@@ -1,0 +1,10 @@
+- Beschreibung:
+    add_str_to_beschreibung
+    add_schublade
+- columns to string
+- Geografie
+    geo_key_completion
+- Inventarnummer
+    has_inventarnummer_double
+-
+

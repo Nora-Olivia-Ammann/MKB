@@ -71,8 +71,7 @@ class Inventarnummer:
     # inventar_sortierbar(indata="a_Test_inventar_sortierbar", is_excel=True, tranche="Test", return_sorted=False)
 
     @staticmethod
-    def add_rename_inventarnummer(input_df: pd.DataFrame, return_sorted: bool,
-                                  tranche: str or None = None) -> pd.DataFrame or None:
+    def add_rename_inventarnummer(input_df: pd.DataFrame, return_sorted: bool) -> pd.DataFrame or None:
         """
         Adds columns to df, that are used when having to rename any Inventarnummer. Can be used as a nested function.
         :param in_data: df / excel
@@ -95,8 +94,7 @@ class Inventarnummer:
     # tranche="Test")
 
     @staticmethod
-    def has_inventarnummer_double(input_df: pd.DataFrame, tranche: str or None = None,
-                                  abteilung: str or None = None) -> pd.DataFrame or None:
+    def has_inventarnummer_double(input_df: pd.DataFrame, tranche: str, in_excel_name: str) -> pd.DataFrame or None:
         """
         Checks whether there are any double in the column "Inventarnummer". If not excel, also returns a bool.
         :param in_data: excel / df
@@ -112,25 +110,19 @@ class Inventarnummer:
         df_doubles = input_df[input_df["Inventarnummer"].duplicated(keep=False)]
         if len(df_doubles) != 0:
             # add new columns for adding new Inventarnummer
-            df_doubles = Inventarnummer.add_rename_inventarnummer(
-                in_data=df_doubles, is_excel=False, return_sorted=True, tranche=None)
+            df_doubles = Inventarnummer.add_rename_inventarnummer(input_df, False)
             input_df.drop_duplicates(subset=["Inventarnummer"], keep=False, inplace=True, ignore_index=True)
-            #
-            # df_doc = pd.concat([df_doc, pd.DataFrame(
-            #     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
-            #      "Feld": "Inventarnummer", "Was": "Dubletten", "Resultat": f"{len(df_doubles)} dubletten",
-            #      "Output Dokument": f"{tranche}_{today}_Inventarnummer_Dubletten // "
-            #                         f"{tranche}_{today}_Inventarnummer_Keine_Dubletten",
-            #      "Ersetzt Hauptexcel": "unterteilt es"}, index=[0])], ignore_index=True)
-            return True, df_doubles, input_df
+            doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
+                        "Feld": "Inventarnummer", "Was": "Dubletten", "Resultat": f"{len(df_doubles)} dubletten",
+                        "Output Dokument": f"{tranche}_{today}_Inventarnummer_Dubletten // "
+                                           f"{tranche}_{today}_Inventarnummer_Keine_Dubletten",
+                        "Ersetzt Hauptexcel": "unterteilt es"}
+            return True, df_doubles, input_df, doc_dict
         else:
-            return False, None, None
-            # Write documentation
-            # df_doc = pd.concat([df_doc, pd.DataFrame(
-            #     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
-            #      "Feld": "Inventarnummer", "Was": "Dubletten", "Resultat": f"keine dubletten",
-            #      "Output Dokument": f"-", "Ersetzt Hauptexcel": "-"}, index=[0])], ignore_index=True)
-
+            doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
+                 "Feld": "Inventarnummer", "Was": "Dubletten", "Resultat": f"keine dubletten",
+                 "Output Dokument": f"-", "Ersetzt Hauptexcel": "-"}
+            return False, None, None, doc_dict
 
     # # Version with doubles
     # has_inventarnummer_double(in_data="a_Test_has_inventarnummer_double_Doppelt", is_excel=True, tranche="Test",

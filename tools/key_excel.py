@@ -16,6 +16,7 @@ current_wdir = os.getcwd()
 # Suppress the SettingWithCopyWarning
 pd.set_option("mode.chained_assignment", None)
 
+# TODO: complete rewrite
 
 class KeyExcel:
 

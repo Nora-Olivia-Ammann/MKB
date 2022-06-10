@@ -1,29 +1,30 @@
 import os
 import pandas as pd
 import numpy as np
+from datetime import date
 
 from excel_functions import ExcelFunctions as ExF
 from cleaning_df import CleanDF as Clean
+
+today = str(date.today())
 
 
 class ColumnsToStr:
 
     @staticmethod
-    def join_col_to_str(input_df: str or pd.DataFrame, col_list: list[str], name_list: list[str] or False,
-                        new_col_name: str, tranche: str or None = None, abteilung: str or None = None,
-                        ) -> pd.DataFrame or None:
+    def join_col_to_str(input_df: pd.DataFrame, in_excel_name: str, col_list: list[str], new_col_name: str,
+                        tranche: str, name_list: list[str] or False = False) -> pd.DataFrame and dict:
         """
         For each row it gets the information from a list of columns and if it is not NaN enters that as a str into a new
         column. A prefix (such as column name or similar) for each column can be added. If this function is used with an
         excel as input it writes the documentation.
-        :param in_data: excel / df
-        :param is_excel: True if excel
+        :param in_excel_name: name of the excel that is used, important for the documentation
+        :param input_df: excel / df
         :param col_list: list of column names that should be included
         :param name_list: names of the prefix for every column MUST BE SAME LENGTH AS LIST OF COLUMNS or False if no prefix
         :param new_col_name: name of the column where the resulting str should be entered
         :param tranche: name
-        :param abteilung: name or df_doc if not excel
-        :return: df or none
+        :return: df and documentation dict
         """
         input_df = Clean.strip_spaces(input_df)
         # iterate over the column list that contains information that should be joined into a str
@@ -61,12 +62,11 @@ class ColumnsToStr:
                 b_str = "; ".join(besch)
             # add the string the the new_column
             input_df.loc[index, new_col_name] = b_str
-        # df_doc = pd.concat([df_doc, pd.DataFrame(
-        #     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
-        #      "Feld": new_col_name, "Was": f"Info hinzufügen",
-        #      "Resultat": f"Info von Spalte: '{col_list}' in neue Spalte {new_col_name}",
-        #      "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
-        return input_df
+        doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
+                    "Feld": new_col_name, "Was": f"Info hinzufügen",
+                    "Resultat": f"Info von Spalte: '{col_list}' in neue Spalte {new_col_name}",
+                    "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}
+        return input_df, doc_dict
 
     # # with Prefix
     # join_col_to_str(in_data="a_Test_join_col_to_str", is_excel=True, col_list=["Col1", "Col2", "Col3", "Col4"],

@@ -20,8 +20,7 @@ pd.set_option("mode.chained_assignment", None)
 class Inschrift:
 
     @staticmethod
-    def einlaufnummer_bearbeiten(input_df: pd.DataFrame, tranche: str or None = None,
-                                 abteilung: str or None = None) -> None or pd.DataFrame:
+    def einlaufnummer_bearbeiten(input_df: pd.DataFrame, tranche: str, in_excel_name: str) -> None or pd.DataFrame:
         """
         Checks whether all the Einlaufnummer are in the correct format. If leading zeros are missing it fills those.
         If used as nested function it also returns a True if all is correct and the df (if leading zeros were added
@@ -68,20 +67,16 @@ class Inschrift:
         # if all are correct then the column is empty
         if input_df["Inschrift falsch"].isnull().all():
             input_df.pop("Inschrift falsch")
-                # write documentation
-                # input_doc = pd.concat([input_doc, pd.DataFrame(
-                #     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
-                #      "Feld": "Inschrift", "Was": "Compliance",
-                #      "Resultat": f"alle Angaben korrekt oder wurden korriegiert.",
-                #      "Output Dokument": f"{tranche}_{today}_Komplett", "Ersetzt Hauptexcel": "ja"},
-                #     index=[0])], ignore_index=True)
-            return True, input_df
-            # input_doc = pd.concat([input_doc, pd.DataFrame(
-            #     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
-            #      "Feld": "Inschrift", "Was": "Compliance", "Resultat": f"Inschriften inkorrekt",
-            #      "Output Dokument": f"{tranche}_{today}_Komplett",
-            #      "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
-        return False, input_df
+            doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
+                     "Feld": "Inschrift", "Was": "Compliance",
+                     "Resultat": f"alle Angaben korrekt oder wurden korriegiert.",
+                     "Output Dokument": f"{tranche}_{today}_Komplett", "Ersetzt Hauptexcel": "ja"}
+            return True, input_df, doc_dict
+        doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
+             "Feld": "Inschrift", "Was": "Compliance", "Resultat": f"Inschriften inkorrekt",
+             "Output Dokument": f"{tranche}_{today}_Komplett",
+             "Ersetzt Hauptexcel": "ja"}
+        return False, input_df, doc_dict
 
     # # everything is correct and all the numbers are there
     # einlaufnummer_bearbeiten(in_data="_Test_Excel/c_Test_einlaufnummer_bearbeiten_Vollständig", is_excel=True,

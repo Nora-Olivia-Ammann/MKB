@@ -85,7 +85,7 @@ class NaN:
             # if there are NaN values save as an excel and write documentation
             if len(df_nan) != 0:
                 if is_excel:
-                    SE.save_df_excel(df_nan, f"{tranche}_{today}_Fehlende_Angaben")
+                    ExF.save_df_excel(df_nan, f"{tranche}_{today}_Fehlende_Angaben")
                     # write documentation
                     df_doc = pd.concat([df_doc, pd.DataFrame(
                         {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
@@ -106,8 +106,8 @@ class NaN:
                 else:
                     return False, None, None, None
         if is_excel:
-            SE.save_doc_excel(df_doc, abteilung)
-            SE.save_df_excel(df_not_nan, f"{tranche}_{today}_Angaben_Komplett")
+            ExF.save_doc_excel(df_doc, abteilung)
+            ExF.save_df_excel(df_not_nan, f"{tranche}_{today}_Angaben_Komplett")
 
     # has_columns_NaN(in_data="a_Test_has_columns_NaN", is_excel=True, tranche="Test", abteilung="Test",
     #                 column_list=["Spalte_2", "Spalte_4"], separate_excel_columns=True)

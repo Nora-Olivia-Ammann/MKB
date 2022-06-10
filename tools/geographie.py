@@ -8,7 +8,6 @@ import re
 
 from excel_functions import ExcelFunctions as ExF
 
-
 today = str(date.today())
 os.chdir("..")
 current_wdir = os.getcwd()
@@ -49,8 +48,8 @@ class Geographie:
         return input_key_df
 
     @staticmethod
-    def geo_key_completion(input_key_df: pd.DataFrame, drop_uncontrolled: bool, tranche: str or None = None,
-                           abteilung: str or None = None) -> bool and pd.DataFrame or None:
+    def geo_key_completion(input_key_df: pd.DataFrame, key_excel_name: str, drop_uncontrolled: bool,
+                           tranche: str or None = None, abteilung: str or None = None) -> bool and pd.DataFrame or None:
         """
         There are not many columns that have to be filled for each Geo_ID, it checks those. A bool decides whether the
         uncontrolled rows should also be checked
@@ -73,23 +72,21 @@ class Geographie:
                                 input_key_df[input_key_df["Geo_ID"].isnull()]], ignore_index=True)
             # drop any duplicates
             df_nan.drop_duplicates(subset=["Geo_ID"], keep="first", inplace=True, ignore_index=True)
-            # input_doc = pd.concat([input_doc, pd.DataFrame(
-            #     {"Datum": today, "Tranche": tranche, "Input Dokument": "", "Schlüssel Excel": key_data,
-            #      "Feld": "Angaben Geo", "Was": "Vollständigkeit Geografie",
-            #      "Resultat": f"{len(df_nan)} unvollständige Geo_ID",
-            #      "Output Dokument": f"Schlüssel_Geo_Fehlende_Angaben_{today}", "Ersetzt Hauptexcel": "-"},
-            #     index=[0])], ignore_index=True)
-            return False, df_nan
-                # input_doc = pd.concat([input_doc, pd.DataFrame(
-                #     {"Datum": today, "Tranche": tranche, "Input Dokument": "", "Schlüssel Excel": key_data,
-                #      "Feld": "Angaben Geo", "Was": "Vollständigkeit Geografie",
-                #      "Resultat": f"keine unvollständige Geo_ID",
-                #      "Output Dokument": f"-", "Ersetzt Hauptexcel": "-"}, index=[0])], ignore_index=True)
-                # ExF.save_doc_excel(input_doc, abteilung)
-                # as it checkes only the completion of the keys it does not do any modifications we want to keep
-                # therefore the df is not saved
-                # when used in a function we want to have the df without the uncontrolled ID
-        return True, None
+            doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": "", "Schlüssel Excel": key_excel_name,
+                        "Feld": "Angaben Geo", "Was": "Vollständigkeit Geografie",
+                        "Resultat": f"{len(df_nan)} unvollständige Geo_ID",
+                        "Output Dokument": f"Schlüssel_Geo_Fehlende_Angaben_{today}", "Ersetzt Hauptexcel": "-"}
+
+            return False, df_nan, doc_dict
+
+            # as it checkes only the completion of the keys it does not do any modifications we want to keep
+            # therefore the df is not saved
+            # when used in a function we want to have the df without the uncontrolled ID
+        doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": "", "Schlüssel Excel": key_excel_name,
+                    "Feld": "Angaben Geo", "Was": "Vollständigkeit Geografie",
+                    "Resultat": f"keine unvollständige Geo_ID",
+                    "Output Dokument": f"-", "Ersetzt Hauptexcel": "-"}
+        return True, None, doc_dict
 
     # geo_key_completion(key_data="_Test_Excel/d_Test_Schlüssel_Geo_Korrekt", is_excel=True, drop_uncontrolled=False,
     #                    tranche="Test", abteilung="Test")

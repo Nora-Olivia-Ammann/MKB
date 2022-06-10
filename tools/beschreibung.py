@@ -10,9 +10,8 @@ current_wdir = os.getcwd()
 class Beschreibung:
 
     @staticmethod
-    def add_str_to_beschreibung(input_df: pd.DataFrame, source_col: str, prefix_text: str,
-                                is_excel: bool = False, abteilung: str or None = None, tranche: str or None = None) \
-            -> None or pd.DataFrame:
+    def add_str_to_beschreibung(input_df: pd.DataFrame, in_excel_name: str, source_col: str, prefix_text: str,
+                                tranche: str or None = None) -> pd.DataFrame and dict:
         """
         Adds the value from one column to the Beschreibung column.
         :param in_data: excel
@@ -43,7 +42,7 @@ class Beschreibung:
                 else:
                     input_df.loc[index, "Beschreibung"] = f"{prefix_text}{source_val}"
             # skip the row if it contains NaN
-        doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+        doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
                     "Feld": "Beschreibung",
                     "Was": f"Information ergänzen",
                     "Resultat": f"Info von Spalte: '{source_col}', zu Beschreibung mit Präfix: '{prefix_text}'",
@@ -54,7 +53,7 @@ class Beschreibung:
     #                         source_col="P1 Fotograf*in/Filmer*in", prefix_text="")
 
     @staticmethod
-    def add_schublade(input_df: pd.DataFrame, tranche: str or None = None, abteilung: str or None = None):
+    def add_schublade(input_df: pd.DataFrame, tranche: str, in_excel_name: str):
         """
         Adds the name of the Schublade, to the Beschreibung after the number of the Schublade.
         :param input_df:
@@ -74,12 +73,10 @@ class Beschreibung:
                 input_df.loc[index, "Beschreibung"] = ",".join(besch_spl)
             except TypeError:
                 pass
-        # input_docu = pd.concat([input_docu, pd.DataFrame(
-        #     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
-        #      "Feld": "Beschreibung", "Was": "Hinzufügen Schubladenname", "Resultat": f"erfolgreich hinzugefügt",
-        #      "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
-        else:
-            return input_df
+        doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
+                    "Feld": "Beschreibung", "Was": "Hinzufügen Schubladenname", "Resultat": f"erfolgreich hinzugefügt",
+                    "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}
+        return input_df, doc_dict
 
     # add_schublade("_Test_Tranche_Neu_Formatiert_Kurz", is_excel=True, tranche="Test", abteilung="Test")
 

@@ -20,8 +20,8 @@ pd.set_option("mode.chained_assignment", None)
 class Inschrift:
 
     @staticmethod
-    def einlaufnummer_bearbeiten(in_data: str or pd.DataFrame, tranche: str or None = None,
-                                 abteilung: str or None = None, is_excel: bool = False) -> None or pd.DataFrame:
+    def einlaufnummer_bearbeiten(input_df: pd.DataFrame, tranche: str or None = None,
+                                 abteilung: str or None = None) -> None or pd.DataFrame:
         """
         Checks whether all the Einlaufnummer are in the correct format. If leading zeros are missing it fills those.
         If used as nested function it also returns a True if all is correct and the df (if leading zeros were added
@@ -33,32 +33,22 @@ class Inschrift:
         :param abteilung: name
         :return: True if all is correct and new tranche df, False if not correct and new tranche df and faulty df
         """
-        if is_excel:
-            # read in_excel to df
-            df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_data}.xlsx"))
-            # read the documentation excel
-            df_doc = pd.read_excel(
-                os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
-        else:
-            df_in = in_data
-            df_doc = abteilung
-        ####################################
         pattern_einlauf_correct, pattern_zero, pattern_incomplete = REPAT.inschrift_re_pattern()
         # get the index number of the column inschrift
-        index_no = df_in.columns.get_loc("Inschrift")
+        index_no = input_df.columns.get_loc("Inschrift")
         # try to insert a new column to the right of it
         try:
-            df_in.insert(index_no + 1, "Inschrift falsch", np.nan)
+            input_df.insert(index_no + 1, "Inschrift falsch", np.nan)
         # if it already exists then delete all the entries
         except ValueError:
-            df_in["Inschrift falsch"] = np.nan
-        for index, inschrift in df_in["Inschrift"].iteritems():
+            input_df["Inschrift falsch"] = np.nan
+        for index, inschrift in input_df["Inschrift"].iteritems():
             # RegEx only works with strings. Numbers (int and float) are also treated as strings,
             # you only get a type error if it is empty
             try:
                 # if the numbers are only zeros, this has to come first, as a 0 number could also match the correct RegEx
                 if pattern_zero.match(inschrift):
-                    df_in.loc[index, "Inschrift falsch"] = "x"
+                    input_df.loc[index, "Inschrift falsch"] = "x"
                 # if the numbers are valid
                 elif pattern_einlauf_correct.match(inschrift):
                     continue
@@ -70,38 +60,28 @@ class Inschrift:
                     # join the split string from the list
                     new_inschrift = "_".join(spl_val)
                     # assign the new value to the cell
-                    df_in.loc[index, "Inschrift"] = new_inschrift
+                    input_df.loc[index, "Inschrift"] = new_inschrift
                 else:
-                    df_in.loc[index, "Inschrift falsch"] = "x"
+                    input_df.loc[index, "Inschrift falsch"] = "x"
             except TypeError:
-                df_in.loc[index, "Inschrift falsch"] = "x"
+                input_df.loc[index, "Inschrift falsch"] = "x"
         # if all are correct then the column is empty
-        if df_in["Inschrift falsch"].isnull().all():
-            df_in.pop("Inschrift falsch")
-            if is_excel:
-                ExF.save_df_excel(df_in, f"{tranche}_{today}_Komplett")
+        if input_df["Inschrift falsch"].isnull().all():
+            input_df.pop("Inschrift falsch")
                 # write documentation
-                df_doc = pd.concat([df_doc, pd.DataFrame(
-                    {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
-                     "Feld": "Inschrift", "Was": "Compliance",
-                     "Resultat": f"alle Angaben korrekt oder wurden korriegiert.",
-                     "Output Dokument": f"{tranche}_{today}_Komplett", "Ersetzt Hauptexcel": "ja"},
-                    index=[0])], ignore_index=True)
-                ExF.save_doc_excel(df_doc, abteilung)
-            else:
-                return True, df_in
-        else:
-            if is_excel:
-                ExF.save_df_excel(df_in, f"{tranche}_{today}_Komplett")
-                # write documentation
-                df_doc = pd.concat([df_doc, pd.DataFrame(
-                    {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
-                     "Feld": "Inschrift", "Was": "Compliance", "Resultat": f"Inschriften inkorrekt",
-                     "Output Dokument": f"{tranche}_{today}_Komplett",
-                     "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
-                ExF.save_doc_excel(df_doc, abteilung)
-            else:
-                return False, df_in
+                # input_doc = pd.concat([input_doc, pd.DataFrame(
+                #     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+                #      "Feld": "Inschrift", "Was": "Compliance",
+                #      "Resultat": f"alle Angaben korrekt oder wurden korriegiert.",
+                #      "Output Dokument": f"{tranche}_{today}_Komplett", "Ersetzt Hauptexcel": "ja"},
+                #     index=[0])], ignore_index=True)
+            return True, input_df
+            # input_doc = pd.concat([input_doc, pd.DataFrame(
+            #     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+            #      "Feld": "Inschrift", "Was": "Compliance", "Resultat": f"Inschriften inkorrekt",
+            #      "Output Dokument": f"{tranche}_{today}_Komplett",
+            #      "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
+        return False, input_df
 
     # # everything is correct and all the numbers are there
     # einlaufnummer_bearbeiten(in_data="_Test_Excel/c_Test_einlaufnummer_bearbeiten_Vollständig", is_excel=True,
@@ -115,52 +95,6 @@ class Inschrift:
     # einlaufnummer_bearbeiten(in_data="_Test_Excel/c_Test_einlaufnummer_bearbeiten_Fehler", is_excel=True,
     #                          tranche="Test", abteilung="Test")
 
-    @staticmethod
-    def get_unique_einlauf(in_excel: str, tranche: str) -> None:
-        """
-        Gets all the Einlaufnummer in column "Inschrift" once in a new excel.
-        :param in_excel: excel
-        :param tranche: name
-        :return: saves excel
-        """
-        # read in_excel to df
-        df_in = pd.read_excel(os.path.join(current_wdir, "input", "", f"{in_excel}.xlsx"))
-        # clean the df
-        df_in = Clean.strip_spaces(df_in)
-        # drop null rows
-        df_in.dropna(subset=["Inschrift"], inplace=True)
-        # drop duplicates
-        df_in.drop_duplicates(subset="Inschrift", keep='first', inplace=True, ignore_index=False)
-        # get the column into a new df for saving as the rest of the information is not relevant
-        df_out = pd.DataFrame({"Inschrift": df_in["Inschrift"], "TMS Bearbeitet": np.nan})
-        df_out.sort_values(by=["Inschrift"], ascending=True, inplace=True, ignore_index=True)
-        # save the excel
-        ExF.save_df_excel(df_out, f"{tranche}_Einmalige_Einlaufnummern_{today}")
-
-    # get_unique_einlauf("_Test_Tranche_Neu_Formatiert_Kurz", "Test")
-
-    @staticmethod
-    def add_unique_einlauf(in_excel: str, key_excel: str, out_tranche: str) -> None:
-        df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
-        # clean the df
-        df_in = Clean.strip_spaces(df_in)
-        # read key_excel in which will provide the dictionary
-        df_key = pd.read_excel(os.path.join(current_wdir, "input", f"{key_excel}.xlsx"))
-        # clean the df
-        df_key = Clean.strip_spaces(df_key)
-        # drop null rows
-        df_in.dropna(subset=["Inschrift"], inplace=True)
-        # reformat the information
-        df_temp = pd.DataFrame({"Inschrift": df_in["Inschrift"]})
-        # sort the values
-        df_temp.sort_values(by=["Inschrift"], ascending=True, inplace=True, ignore_index=True)
-        df_combined = pd.concat([df_key, df_temp], ignore_index=True)
-        # drop duplicates
-        df_combined.drop_duplicates(subset="Inschrift", keep='first', inplace=True, ignore_index=True)
-        # save excel
-        ExF.save_df_excel(df_combined, f"{out_tranche}_Einmalige_Einlaufnummern_{today}")
-
-    # add_unique_einlauf("_Test_Tranche_Neu_Formatiert_Lang", "c_Test_Einmalige_Einlaufnummern", "Test_lang")
 
     @staticmethod
     def key_einlauf_completion_check(key_data: pd.DataFrame or str, is_excel: bool = False):

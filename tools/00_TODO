@@ -3,26 +3,19 @@ All:
 - change documentation
 -
 
-Change is_excel:
-- ColumnsToStr
-- DoubleCheck
-- Inschrift
-- Inventarnummer
-- Key Excel
-
-Change read excel
-
+TOOLS
 
 Documentation Change Pending
 - Beschreibung:
     add_str_to_beschreibung
     add_schublade
 - columns to string
--
+- Inschrift
 
 
 Complete Rewrite
 - double_check
+- Geographie: geo_key_completion
 
 
 

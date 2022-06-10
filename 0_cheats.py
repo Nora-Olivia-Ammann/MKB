@@ -42,14 +42,13 @@ df_doc = pd.concat([df_doc, pd.DataFrame({
 def new_funct(in_excel, key_excel, tranche, abteilung):
     # read in the excels
     df_in = ExF.in_excel_to_df(in_excel)
-    df_doc = ExF.doc_excel_to_df(abteilung)
     df_key = ExF.in_excel_to_df(key_excel)
     doc_list = []
     ############################################
 
     # save df
     ExF.save_df_excel(df_in, f"{tranche}_{today}")
-    ExF.save_doc_excel(df_doc, abteilung)
+    ExF.doc_save_list(doc_list, abteilung)
 
 
 #####################

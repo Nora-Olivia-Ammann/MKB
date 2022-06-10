@@ -1,4 +1,10 @@
 import pandas as pd
+import os
+from datetime import date
+
+today = str(date.today())
+os.chdir("..")
+current_wdir = os.getcwd()
 
 
 class Beschreibung:
@@ -37,14 +43,12 @@ class Beschreibung:
                 else:
                     input_df.loc[index, "Beschreibung"] = f"{prefix_text}{source_val}"
             # skip the row if it contains NaN
-        # write documentation
-        # input_doc = pd.concat([input_doc, pd.DataFrame(
-        #     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
-        #      "Feld": "Beschreibung",
-        #      "Was": f"Information ergänzen",
-        #      "Resultat": f"Info von Spalte: '{source_col}', zu Beschreibung mit Präfix: '{prefix_text}'",
-        #      "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
-        return input_df
+        doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+                    "Feld": "Beschreibung",
+                    "Was": f"Information ergänzen",
+                    "Resultat": f"Info von Spalte: '{source_col}', zu Beschreibung mit Präfix: '{prefix_text}'",
+                    "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}
+        return input_df, doc_dict
 
     # add_str_to_beschreibung(in_data="a_Test_add_str_to_beschreibung", is_excel=True, abteilung="Test", tranche="Test",
     #                         source_col="P1 Fotograf*in/Filmer*in", prefix_text="")

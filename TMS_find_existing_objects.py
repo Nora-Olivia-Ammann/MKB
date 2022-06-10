@@ -14,11 +14,8 @@ pd.set_option("mode.chained_assignment", None)
 
 
 def find_existing_objects(tranchen_excel: str, tms_excel: str, tranche: str, abteilung: str) -> None:
-    df_tranche = pd.read_excel(os.path.join(current_wdir, "input", f"{tranchen_excel}.xlsx"))
-    df_tms = pd.read_excel(os.path.join(current_wdir, "input", f"{tms_excel}.xlsx"))
-    # read the documentation excel
-    df_doc = pd.read_excel(
-        os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
+    df_tranche = ExF.in_excel_to_df(tranchen_excel)
+    df_tms = ExF.in_excel_to_df(tms_excel)
     ##########################
     # convert the inventarnummer column from the tms df to a list
     tms_list = df_tms["Inventarnummer"].tolist()
@@ -39,13 +36,12 @@ def find_existing_objects(tranchen_excel: str, tms_excel: str, tranche: str, abt
             not_tms_list.append(row)
     # if the list has no entries, we only need the documentation, no new excel is needed (as it would be identical)
     if len(in_tms_list) == 0:
-        df_doc = pd.concat([df_doc, pd.DataFrame(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": tranchen_excel, "Schlüssel Excel": "-",
+        ExF.doc_save_single(
+            abteilung, {"Datum": today, "Tranche": tranche, "Input Dokument": tranchen_excel, "Schlüssel Excel": "-",
              "Feld": "-", "Was": "Abgleich mit bereits im TMS vorhandenen Datensätzen",
              "Resultat": f"keine Daten sind bereits vorhanden.", "Output Dokument": f"-",
-             "Ersetzt Hauptexcel": "kein neues excel"}, index=[0])], ignore_index=True)
-        # save excel because the function stops
-        ExF.save_doc_excel(df_doc, abteilung)
+             "Ersetzt Hauptexcel": "kein neues excel"})
+        # stopping the function
         return
     else:
         doc_list = []
@@ -68,8 +64,7 @@ def find_existing_objects(tranchen_excel: str, tms_excel: str, tranche: str, abt
              "Resultat": f"{len(not_tms_list)} Daten sind nicht vorhanden.",
              "Output Dokument": f"{tranche}_nicht_im_TMS_vorhanden_{today}", "Ersetzt Hauptexcel": "unterteilt es"})
     # save doc
-    doc_tranche = pd.concat([df_doc, pd.DataFrame.from_records(doc_list)], ignore_index=True)
-    ExF.save_doc_excel(doc_tranche, abteilung)
+    ExF.doc_save_list(doc_list, abteilung)
 
 
 # # with double entries

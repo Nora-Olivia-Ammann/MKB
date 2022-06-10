@@ -63,6 +63,12 @@ class ExcelFunctions:
         name_df.to_excel(writer, sheet_name=" ", index=False)
         writer.save()
 
+    @staticmethod
+    def save_doc_from_list(original_df: pd.DataFrame, list_dict: list[dict], abteilung: str) -> None:
+        df_from_list = pd.DataFrame.from_records(list_dict)
+        df_doc = pd.concat([original_df, df_from_list], ignore_index=True)
+        ExcelFunctions.save_doc_excel(df_doc, abteilung)
+
 
 
 

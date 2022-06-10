@@ -2,6 +2,7 @@ import os
 from datetime import date
 import pandas as pd
 
+from excel_functions import ExcelFunctions as ExF
 
 today = str(date.today())
 os.chdir("..")
@@ -66,8 +67,8 @@ class Beschreibung:
              "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
         if is_excel:
             # save df
-            SE.save_df_excel(df_in, f"{tranche}_{today}")
-            SE.save_doc_excel(df_doc, abteilung)
+            ExF.save_df_excel(df_in, f"{tranche}_{today}")
+            ExF.save_doc_excel(df_doc, abteilung)
         else:
             return df_in
 
@@ -112,8 +113,8 @@ class Beschreibung:
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
                  "Feld": "Beschreibung", "Was": "Hinzufügen Schubladenname", "Resultat": f"erfolgreich hinzugefügt",
                  "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
-            SE.save_df_excel(df_in, f"{tranche}_{today}")
-            SE.save_doc_excel(df_doc, abteilung)
+            ExF.save_df_excel(df_in, f"{tranche}_{today}")
+            ExF.save_doc_excel(df_doc, abteilung)
         else:
             return df_in
 

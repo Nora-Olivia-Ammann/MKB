@@ -31,17 +31,6 @@ def create_documentation(abteilung: str) -> None:
 #create_documentation("Test")
 
 
-def append_doc(abteilung: str, tranche: str, in_excel: str) -> None:
-    df_doc = pd.read_excel(os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
-    df_doc = pd.concat([df_doc, pd.DataFrame(
-        {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "", "Feld": "", "Was": "",
-         "Resultat": f"", "Output Dokument": f"", "Ersetzt Hauptexcel": ""}, index=[0])], ignore_index=True)
-    ExF.save_doc_excel(df_doc, abteilung)
-
-
-#append_doc("Test", "Test", "Test")
-
-
 def create_to_do() -> None:
     """
     Each new Excel that was generated, sets certain processes in motion. As one function may initiate several

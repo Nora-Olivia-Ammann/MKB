@@ -9,6 +9,7 @@ today = str(date.today())
 # os.chdir("..")
 current_wdir = os.getcwd()
 
+
 ############################################
 
 
@@ -25,8 +26,7 @@ def create_tms_delete_doc() -> None:
     ExF.save_df_excel(df, "TMS_Löschen_Dokumentation")
 
 
-#create_tms_delete_doc()
-
+# create_tms_delete_doc()
 
 def tms_inventarnummer_delete(in_excel: str, inventarnummer: str) -> None:
     """
@@ -37,9 +37,8 @@ def tms_inventarnummer_delete(in_excel: str, inventarnummer: str) -> None:
     :return: None
     """
     # read the excel
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
-    # read the documentation excel
-    df_doc = pd.read_excel(os.path.join(current_wdir, "output", "_dokumentation", "TMS_Löschen_Dokumentation.xlsx"))
+    df_in = ExF.in_excel_to_df(in_excel)
+    doc_list = []
     # drop the columns that are filled even in cases where there are no usable information in the system
     # by using inplace=True, changes are made in the df
     df_in.drop(columns=["Vom System vergebene Nr.", "Sortiernummer", "Objekt (Kurzbezeichnung)", "Bearbeitet von"],
@@ -60,17 +59,13 @@ def tms_inventarnummer_delete(in_excel: str, inventarnummer: str) -> None:
         df_out.pop("Medien")
         # save the df as an excel which will be used to delete the Inventarnummer in the system
         ExF.save_df_excel(df_out, f"{inventarnummer}_zu_Löschen_{today}")
-        df_doc = pd.concat([df_doc, pd.DataFrame(
-            {"Datum": today, "Inventarnummer": inventarnummer, "Input Dokument": in_excel,
-             "Resultat": f"{len(df_out)} Inventarnummern zu Löschen",
-             "Output Dokument": f"{inventarnummer}_zu_Löschen_{today}"}, index=[0])], ignore_index=True)
+        ExF.doc_save_single("TMS_Löschen_Dokumentation",
+                            {"Datum": today, "Inventarnummer": inventarnummer, "Input Dokument": in_excel,
+                             "Resultat": f"{len(df_out)} Inventarnummern zu Löschen",
+                             "Output Dokument": f"{inventarnummer}_zu_Löschen_{today}"})
     else:
-        df_doc = pd.concat([df_doc, pd.DataFrame(
-            {"Datum": today, "Inventarnummer": inventarnummer, "Input Dokument": in_excel,
-             "Resultat": "Keine leeren Inventarnummern", "Output Dokument": "-"}, index=[0])], ignore_index=True)
-    ExF.save_doc_excel(df_doc, "TMS_Löschen")
+        ExF.doc_save_single("TMS_Löschen_Dokumentation",
+                            {"Datum": today, "Inventarnummer": inventarnummer, "Input Dokument": in_excel,
+                             "Resultat": "Keine leeren Inventarnummern", "Output Dokument": "-"})
 
-
-#tms_inventarnummer_delete("III_2022-03-10", "(F)III")
-
-
+# tms_inventarnummer_delete("III_2022-03-10", "(F)III")

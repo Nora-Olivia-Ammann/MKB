@@ -17,8 +17,7 @@ pd.set_option("mode.chained_assignment", None)
 
 def add_barcode_BSB(in_excel: str) -> None:
     # read in the excels
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
-    ############################################
+    df_in = ExF.in_excel_to_df(in_excel)
     len_df = len(df_in)
     df_in.insert(0, "Barcode_BSB", np.nan)
     random_set = set(x for x in random.sample(range(1111111, 9999999), 50))
@@ -40,7 +39,7 @@ def add_barcode_BSB(in_excel: str) -> None:
 
 
 def get_unique_barcode(in_excel: str) -> None:
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
+    df_in = ExF.in_excel_to_df(in_excel)
     df_out = pd.DataFrame(columns=["Barcode_BSB", "Besch_Karteikarte"], index=range(0, len(df_in)))
     df_out["Barcode_BSB"] = df_in["Barcode_BSB"]
     df_out.drop_duplicates(subset=["Barcode_BSB"], keep="first", inplace=True, ignore_index=True)
@@ -51,8 +50,8 @@ def get_unique_barcode(in_excel: str) -> None:
 
 
 def map_barcode_tranche(in_excel: str, bsb_excel: str, tranche: str) -> None:
-    df_tranche = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
-    df_bsb = pd.read_excel(os.path.join(current_wdir, "input", f"{bsb_excel}.xlsx"))
+    df_tranche = ExF.in_excel_to_df(in_excel)
+    df_bsb = ExF.in_excel_to_df(bsb_excel)
     map_dict = dict(zip(df_bsb["Inventarnummer"], df_bsb["Barcode_BSB"]))
     df_tranche.insert(0, "Barcode_BSB", np.nan)
     df_tranche["Barcode_BSB"] = df_tranche["Inventarnummer"].map(map_dict)
@@ -67,8 +66,8 @@ def map_barcode_tranche(in_excel: str, bsb_excel: str, tranche: str) -> None:
 
 
 def map_kk_content_barcode(in_excel: str, key_excel: str, tranche: str) -> None:
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
-    df_key = pd.read_excel(os.path.join(current_wdir, "input", f"{key_excel}.xlsx"))
+    df_in = ExF.in_excel_to_df(in_excel)
+    df_key = ExF.in_excel_to_df(key_excel)
     # TODO: check if all in dict
     map_dict = dict(zip(df_key["Barcode_BSB"], df_key["Besch_Karteikarte"]))
     df_in["Besch_KarteiKarte"] = df_in["Barcode_BSB"].map(map_dict)

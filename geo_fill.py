@@ -32,15 +32,14 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str, contin
     :return: None
     """
     # read in_excel to df, which is the one to fill with values
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
+    df_in = ExF.in_excel_to_df(in_excel)
     # clean the df
     df_in = Clean.strip_spaces(df_in)
-    # read the documentation excel
-    df_doc = pd.read_excel(os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
     # read key_excel in which will provide the dictionary
-    df_key = pd.read_excel(os.path.join(current_wdir, "input", "", f"{key_excel}.xlsx"))
+    df_key = ExF.in_excel_to_df(key_excel)
     # clean the df
     df_key = Clean.strip_spaces(df_key)
+    doc_list = []
     # check whether all rows have a GeoID
     if df_in["Geo_ID"].isnull().any():
         # if there are save them in a new df
@@ -50,24 +49,18 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str, contin
             df_in.dropna(subset=["Geo_ID"], inplace=True)
             ExF.save_df_excel(df_in, f"{tranche}_{today}_Vollständige_GeoID")
             # write documentation
-            df_doc = pd.concat([df_doc, pd.DataFrame(
-                {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "",
+            ExF.doc_save_single(abteilung, {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "",
                  "Feld": "Geo_ID", "Was": "Vollständigkeit", "Resultat": f"{len(df_nan)} Geo_ID fehlen",
-                 "Output Dokument": f"{tranche}_{today}_Fehlende_GeoID", "Ersetzt Hauptexcel": "zusatz"},
-                index=[0])], ignore_index=True)
-            ExF.save_doc_excel(df_doc, abteilung)
+                 "Output Dokument": f"{tranche}_{today}_Fehlende_GeoID", "Ersetzt Hauptexcel": "zusatz"})
             # raise Error
             raise TrancheMissingValue("Not all rows have a Geo_ID")
         else:
             # write documentation
-            df_doc = pd.concat([df_doc, pd.DataFrame(
-                {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "",
+            doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "",
                  "Feld": "Geo_ID", "Was": "Vollständigkeit", "Resultat": f"{len(df_nan)} Geo_ID fehlen",
-                 "Output Dokument": f"{tranche}_{today}_Fehlende_GeoID", "Ersetzt Hauptexcel": "unterteilt es"},
-                index=[0])], ignore_index=True)
+                 "Output Dokument": f"{tranche}_{today}_Fehlende_GeoID", "Ersetzt Hauptexcel": "unterteilt es"})
             df_in.dropna(subset=["Geo_ID"], inplace=True)
             warnings.warn("Some Geo_ID are missing, NaN document saved, function continued with non NaN df.")
-
     # check if the Geo key is complete
     # here we have to assign two variables, as it returns a df in any case, if there are values missing
     # it returns a nan_df otherwise it returns the checked df that has the default values filled in
@@ -75,48 +68,43 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str, contin
         key_data=df_key, is_excel=False, drop_uncontrolled=True, tranche=None, abteilung=df_doc)
     if not result_check:
         ExF.save_df_excel(df_not_complete, f"Schlüssel_Geo_Fehlende_Angaben_{today}")
-        df_doc = pd.concat([df_doc, pd.DataFrame(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": "", "Schlüssel Excel": key_excel,
+        doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": "", "Schlüssel Excel": key_excel,
              "Feld": "Angaben Geo", "Was": "Vollständigkeit Geografie",
              "Resultat": f"{len(df_not_complete)} unvollständige Geo_ID",
-             "Output Dokument": f"Schlüssel_Geo_Fehlende_Angaben_{today}", "Ersetzt Hauptexcel": "-"},
-            index=[0])], ignore_index=True)
-        ExF.save_doc_excel(df_doc, abteilung)
+             "Output Dokument": f"Schlüssel_Geo_Fehlende_Angaben_{today}", "Ersetzt Hauptexcel": "-"})
+        ExF.doc_save_list(doc_list, abteilung)
         # raise error
         raise KeyDocIncomplete("Not all mandatory fields in the key document are filled.")
-
     # check if all the Geo_ID are in the Key document
     result_isin_check, df_not_dict = KE.check_key_isin(
         in_data=df_in, in_col="Geo_ID", key_data=df_key, key_col="Geo_ID", drop_uncontrolled=True,
-        out_excel=None, is_excel=False, tranche=None, abteilung=df_doc)
+        out_excel=None, is_excel=False, tranche=None, abteilung=abteilung)
     if not result_isin_check:
-        df_key = pd.read_excel(os.path.join(current_wdir, "input", "", f"{key_excel}.xlsx"))
+        df_key = ExF.in_excel_to_df(key_excel)
         # check if the Geo_ID is also missing from the df that contains the unchecked Geo_IDs
         all_geo_isin, df_not_all_dict = KE.check_key_isin(
             in_data=df_in, in_col="Geo_ID", key_data=df_key, key_col="Geo_ID", drop_uncontrolled=False,
-            out_excel=None, is_excel=False, tranche=None, abteilung=df_doc)
+            out_excel=None, is_excel=False, tranche=None, abteilung=abteilung)
         if not all_geo_isin:
             ExF.save_df_excel(df_not_all_dict, f"Schlüssel_Fehlende_Geo_ID_{tranche}_{today}")
             # write documentation
-            df_doc = pd.concat([df_doc, pd.DataFrame(
-                {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
+            doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
                  "Feld": f"Geo_ID", "Was": f"Vollständigkeit im Schlüssel Excel",
                  "Resultat": f"{len(df_not_all_dict)} fehlende Schlüssel",
-                 "Output Dokument": f"Schlüssel_Fehlende_Geo_ID_{tranche}_{today}", "Ersetzt Hauptexcel": "-"},
-                index=[0])], ignore_index=True)
-            ExF.save_doc_excel(df_doc, abteilung)
+                 "Output Dokument": f"Schlüssel_Fehlende_Geo_ID_{tranche}_{today}", "Ersetzt Hauptexcel": "-"})
+            ExF.doc_save_list(doc_list, abteilung)
             # raise Error
             raise MissingKey("Not all necessary Geo_ID are in the key document.")
         # if the unchecked contains all the geo_ID we want to differentiate that in the documentation
         else:
             ExF.save_df_excel(df_not_dict, f"Schlüssel_Geo_Unkontrollierte_Angaben_{tranche}_{today}")
-            df_doc = pd.concat([df_doc, pd.DataFrame(
+            doc_list.append(
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
                  "Feld": f"Geo_ID", "Was": f"Vollständigkeit im Schlüssel Excel",
                  "Resultat": f"{len(df_not_dict)} unkontrollierte, notwendige Geo_ID",
                  "Output Dokument": f"Schlüssel_Geo_Unkontrollierte_Angaben_{tranche}_{today}",
-                 "Ersetzt Hauptexcel": "-"}, index=[0])], ignore_index=True)
-            ExF.save_doc_excel(df_doc, abteilung)
+                 "Ersetzt Hauptexcel": "-"})
+            ExF.doc_save_list(doc_list, abteilung)
             raise MissingKey("Not all necessary Geo_ID were controlled.")
     df_key.dropna(subset=["Kontrolliert"], inplace=True)
     # fill the Geografiety with the default if not otherwise specified
@@ -132,14 +120,13 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str, contin
         df_in[col] = df_in["Geo_ID"].map(geo_dic)
     ExF.save_df_excel(df_in, f"{tranche}_{today}")
     # write documentation
-    df_doc = pd.concat([df_doc, pd.DataFrame(
-        {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel, "Feld": "Geo_ID",
+    doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel, "Feld": "Geo_ID",
          "Was": "Ausfüllen Geografie", "Resultat": f"Geografie wurde gemäss Schlüssel ausgefüllt",
-         "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
-    ExF.save_doc_excel(df_doc, abteilung)
+         "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"})
+    ExF.doc_save_list(doc_list, abteilung)
 
 
-fill_geo("Metadaten_Test_Import", "Ozeanien_Geo_Schlüssel", continue_if_nan=True, tranche="Test", abteilung="Test")
+#fill_geo("Metadaten_Test_Import", "Ozeanien_Geo_Schlüssel", continue_if_nan=True, tranche="Test", abteilung="Test")
 
 # # ALL CORRECT
 # fill_geo(in_excel="_Test_Excel/d_Test_Tranche_Geo_Auszufüllen_Komplett",

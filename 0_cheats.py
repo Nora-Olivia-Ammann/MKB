@@ -41,9 +41,10 @@ df_doc = pd.concat([df_doc, pd.DataFrame({
 
 def new_funct(in_excel, key_excel, tranche, abteilung):
     # read in the excels
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
-    df_doc = pd.read_excel(os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
-    df_key = pd.read_excel(os.path.join(current_wdir, "input", f"{key_excel}.xlsx"))
+    df_in = ExF.in_excel_to_df(in_excel)
+    df_doc = ExF.doc_excel_to_df(abteilung)
+    df_key = ExF.in_excel_to_df(key_excel)
+    doc_list = []
     ############################################
 
     # save df

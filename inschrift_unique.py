@@ -23,7 +23,7 @@ def get_unique_einlauf(in_excel: str, tranche: str) -> None:
     :return: saves excel
     """
     # read in_excel to df
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", "", f"{in_excel}.xlsx"))
+    df_in = ExF.in_excel_to_df(in_excel)
     # clean the df
     df_in = Clean.strip_spaces(df_in)
     # drop null rows
@@ -40,11 +40,11 @@ def get_unique_einlauf(in_excel: str, tranche: str) -> None:
 
 
 def add_unique_einlauf(in_excel: str, key_excel: str, out_tranche: str) -> None:
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
+    df_in = ExF.in_excel_to_df(in_excel)
     # clean the df
     df_in = Clean.strip_spaces(df_in)
     # read key_excel in which will provide the dictionary
-    df_key = pd.read_excel(os.path.join(current_wdir, "input", f"{key_excel}.xlsx"))
+    df_key = ExF.in_excel_to_df(key_excel)
     # clean the df
     df_key = Clean.strip_spaces(df_key)
     # drop null rows

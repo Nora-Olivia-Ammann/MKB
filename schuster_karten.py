@@ -21,7 +21,7 @@ def add_transcript_schuster(in_excel: str) -> None:
     :return: None
     """
     # combine all the geo info and save them in a new column
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
+    df_in = ExF.in_excel_to_df(in_excel)
     # make a list of the column name
     col_list = ["Herk.7: Subkontinent", "Herk.4: Grossregion/gr. Insel", "Herk.3: Gebiet/Unterregion/Kl. Insel",
                  "Herk.6: Land", "Herk.1: Ort", "Kultur"]
@@ -64,7 +64,7 @@ def get_geo_schuster(in_excel: str) -> None:
     :return:
     """
     # read in_excel to df
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
+    df_in = ExF.in_excel_to_df(in_excel)
     # transfer the geo info into the format of the key excel
     df_out = pd.DataFrame({
         "Kontrolliert": "", "Inventarnummer": df_in["Inventarnummer"], "Geo_ID": "", "Kultur": df_in["Kultur"],
@@ -94,8 +94,8 @@ def fill_geo_ID(schuster: str, schuster_key: str) -> None:
     :param schuster_key: Schuster geo key excel
     :return:
     """
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{schuster}.xlsx"))
-    df_key = pd.read_excel(os.path.join(current_wdir, "input", f"{schuster_key}.xlsx"))
+    df_in = ExF.in_excel_to_df(schuster)
+    df_key = ExF.in_excel_to_df(schuster_key)
     # create a dict so that we can fill the Geo_ID according to the values in the column Original_Geo
     map_dict = dict(zip(df_key["Original_Geo"], df_key["Geo_ID"]))
     # map the df according to the key
@@ -107,8 +107,8 @@ def fill_geo_ID(schuster: str, schuster_key: str) -> None:
 
 
 def replace_transcript(schuster: str, schuster_key: str) -> None:
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{schuster}.xlsx"))
-    df_key = pd.read_excel(os.path.join(current_wdir, "input", f"{schuster_key}.xlsx"))
+    df_in = ExF.in_excel_to_df(schuster)
+    df_key = ExF.in_excel_to_df(schuster_key)
     df_in.drop_duplicates(subset=["Original Geo Neu"], keep="first", inplace=True, ignore_index=True)
     df_in.dropna(subset=["Original Geo Neu"], inplace=True)
     replace_dict = dict(zip(df_in["Original_Geo"], df_in["Original Geo Neu"]))

@@ -30,11 +30,12 @@ class Ethnie:
         :return: None
         """
         # read in_excel to df
-        df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
+        df_in = ExF.in_excel_to_df(in_excel)
         # create a new df in which to store the info and copy the column
-        df_unique_info = pd.DataFrame({"Kontrolliert": "", "Ethniengruppe (Nation)": df_in["Ethniengruppe (Nation)"],
-                                       "Ethnie Neu": "", "Bsp: Inventarnummer": df_in["Inventarnummer"],
-                                       "Bsp: Ordner Bild": df_in["Ordner Bild"], "Bemerkungen": ""})
+        df_unique_info = pd.DataFrame(
+            {"Kontrolliert": "", "Ethniengruppe (Nation)": df_in["Ethniengruppe (Nation)"], "Ethnie Neu": "",
+             "Bsp: Inventarnummer": df_in["Inventarnummer"], "Bsp: Ordner Bild": df_in["Ordner Bild"],
+             "Bemerkungen": ""})
         # drop all the rows with nan col, modify memory
         df_unique_info.dropna(subset=["Ethniengruppe (Nation)"], inplace=True)
         # clean all the blank spaces
@@ -57,11 +58,11 @@ class Ethnie:
         """
         # TO THE ALREADY EXISTING LIST OF UNIQUE ETHNIE
         # read the new excel
-        df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
+        df_in = ExF.in_excel_to_df(in_excel)
         # clean the df
         df_in = Clean.strip_spaces(df_in)
         # read in the key excel
-        df_key = pd.read_excel(os.path.join(current_wdir, "input", f"{key_excel}.xlsx"))
+        df_key = ExF.in_excel_to_df(key_excel)
         # create a temporary df to store only the relevant columns in, that has the same structure as the other df
         temp_in = pd.DataFrame({"Kontrolliert": "", "Ethniengruppe (Nation)": df_in["Ethniengruppe (Nation)"],
                                 "Ethnie Neu": "", "Bsp: Inventarnummer": df_in["Inventarnummer"],

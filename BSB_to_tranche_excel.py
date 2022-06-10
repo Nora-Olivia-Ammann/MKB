@@ -39,12 +39,11 @@ def new_tranche_excel(in_excel: str, tranche: str, abteilung: str, prefix_unique
     :return: None
     """
     # read in the excel with the data
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", "", f"{in_excel}.xlsx"))
+    df_in = ExF.in_excel_to_df(in_excel)
     # clean the df
     df_in = Clean.strip_spaces(df_in)
-    # read the documentation excel
-    df_doc = pd.read_excel(
-        os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
+    # create empty list to save the documentation
+    doc_list = []
     if has_second_header:
         # drop the first row as it is the second header, modifies memory of df (inplace)
         df_in.drop(index=df_in.index[0], axis=0, inplace=True)
@@ -99,21 +98,18 @@ def new_tranche_excel(in_excel: str, tranche: str, abteilung: str, prefix_unique
         df_nan = df_nan.append(df_out[df_out["Beschreibung"].isnull()], ignore_index=True)
         df_nan.drop_duplicates(subset=["Unique_ID"], keep="first", inplace=True, ignore_index=True)
         ExF.save_df_excel(df_nan, f"{tranche}_{today}_BSB_Angaben_Fehlen")
-        df_doc = pd.concat([df_doc, pd.DataFrame(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
+        doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
              "Feld": "Gesamtes Dokument", "Was": "Transfer von Information in Excel für die Bearbeitung",
              "Resultat": f"{len(df_nan)} Beschreibung/Inventarnummer fehlen, Zeilen auf Hauptexcel erhalten.",
-             "Output Dokument": f"{tranche}_{today}_BSB_Angaben_Fehlen", "Ersetzt Hauptexcel": "neu"}, index=[0])],
-                           ignore_index=True)
+             "Output Dokument": f"{tranche}_{today}_BSB_Angaben_Fehlen", "Ersetzt Hauptexcel": "neu"})
     # save the df
     ExF.save_df_excel(df_out, f"{tranche}_Komplett_{today}")
     # write documentation
-    df_doc = pd.concat([df_doc, pd.DataFrame(
-        {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
+    doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
          "Feld": "Gesamtes Dokument", "Was": "Transfer von Information in Excel für die Bearbeitung",
          "Resultat": f"Unique_ID: {df_out.iloc[0, 15]} - {df_out.iloc[-1, 15]}",
-         "Output Dokument": f"{tranche}_{today}_Komplett", "Ersetzt Hauptexcel": "neu"}, index=[0])], ignore_index=True)
-    ExF.save_doc_excel(df_doc, abteilung)
+         "Output Dokument": f"{tranche}_{today}_Komplett", "Ersetzt Hauptexcel": "neu"})
+    ExF.doc_save_list(doc_list, abteilung)
 
 
 # # This will produce two excel one which all the data and one with rows that are missing some data

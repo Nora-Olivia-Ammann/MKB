@@ -15,7 +15,7 @@ current_wdir = os.getcwd()
 pd.set_option("mode.chained_assignment", None)
 
 
-def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_pattern):
+def inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str, regex_pattern):
     """
     Uses RegEx patterns to check whether the Inventarnummer is correct. The RegEx pattern for each abteilung differs,
     all the existing patterns are stored in the file: "b_RegEx_Inventarnummer". For each possible problem that is
@@ -23,20 +23,16 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
     The ones with leading zeros (e.g. (F)Vb 0001) are automatically corrected and the outgoing excel is used to
     check whether the picture filename is also wrong.
     :param regex_pattern: function form the tools.RegEx_patterns that compiles and returns the pattern for the Abteilung
-    :param in_data: excel
+    :param df_in: excel
     :param tranche: name
     :param abteilung: name
     :return: saves separate excels for each problem if they exist
     """
     # read the excel into a dataframe
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_data}.xlsx"))
-    # read the documentation excel
-    df_doc = pd.read_excel(
-        os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
+    df_in = ExF.in_excel_to_df(in_excel)
     # initiate an empty list to store the dicts with the documentation, there are many here, so it is faster
     # to concat in the end
     doc_list = []
-    #############################
     # NAN CHECK
     # Check if all rows have an "Inventarnummer", also one cannot perform a RegEx check on a NaN so the programme
     # would stop and throw an error
@@ -50,13 +46,13 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
         ExF.save_df_excel(df_nan, f"{tranche}_{today}_Inventarnummer_Fehlen")
         # Write documentation
         doc_list.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+            {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Fehlen Inventarnummer", "Resultat": f"{len(df_nan)} fehlen",
              "Output Dokument": f"{tranche}_{today}_Inventarnummer_Fehlen", "Ersetzt Hauptexcel": "unterteilt es"})
     else:
         # Write documentation
         doc_list.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+            {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Fehlen Inventarnummer", "Resultat": f"keine fehlen",
              "Output Dokument": f"-", "Ersetzt Hauptexcel": "unterteilt es"})
     # get the RegEx pattern
@@ -93,14 +89,14 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
         ExF.save_df_excel(df_leading_zero, f"{tranche}_{today}_Inventarnummer_Führende_0")
         # Write documentation
         doc_list.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+            {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Führende Null",
              "Resultat": f"{len(df_leading_zero)} mit führenden null wurden im Excel ersetzt",
              "Output Dokument": f"{tranche}_{today}_Inventarnummer_Führende_0", "Ersetzt Hauptexcel": "unterteilt es"})
     else:
         # Write documentation
         doc_list.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+            {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Führende Null", "Resultat": f"keine führende null",
              "Output Dokument": f"-", "Ersetzt Hauptexcel": "-"})
     #######################################
@@ -115,7 +111,7 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
         ExF.save_df_excel(df_doubles, f"{tranche}_{today}_Inventarnummer_Dubletten")
         # Write documentation
         doc_list.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+            {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Dubletten", "Resultat": f"{len(df_doubles)} dubletten",
              "Output Dokument": f"{tranche}_{today}_Inventarnummer_Dubletten", "Ersetzt Hauptexcel": "unterteilt es"})
         # drop all the duplicates from the main df
@@ -123,7 +119,7 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
     else:
         # Write documentation
         doc_list.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+            {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Dubletten", "Resultat": f"keine dubletten",
              "Output Dokument": f"-", "Ersetzt Hauptexcel": "unterteilt es"})
     #######################################
@@ -157,13 +153,13 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
         ExF.save_df_excel(df_correct, f"{tranche}_{today}_Inventarnummer_Korrekt")
         # Write documentation
         doc_list.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+            {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Korrektes Format", "Resultat": f"{len(df_correct)} korrekte",
              "Output Dokument": f"{tranche}_{today}_Inventarnummer_Korrekt", "Ersetzt Hauptexcel": "unterteilt es"})
     else:
         # Write documentation
         doc_list.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+            {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Korrektes Format", "Resultat": f"keine korrekte",
              "Output Dokument": f"-", "Ersetzt Hauptexcel": "unterteilt es"})
     # check if there are any dummy numbers
@@ -175,13 +171,13 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
         ExF.save_df_excel(df_dummy, f"{tranche}_{today}_Inventarnummer_Dummy")
         # Write documentation
         doc_list.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+            {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Dummy Nummern", "Resultat": f"{len(df_dummy)} Dummy Nummern",
              "Output Dokument": f"{tranche}_{today}_Inventarnummer_Dummy", "Ersetzt Hauptexcel": "unterteilt es"})
     else:
         # Write documentation
         doc_list.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+            {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Dummy Nummern", "Resultat": f"keine Dummy Nummern",
              "Output Dokument": f"-", "Ersetzt Hauptexcel": "unterteilt es"})
     # check if there are any wrong inventarnummern
@@ -194,17 +190,16 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
         ExF.save_df_excel(df_wrong, f"{tranche}_{today}_Inventarnummer_Fehlerhafte")
         # Write documentation
         doc_list.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+            {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Falsche Formate", "Resultat": f"{len(df_wrong)} falsche Formate",
              "Output Dokument": f"{tranche}_{today}_Inventarnummer_Fehlerhafte", "Ersetzt Hauptexcel": "unterteilt es"})
     else:
         # Write documentation
         doc_list.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+            {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Falsche Formate", "Resultat": f"keine falsche Formate",
              "Output Dokument": f"-", "Ersetzt Hauptexcel": "unterteilt es"})
-    df_doc = pd.concat([df_doc, pd.DataFrame.from_records(doc_list)], ignore_index=True)
-    ExF.save_doc_excel(df_doc, abteilung)
+    ExF.doc_save_list(doc_list, abteilung)
 
 
 # # EXCEL WITH WRONG INVENTARNUMMER

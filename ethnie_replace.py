@@ -27,14 +27,13 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
     :return:
     """
     # ACCORDING TO THE KEY EXCEL REPLACE THE EXISTING INFO
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", "", f"{in_excel}.xlsx"))
-    df_key = pd.read_excel(os.path.join(current_wdir, "input", f"{key_excel}.xlsx"))
-    df_doc = pd.read_excel(os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
+    df_in = ExF.in_excel_to_df(in_excel)
+    df_key = ExF.in_excel_to_df(key_excel)
+    df_doc = ExF.doc_excel_to_df(abteilung)
     # check if all the elements are in the key excel and were checked
     key_check, df_not_dict = KE.check_key_isin(in_data=df_in, in_col="Ethniengruppe (Nation)", key_data=df_key,
-                                            key_col="Ethniengruppe (Nation)", drop_uncontrolled=True, is_excel=False,
-                                            tranche=None, abteilung=df_doc, out_excel=None)
-
+                                               key_col="Ethniengruppe (Nation)", drop_uncontrolled=True, is_excel=False,
+                                               tranche=None, abteilung=df_doc, out_excel=None)
     if not key_check:
         # check whether it is only because the values are marked as uncontrolled
         # because modifications were made on the dataframe in the previous check we have to read it in again
@@ -50,13 +49,12 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
             # save the excel
             ExF.save_df_excel(out_key, f"Schlüssel_Fehlende_Ethnie_{tranche}_{today}")
             # write documentation
-            df_doc = pd.concat([df_doc, pd.DataFrame(
+            ExF.doc_save_single(
+                abteilung,
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
                  "Feld": f"Ethniengruppe (Nation)", "Was": f"Vollständigkeit im Schlüssel Excel",
                  "Resultat": f"{len(out_key)} fehlende Schlüssel",
-                 "Output Dokument": f"Schlüssel_Fehlende_Ethnie_{tranche}_{today}", "Ersetzt Hauptexcel": "-"},
-                index=[0])], ignore_index=True)
-            ExF.save_doc_excel(df_doc, abteilung)
+                 "Output Dokument": f"Schlüssel_Fehlende_Ethnie_{tranche}_{today}", "Ersetzt Hauptexcel": "-"})
             raise MissingKey("Ethniengruppe (Nation) values are missing in the key document.")
         else:
             # reformat the df
@@ -67,13 +65,13 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
             # save the excel
             ExF.save_df_excel(out_key, f"Schlüssel_Unkontrolliert_Ethnie_{tranche}_{today}")
             # write documentation
-            df_doc = pd.concat([df_doc, pd.DataFrame(
+            ExF.doc_save_single(
+                abteilung,
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
                  "Feld": f"Ethniengruppe (Nation)", "Was": f"Vollständigkeit im Schlüssel Excel",
                  "Resultat": f"{len(out_key)} Schlüssel sind nicht kontrolliert.",
                  "Output Dokument": f"Schlüssel_Unkontrolliert_Ethnie_{tranche}_{today}",
-                 "Ersetzt Hauptexcel": "-"}, index=[0])], ignore_index=True)
-            ExF.save_doc_excel(df_doc, abteilung)
+                 "Ersetzt Hauptexcel": "-"})
             # raise Error
             raise MissingKey("Not all keys are validated")
     # at this point the uncontrolled are already dropped, therefore this doesnt have to be repeated
@@ -81,13 +79,12 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
     if df_key["Ethnie Neu"].isnull().any():
         df_nan = df_key[df_key["Ethnie Neu"].isnull()]
         ExF.save_df_excel(df_nan, f"Schlüssel_Fehlende_Angaben_{today}")
-        df_doc = pd.concat([df_doc, pd.DataFrame(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
-             "Feld": f"Ethniengruppe (Nation)", "Was": f"Vollständigkeit im Schlüssel Excel",
-             "Resultat": f"{len(df_nan)} Schlüssel fehlen Angaben",
-             "Output Dokument": f"Schlüssel_Fehlende_Angaben_{today}",
-             "Ersetzt Hauptexcel": "-"}, index=[0])], ignore_index=True)
-        ExF.save_doc_excel(df_doc, abteilung)
+        ExF.doc_save_single(
+            abteilung, {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
+                        "Feld": f"Ethniengruppe (Nation)", "Was": f"Vollständigkeit im Schlüssel Excel",
+                        "Resultat": f"{len(df_nan)} Schlüssel fehlen Angaben",
+                        "Output Dokument": f"Schlüssel_Fehlende_Angaben_{today}",
+                        "Ersetzt Hauptexcel": "-"})
         raise KeyDocIncomplete("Not alle Keys have an assigned new value.")
     # replace the values with the correct TMS constituent name
     # create a dict from the key_excel
@@ -97,12 +94,11 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
     df_in.replace(to_replace=ethno_dict, inplace=True)
     # save excel
     ExF.save_df_excel(df_in, f"{tranche}_{today}")
-    df_doc = pd.concat([df_doc, pd.DataFrame(
-        {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
-         "Feld": f"Ethniengruppe (Nation)", "Was": f"Ersetzten mit neuer Schreibweise",
-         "Resultat": f"Erfolgreich ersetzt", "Output Dokument": f"{tranche}_{today}",
-         "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
-    ExF.save_doc_excel(df_doc, abteilung)
+    ExF.doc_save_single(
+        abteilung, {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
+                    "Feld": f"Ethniengruppe (Nation)", "Was": f"Ersetzten mit neuer Schreibweise",
+                    "Resultat": f"Erfolgreich ersetzt", "Output Dokument": f"{tranche}_{today}",
+                    "Ersetzt Hauptexcel": "ja"})
 
 
 # # EVERYTHING IS CORRECT

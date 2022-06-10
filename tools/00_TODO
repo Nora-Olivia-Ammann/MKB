@@ -1,5 +1,4 @@
 All:
-- change is_excel
 - change documentation
 -
 
@@ -28,3 +27,15 @@ Complete Rewrite
 
 Complete Revision Done:
 - excel_functions
+- inventarnummer compliance make more nested functions
+
+
+OTHER CODE:
+
+Nested Function Clean up
+- BSB to tranche excel: new_tranche_excel
+- end_bearbeitung
+
+
+DOcument changes done
+- end_bearbeitung

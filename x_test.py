@@ -14,9 +14,12 @@ current_wdir = os.getcwd()
 pd.set_option("mode.chained_assignment", None)
 
 
-def check_para(function_name):
-    pattern_correct, pattern_leading_zero, pattern_dummy = function_name
-    print(pattern_correct)
+def check_para(function_name: str or None):
+    if function_name:
+        print(function_name)
+    else:
+        print(None)
 
 
-check_para(REPAT.ozeanien_re_pattern())
+check_para(None)
+

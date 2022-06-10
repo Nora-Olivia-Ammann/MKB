@@ -65,8 +65,29 @@ class ExcelFunctions:
 
     @staticmethod
     def save_doc_from_list(original_df: pd.DataFrame, list_dict: list[dict], abteilung: str) -> None:
+        """
+        If a function generates several documentation lines, these will be saved in a list of dictionaries.
+        From those a df will be created which then is concat with the existing documentation excel and saved.
+        :param original_df: read in from the excel
+        :param list_dict: list of dictionaries that contain new information
+        :param abteilung: in order to read the correct doc excel
+        :return: None
+        """
         df_from_list = pd.DataFrame.from_records(list_dict)
         df_doc = pd.concat([original_df, df_from_list], ignore_index=True)
+        ExcelFunctions.save_doc_excel(df_doc, abteilung)
+
+    @staticmethod
+    def concat_save_doc(abteilung: str, doc_dict: dict) -> None:
+        """
+        Reads in the existing documentation, concats it with the new documentation, which is a single line and
+        given as a dictionary and lastly saves it.
+        :param abteilung: to read in the correct documentation excel
+        :param doc_dict: dictionary to concat
+        :return: None
+        """
+        df_doc = ExcelFunctions.doc_excel_to_df(abteilung)
+        df_doc = pd.concat([df_doc, pd.DataFrame(doc_dict, index=[0])], ignore_index=True)
         ExcelFunctions.save_doc_excel(df_doc, abteilung)
 
 

@@ -4,7 +4,7 @@ from datetime import date
 
 import warnings
 from tools.cleaning_df import CleanDF as Clean
-from tools.inschrift_einlaufnummer_tranche import Inschrift as INSCH
+from tools.inschrift_tranche import Inschrift as INSCH
 from tools.inventarnummer import Inventarnummer as INVNR
 from tools.excel_functions import ExcelFunctions as ExF
 from tools.unique_ID import UniqueID as UID

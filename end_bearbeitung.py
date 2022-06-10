@@ -6,7 +6,7 @@ import warnings
 from tools.beschreibung import Beschreibung as BE
 from tools.cleaning_df import CleanDF as Clean
 from tools.custom_exceptions import *
-from tools.inschrift_einlaufnummer_tranche import Inschrift as INSCH
+from tools.inschrift_tranche import Inschrift as INSCH
 from tools.inventarnummer import Inventarnummer as INVNR
 from tools.NaN_check import NaN as NAN
 from tools.excel_functions import ExcelFunctions as ExF

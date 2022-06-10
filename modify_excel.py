@@ -9,7 +9,7 @@ import re
 from excel_functions import ExcelFunctions as ExF
 
 today = str(date.today())
-os.chdir("..")
+os.chdir("")
 current_wdir = os.getcwd()
 
 ############################################

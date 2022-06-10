@@ -11,12 +11,19 @@ Documentation Change Pending
     add_schublade
 - columns to string
 - Inschrift
+- Inventarnummer
+    has inventarnummer double
+
+General Changes Pending
+- unique_ID: add_unique_ID
+    error handling if column exists
 
 
 Complete Rewrite
 - double_check
 - Geographie: geo_key_completion
-
+- key_excel: check_key_isin
+. nan_check: has_columns_NaN
 
 
 Complete Revision Done:

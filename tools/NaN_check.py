@@ -16,11 +16,13 @@ current_wdir = os.getcwd()
 # Suppress the SettingWithCopyWarning
 pd.set_option("mode.chained_assignment", None)
 
+# TODO: complete rewrite
+
 
 class NaN:
 
     @staticmethod
-    def has_columns_NaN(in_data: pd.DataFrame or str, column_list: list[str], is_excel: bool = False,
+    def has_columns_NaN(input_df: pd.DataFrame, column_list: list[str], is_excel: bool = False,
                         tranche: str or None = None, abteilung: str or None = None,
                         separate_excel_columns: bool = False) -> bool and pd.DataFrame or None:
         """
@@ -36,16 +38,7 @@ class NaN:
         :return: if not excel: Bool whether there are NaN, if separate excel: list with df, list with excel name, df without
                 NaN / if one excel: df with nan, name for excel and df without nan
         """
-        if is_excel:
-            # read in_excel to df
-            df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_data}.xlsx"))
-            # read the documentation excel
-            df_doc = pd.read_excel(
-                os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
-        else:
-            df_in = in_data
-            df_doc = abteilung
-        df_not_nan = df_in.dropna(subset=column_list, how="any", inplace=False)
+        df_not_nan = input_df.dropna(subset=column_list, how="any", inplace=False)
         # if it is not an excel we return the list of the df_f
         return_ex_name = []
         retrun_df_list = []
@@ -53,7 +46,7 @@ class NaN:
         if separate_excel_columns:
             for column in column_list:
                 # create a new df with all missing elements in the chosen column
-                df_nan = df_in[df_in[column].isnull()]
+                df_nan = input_df[input_df[column].isnull()]
                 # if there are NaN values save as an excel and write documentation
                 if len(df_nan) != 0:
                     # if there is a blank space in the column name it would throw a file not found error
@@ -86,7 +79,7 @@ class NaN:
             df_nan = pd.DataFrame({})
             for column in column_list:
                 # append the NaN rows to the df
-                df_nan = df_nan.append(df_in[df_in[column].isnull()], ignore_index=True)
+                df_nan = df_nan.append(input_df[input_df[column].isnull()], ignore_index=True)
             # drop the duplicates
             df_nan.drop_duplicates(subset=["Unique_ID"], keep="first", inplace=True, ignore_index=True)
             # if there are NaN values save as an excel and write documentation

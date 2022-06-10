@@ -4,7 +4,7 @@ from datetime import date
 
 import warnings
 from tools.custom_exceptions import *
-from tools.inschrift_einlaufnummer_tranche import Inschrift as INSCH
+from tools.inschrift_tranche import Inschrift as INSCH
 from tools.key_excel import KeyExcel as KE
 from tools.excel_functions import ExcelFunctions as ExF
 

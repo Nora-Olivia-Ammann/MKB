@@ -11,12 +11,10 @@ from cleaning_df import CleanDF as Clean
 
 
 today = str(date.today())
-os.chdir("..")
+os.chdir("")
 current_wdir = os.getcwd()
 
 ############################################
-# Suppress the SettingWithCopyWarning
-pd.set_option("mode.chained_assignment", None)
 
 
 class Ethnie:

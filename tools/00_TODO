@@ -1,4 +1,30 @@
 All:
 - change is_excel
 - change documentation
-- 
+-
+
+Change is_excel:
+- ColumnsToStr
+- DoubleCheck
+- Inschrift
+- Inventarnummer
+- Key Excel
+
+Change read excel
+
+
+Documentation Change Pending
+- Beschreibung:
+    add_str_to_beschreibung
+    add_schublade
+- columns to string
+-
+
+
+Complete Rewrite
+- double_check
+
+
+
+Complete Revision Done:
+- excel_functions

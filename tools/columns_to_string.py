@@ -1,26 +1,17 @@
 import os
 import pandas as pd
 import numpy as np
-from datetime import date
 
 from excel_functions import ExcelFunctions as ExF
 from cleaning_df import CleanDF as Clean
-
-today = str(date.today())
-os.chdir("..")
-current_wdir = os.getcwd()
-
-############################################
-# Suppress the SettingWithCopyWarning
-pd.set_option("mode.chained_assignment", None)
 
 
 class ColumnsToStr:
 
     @staticmethod
-    def join_col_to_str(in_data: str or pd.DataFrame, col_list: list[str], name_list: list[str] or False,
+    def join_col_to_str(input_df: str or pd.DataFrame, col_list: list[str], name_list: list[str] or False,
                         new_col_name: str, tranche: str or None = None, abteilung: str or None = None,
-                        is_excel: bool = False) -> pd.DataFrame or None:
+                        ) -> pd.DataFrame or None:
         """
         For each row it gets the information from a list of columns and if it is not NaN enters that as a str into a new
         column. A prefix (such as column name or similar) for each column can be added. If this function is used with an
@@ -34,20 +25,12 @@ class ColumnsToStr:
         :param abteilung: name or df_doc if not excel
         :return: df or none
         """
-        if is_excel:
-            # read the excel into a dataframe
-            df_in = pd.read_excel(io=os.path.join(current_wdir, "input", f"{in_data}.xlsx"))
-            df_doc = pd.read_excel(
-                os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
-        else:
-            df_in = in_data
-        # clean the df
-        df_in = Clean.strip_spaces(df_in)
+        input_df = Clean.strip_spaces(input_df)
         # iterate over the column list that contains information that should be joined into a str
         for col in col_list:
             # check if the column contains only NaN values, if it does then it doesn't skip them and you get nan in the
             # resulting str
-            if df_in[col].isnull().all():
+            if input_df[col].isnull().all():
                 # get the index of the column
                 ind = col_list.index(col)
                 # remove the NaN colum from both lists
@@ -55,7 +38,7 @@ class ColumnsToStr:
                 if name_list is not False:
                     name_list.pop(ind)
         # iterate over the rows of the df
-        for index, row in df_in.iterrows():
+        for index, row in input_df.iterrows():
             # initiate an empty list to store the values form the columns
             besch = []
             # with an index range iterate over the column and name list
@@ -77,18 +60,13 @@ class ColumnsToStr:
             else:
                 b_str = "; ".join(besch)
             # add the string the the new_column
-            df_in.loc[index, new_col_name] = b_str
-        if is_excel:
-            df_doc = pd.concat([df_doc, pd.DataFrame(
-                {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
-                 "Feld": new_col_name, "Was": f"Info hinzufügen",
-                 "Resultat": f"Info von Spalte: '{col_list}' in neue Spalte {new_col_name}",
-                 "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
-            # save df
-            ExF.save_df_excel(df_in, f"{tranche}_{today}")
-            ExF.save_doc_excel(df_doc, abteilung)
-        else:
-            return df_in
+            input_df.loc[index, new_col_name] = b_str
+        # df_doc = pd.concat([df_doc, pd.DataFrame(
+        #     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
+        #      "Feld": new_col_name, "Was": f"Info hinzufügen",
+        #      "Resultat": f"Info von Spalte: '{col_list}' in neue Spalte {new_col_name}",
+        #      "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
+        return input_df
 
     # # with Prefix
     # join_col_to_str(in_data="a_Test_join_col_to_str", is_excel=True, col_list=["Col1", "Col2", "Col3", "Col4"],

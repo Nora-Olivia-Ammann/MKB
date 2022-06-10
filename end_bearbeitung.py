@@ -1,27 +1,15 @@
 import os
 import pandas as pd
-import numpy as np
 from datetime import date
-import re
 import warnings
 
 from tools.beschreibung import Beschreibung as BE
 from tools.cleaning_df import CleanDF as Clean
-from tools.columns_to_string import ColumnsToStr as COLSTR
 from tools.custom_exceptions import *
-from tools.ethnie import Ethnie as ETHN
-from tools.double_check import DoubleCheck as DOUBLE
-from tools.geographie import Geographie as GEO
 from tools.inschrift_einlaufnummer_tranche import Inschrift as INSCH
 from tools.inventarnummer import Inventarnummer as INVNR
-from tools.key_excel import KeyExcel as KE
-from tools.modify_excel import ModifyExcel as MODEX
 from tools.NaN_check import NaN as NAN
-from tools.RegEx_patterns import RegExPattern as REPAT
 from tools.excel_functions import ExcelFunctions as ExF
-from tools.TMS_einlauf import TMSEinlauf as TMSEINL
-from tools.unique_ID import UniqueID as UID
-
 
 today = str(date.today())
 # os.chdir("..")

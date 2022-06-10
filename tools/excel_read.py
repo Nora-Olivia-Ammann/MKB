@@ -22,6 +22,7 @@ class ReadExcel:
     def in_excel_to_df(in_excel: str) -> pd.DataFrame:
         return pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
 
+    @staticmethod
     def doc_excel_to_df(abteilung: str) -> pd.DataFrame:
         return pd.read_excel(os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
 

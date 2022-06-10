@@ -4,7 +4,7 @@ from datetime import date
 import numpy as np
 import pandas as pd
 
-from tools.save_excel import SaveExcel as SE
+from tools.excel_functions import ExcelFunctions as ExF
 
 # import functions from other documents
 
@@ -31,7 +31,7 @@ def get_inventarnummer_tranche(list_in_excel: list[str]) -> None:
     df_1 = pd.DataFrame({"Inventarnummer": df_1["Inventarnummer"], "Tranche": "19-01"})
     df_2 = pd.DataFrame({"Inventarnummer": df_2["Inventarnummer"], "Tranche": "20-01"})
     df_out = pd.concat([df_pil, df_1, df_2], ignore_index=True)
-    SE.save_df_excel(df_out, "Oz1-3_Inventarnummern")
+    ExF.save_df_excel(df_out, "Oz1-3_Inventarnummern")
 
 
 #get_inventarnummer_tranche(["Pilot_2022-02-08", "Metadaten_Tranche_19-01", "Metadaten_Tranche_20-01"])
@@ -56,7 +56,7 @@ def combine_excel(list_in_excel: list[str], name_out_excel: str) -> None:
         df_list.append(globals()[f"df_{ind}"])
     # combine the dfs into one
     df_combined = pd.concat(df_list, ignore_index=True)
-    SE.save_df_excel(df_combined, f"{name_out_excel}_{today}")
+    ExF.save_df_excel(df_combined, f"{name_out_excel}_{today}")
 
 
 def get_unique_geo_tms(in_excel: str) -> None:
@@ -65,7 +65,7 @@ def get_unique_geo_tms(in_excel: str) -> None:
     df_ethno = pd.DataFrame({"Kultur": df_in["Kultur"], "Ethniengruppe (Nation)": df_in["Ethniengruppe (Nation)"]})
     df_ethno.drop_duplicates(subset=['Kultur', 'Ethniengruppe (Nation)'], keep='first', inplace=True)
     df_ethno.dropna(axis=0, how='all', inplace=True)
-    SE.save_df_excel(df_ethno, "Ozeanien_Ethnie_TMS")
+    ExF.save_df_excel(df_ethno, "Ozeanien_Ethnie_TMS")
     # remove from the general df
     df_in.drop(columns=["Kultur", "Ethniengruppe (Nation)"], inplace=True)
     # drop all the rows that are only NaN
@@ -76,7 +76,7 @@ def get_unique_geo_tms(in_excel: str) -> None:
                 "Herk.7: Subkontinent", "Herk.4: Grossregion/gr. Insel", "Herk.3: Gebiet/Unterregion/kl. Insel",
                 "Herk.2: Landschaft/Fluss", "Herk.8: Politische Region", "Inselgruppe", "Insel"],
         keep='first', inplace=True)
-    SE.save_df_excel(df_in, "Ozeanien_Geo_TMS")
+    ExF.save_df_excel(df_in, "Ozeanien_Geo_TMS")
 
 
 def add_dublette_check(in_excel, name_excel):
@@ -86,7 +86,7 @@ def add_dublette_check(in_excel, name_excel):
     df_in["Dublette"] = df_in.duplicated(subset="Inventarnummer", keep=False)
     repl_dict = {True: "x", False: np.nan}
     df_in.replace(to_replace=repl_dict, inplace=True)
-    SE.save_df_excel(df_in, name_excel)
+    ExF.save_df_excel(df_in, name_excel)
 
 
 

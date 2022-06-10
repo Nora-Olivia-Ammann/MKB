@@ -18,7 +18,7 @@ from key_excel import KeyExcel as KE
 from modify_excel import ModifyExcel as MODEX
 from NaN_check import NaN as NAN
 from RegEx_patterns import RegExPattern as REPAT
-from save_excel import SaveExcel as SE
+from excel_functions import ExcelFunctions as ExF
 from TMS_einlauf import TMSEinlauf as TMSEINL
 from unique_ID import UniqueID as UID
 

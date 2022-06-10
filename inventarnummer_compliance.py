@@ -18,7 +18,7 @@ from tools.key_excel import KeyExcel as KE
 from tools.modify_excel import ModifyExcel as MODEX
 from tools.NaN_check import NaN as NAN
 from tools.RegEx_patterns import RegExPattern as REPAT
-from tools.save_excel import SaveExcel as SE
+from tools.excel_functions import ExcelFunctions as ExF
 from tools.TMS_einlauf import TMSEinlauf as TMSEINL
 from tools.unique_ID import UniqueID as UID
 
@@ -64,7 +64,7 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
         df_in.dropna(subset=["Inventarnummer"], inplace=True)
         df_in.reset_index(inplace=True)  # reset the index
         df_in.pop("index")  # when resetting the index it is saved as a new column
-        SE.save_df_excel(df_nan, f"{tranche}_{today}_Inventarnummer_Fehlen")
+        ExF.save_df_excel(df_nan, f"{tranche}_{today}_Inventarnummer_Fehlen")
         # Write documentation
         doc_list.append(
             {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
@@ -107,7 +107,7 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
         df_leading_zero = pd.DataFrame.from_records(list_leading_zero)
         # save the excel that contains the information of the changed inventarnummer
         df_leading_zero.sort_values(by=["Ordner Bild", "Inventar Sortierbar"], inplace=True, ignore_index=True)
-        SE.save_df_excel(df_leading_zero, f"{tranche}_{today}_Inventarnummer_Führende_0")
+        ExF.save_df_excel(df_leading_zero, f"{tranche}_{today}_Inventarnummer_Führende_0")
         # Write documentation
         doc_list.append(
             {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
@@ -129,7 +129,7 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
         df_doubles = INVNR.add_rename_inventarnummer(in_data=df_doubles, is_excel=False, return_sorted=True, tranche=None)
         # the exact name of the picture is important as it may differ from the usual schema in order to be unique
         df_doubles.insert(1, "Name Bild", np.nan)
-        SE.save_df_excel(df_doubles, f"{tranche}_{today}_Inventarnummer_Dubletten")
+        ExF.save_df_excel(df_doubles, f"{tranche}_{today}_Inventarnummer_Dubletten")
         # Write documentation
         doc_list.append(
             {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
@@ -171,7 +171,7 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
         df_correct = pd.DataFrame.from_records(list_correct)
         # save the documentation of the changed Inventarnummer
         df_correct.sort_values(by=["Ordner Bild", "Inventar Sortierbar"], inplace=True, ignore_index=True)
-        SE.save_df_excel(df_correct, f"{tranche}_{today}_Inventarnummer_Korrekt")
+        ExF.save_df_excel(df_correct, f"{tranche}_{today}_Inventarnummer_Korrekt")
         # Write documentation
         doc_list.append(
             {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
@@ -189,7 +189,7 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
         # add the columns to document the renaming of inventarnummer
         df_dummy = INVNR.add_rename_inventarnummer(in_data=df_dummy, is_excel=False, return_sorted=True, tranche=None)
         # save the documentation of the changed Inventarnummer
-        SE.save_df_excel(df_dummy, f"{tranche}_{today}_Inventarnummer_Dummy")
+        ExF.save_df_excel(df_dummy, f"{tranche}_{today}_Inventarnummer_Dummy")
         # Write documentation
         doc_list.append(
             {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
@@ -208,7 +208,7 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
         df_wrong = INVNR.add_rename_inventarnummer(in_data=df_wrong, is_excel=False, return_sorted=True, tranche=None)
         # save the documentation of the changed Inventarnummer
         df_wrong.sort_values(by=["Ordner Bild", "Inventar Sortierbar"], inplace=True, ignore_index=True)
-        SE.save_df_excel(df_wrong, f"{tranche}_{today}_Inventarnummer_Fehlerhafte")
+        ExF.save_df_excel(df_wrong, f"{tranche}_{today}_Inventarnummer_Fehlerhafte")
         # Write documentation
         doc_list.append(
             {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
@@ -221,7 +221,7 @@ def inventarnummer_compliance(in_data: str, tranche: str, abteilung: str, regex_
              "Feld": "Inventarnummer", "Was": "Falsche Formate", "Resultat": f"keine falsche Formate",
              "Output Dokument": f"-", "Ersetzt Hauptexcel": "unterteilt es"})
     df_doc = pd.concat([df_doc, pd.DataFrame.from_records(doc_list)], ignore_index=True)
-    SE.save_doc_excel(df_doc, abteilung)
+    ExF.save_doc_excel(df_doc, abteilung)
 
 
 # # EXCEL WITH WRONG INVENTARNUMMER

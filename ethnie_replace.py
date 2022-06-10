@@ -18,7 +18,7 @@ from tools.key_excel import KeyExcel as KE
 from tools.modify_excel import ModifyExcel as MODEX
 from tools.NaN_check import NaN as NAN
 from tools.RegEx_patterns import RegExPattern as REPAT
-from tools.save_excel import SaveExcel as SE
+from tools.excel_functions import ExcelFunctions as ExF
 from tools.TMS_einlauf import TMSEinlauf as TMSEINL
 from tools.unique_ID import UniqueID as UID
 
@@ -64,7 +64,7 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
                  "Ethnie Neu": "", "Bsp: Inventarnummer": df_not_dict_uncontr["Inventarnummer"],
                  "Bsp: Ordner Bild": df_not_dict_uncontr["Ordner Bild"], "Bemerkungen": ""})
             # save the excel
-            SE.save_df_excel(out_key, f"Schlüssel_Fehlende_Ethnie_{tranche}_{today}")
+            ExF.save_df_excel(out_key, f"Schlüssel_Fehlende_Ethnie_{tranche}_{today}")
             # write documentation
             df_doc = pd.concat([df_doc, pd.DataFrame(
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
@@ -72,7 +72,7 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
                  "Resultat": f"{len(out_key)} fehlende Schlüssel",
                  "Output Dokument": f"Schlüssel_Fehlende_Ethnie_{tranche}_{today}", "Ersetzt Hauptexcel": "-"},
                 index=[0])], ignore_index=True)
-            SE.save_doc_excel(df_doc, abteilung)
+            ExF.save_doc_excel(df_doc, abteilung)
             raise MissingKey("Ethniengruppe (Nation) values are missing in the key document.")
         else:
             # reformat the df
@@ -81,7 +81,7 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
                  "Ethnie Neu": "", "Bsp: Inventarnummer": df_not_dict["Inventarnummer"],
                  "Bsp: Ordner Bild": df_not_dict["Ordner Bild"], "Bemerkungen": ""})
             # save the excel
-            SE.save_df_excel(out_key, f"Schlüssel_Unkontrolliert_Ethnie_{tranche}_{today}")
+            ExF.save_df_excel(out_key, f"Schlüssel_Unkontrolliert_Ethnie_{tranche}_{today}")
             # write documentation
             df_doc = pd.concat([df_doc, pd.DataFrame(
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
@@ -89,21 +89,21 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
                  "Resultat": f"{len(out_key)} Schlüssel sind nicht kontrolliert.",
                  "Output Dokument": f"Schlüssel_Unkontrolliert_Ethnie_{tranche}_{today}",
                  "Ersetzt Hauptexcel": "-"}, index=[0])], ignore_index=True)
-            SE.save_doc_excel(df_doc, abteilung)
+            ExF.save_doc_excel(df_doc, abteilung)
             # raise Error
             raise MissingKey("Not all keys are validated")
     # at this point the uncontrolled are already dropped, therefore this doesnt have to be repeated
     # check if all the keys have a new value
     if df_key["Ethnie Neu"].isnull().any():
         df_nan = df_key[df_key["Ethnie Neu"].isnull()]
-        SE.save_df_excel(df_nan, f"Schlüssel_Fehlende_Angaben_{today}")
+        ExF.save_df_excel(df_nan, f"Schlüssel_Fehlende_Angaben_{today}")
         df_doc = pd.concat([df_doc, pd.DataFrame(
             {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
              "Feld": f"Ethniengruppe (Nation)", "Was": f"Vollständigkeit im Schlüssel Excel",
              "Resultat": f"{len(df_nan)} Schlüssel fehlen Angaben",
              "Output Dokument": f"Schlüssel_Fehlende_Angaben_{today}",
              "Ersetzt Hauptexcel": "-"}, index=[0])], ignore_index=True)
-        SE.save_doc_excel(df_doc, abteilung)
+        ExF.save_doc_excel(df_doc, abteilung)
         raise KeyDocIncomplete("Not alle Keys have an assigned new value.")
     # replace the values with the correct TMS constituent name
     # create a dict from the key_excel
@@ -112,13 +112,13 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
     ethno_dict[np.nan] = np.nan
     df_in.replace(to_replace=ethno_dict, inplace=True)
     # save excel
-    SE.save_df_excel(df_in, f"{tranche}_{today}")
+    ExF.save_df_excel(df_in, f"{tranche}_{today}")
     df_doc = pd.concat([df_doc, pd.DataFrame(
         {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
          "Feld": f"Ethniengruppe (Nation)", "Was": f"Ersetzten mit neuer Schreibweise",
          "Resultat": f"Erfolgreich ersetzt", "Output Dokument": f"{tranche}_{today}",
          "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
-    SE.save_doc_excel(df_doc, abteilung)
+    ExF.save_doc_excel(df_doc, abteilung)
 
 
 # # EVERYTHING IS CORRECT

@@ -18,7 +18,7 @@ from tools.key_excel import KeyExcel as KE
 from tools.modify_excel import ModifyExcel as MODEX
 from tools.NaN_check import NaN as NAN
 from tools.RegEx_patterns import RegExPattern as REPAT
-from tools.save_excel import SaveExcel as SE
+from tools.excel_functions import ExcelFunctions as ExF
 from tools.TMS_einlauf import TMSEinlauf as TMSEINL
 from tools.unique_ID import UniqueID as UID
 
@@ -40,7 +40,7 @@ def create_tms_delete_doc() -> None:
     :return: saves Excel
     """
     df = pd.DataFrame(columns=["Datum", "Inventarnummer", "Input Dokument", "Resultat", "Output Dokument"])
-    SE.save_df_excel(df, "TMS_Löschen_Dokumentation")
+    ExF.save_df_excel(df, "TMS_Löschen_Dokumentation")
 
 
 #create_tms_delete_doc()
@@ -77,7 +77,7 @@ def tms_inventarnummer_delete(in_excel: str, inventarnummer: str) -> None:
         # we do not need this column
         df_out.pop("Medien")
         # save the df as an excel which will be used to delete the Inventarnummer in the system
-        SE.save_df_excel(df_out, f"{inventarnummer}_zu_Löschen_{today}")
+        ExF.save_df_excel(df_out, f"{inventarnummer}_zu_Löschen_{today}")
         df_doc = pd.concat([df_doc, pd.DataFrame(
             {"Datum": today, "Inventarnummer": inventarnummer, "Input Dokument": in_excel,
              "Resultat": f"{len(df_out)} Inventarnummern zu Löschen",
@@ -86,7 +86,7 @@ def tms_inventarnummer_delete(in_excel: str, inventarnummer: str) -> None:
         df_doc = pd.concat([df_doc, pd.DataFrame(
             {"Datum": today, "Inventarnummer": inventarnummer, "Input Dokument": in_excel,
              "Resultat": "Keine leeren Inventarnummern", "Output Dokument": "-"}, index=[0])], ignore_index=True)
-    SE.save_doc_excel(df_doc, "TMS_Löschen")
+    ExF.save_doc_excel(df_doc, "TMS_Löschen")
 
 
 #tms_inventarnummer_delete("III_2022-03-10", "(F)III")

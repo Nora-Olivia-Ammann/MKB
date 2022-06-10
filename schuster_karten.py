@@ -18,7 +18,7 @@ from tools.key_excel import KeyExcel as KE
 from tools.modify_excel import ModifyExcel as MODEX
 from tools.NaN_check import NaN as NAN
 from tools.RegEx_patterns import RegExPattern as REPAT
-from tools.save_excel import SaveExcel as SE
+from tools.excel_functions import ExcelFunctions as ExF
 from tools.TMS_einlauf import TMSEinlauf as TMSEINL
 from tools.unique_ID import UniqueID as UID
 
@@ -69,7 +69,7 @@ def add_transcript_schuster(in_excel: str) -> None:
         # add the string to that row
         df_in.loc[index, "Original Geo Neu"] = b_str
     # save excel
-    SE.save_df_excel(df_in, f"Schuster_Karten_{today}")
+    ExF.save_df_excel(df_in, f"Schuster_Karten_{today}")
 
 
 #add_transcript_schuster("Karten_Schuster_2022-03-10")
@@ -99,7 +99,7 @@ def get_geo_schuster(in_excel: str) -> None:
     # drop the duplicates
     df_out.drop_duplicates(subset=drop_list, keep='first', inplace=True)
     # save the excel
-    SE.save_df_excel(df_out, f"Schuster_Geo_Schlüssel_{today}")
+    ExF.save_df_excel(df_out, f"Schuster_Geo_Schlüssel_{today}")
 
 
 #get_geo_schuster("Karten_Schuster_2022-03-10")
@@ -118,7 +118,7 @@ def fill_geo_ID(schuster: str, schuster_key: str) -> None:
     map_dict = dict(zip(df_key["Original_Geo"], df_key["Geo_ID"]))
     # map the df according to the key
     df_in["Geo_ID"] = df_in["Original_Geo"].map(map_dict)
-    SE.save_df_excel(df_in, f"Schuster_Karten_{today}")
+    ExF.save_df_excel(df_in, f"Schuster_Karten_{today}")
 
 
 #fill_geo_ID("Schuster_Karten_2022-03-25", "Schuster_Geo_Schlüssel_2022-03-10")
@@ -131,7 +131,7 @@ def replace_transcript(schuster: str, schuster_key: str) -> None:
     df_in.dropna(subset=["Original Geo Neu"], inplace=True)
     replace_dict = dict(zip(df_in["Original_Geo"], df_in["Original Geo Neu"]))
     df_key["Original_Geo"].replace(to_replace=replace_dict, inplace=True)
-    SE.save_df_excel(df_key, f"Schuster_Geo_Schlüssel_{today}")
+    ExF.save_df_excel(df_key, f"Schuster_Geo_Schlüssel_{today}")
 
 
 #replace_transcript("Schuster_Karten_2022-03-25", "Schuster_Geo_Schlüssel_2022-03-10")

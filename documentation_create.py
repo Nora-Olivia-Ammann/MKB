@@ -18,7 +18,7 @@ from tools.key_excel import KeyExcel as KE
 from tools.modify_excel import ModifyExcel as MODEX
 from tools.NaN_check import NaN as NAN
 from tools.RegEx_patterns import RegExPattern as REPAT
-from tools.save_excel import SaveExcel as SE
+from tools.excel_functions import ExcelFunctions as ExF
 from tools.TMS_einlauf import TMSEinlauf as TMSEINL
 from tools.unique_ID import UniqueID as UID
 
@@ -44,7 +44,7 @@ def create_documentation(abteilung: str) -> None:
     """
     df = pd.DataFrame(columns=["Datum", "Tranche", "Input Dokument", "Schlüssel Excel", "Feld", "Was", "Resultat",
                                "Output Dokument", "Ersetzt Hauptexcel"])
-    SE.save_doc_excel(df, abteilung)
+    ExF.save_doc_excel(df, abteilung)
 
 
 #create_documentation("Test")
@@ -55,7 +55,7 @@ def append_doc(abteilung: str, tranche: str, in_excel: str) -> None:
     df_doc = pd.concat([df_doc, pd.DataFrame(
         {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "", "Feld": "", "Was": "",
          "Resultat": f"", "Output Dokument": f"", "Ersetzt Hauptexcel": ""}, index=[0])], ignore_index=True)
-    SE.save_doc_excel(df_doc, abteilung)
+    ExF.save_doc_excel(df_doc, abteilung)
 
 
 #append_doc("Test", "Test", "Test")
@@ -69,7 +69,7 @@ def create_to_do() -> None:
     """
     df = pd.DataFrame(
         columns=["Erledigt", "Tranche", "Dokument", "Was", "Status", "Bemerkung"])
-    SE.save_doc_excel(df, "Nora_ToDo")
+    ExF.save_doc_excel(df, "Nora_ToDo")
 
 
 if __name__ == "__main__":

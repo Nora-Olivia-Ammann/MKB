@@ -18,7 +18,7 @@ from tools.key_excel import KeyExcel as KE
 from tools.modify_excel import ModifyExcel as MODEX
 from tools.NaN_check import NaN as NAN
 from tools.RegEx_patterns import RegExPattern as REPAT
-from tools.save_excel import SaveExcel as SE
+from tools.excel_functions import ExcelFunctions as ExF
 from tools.TMS_einlauf import TMSEinlauf as TMSEINL
 from tools.unique_ID import UniqueID as UID
 
@@ -65,8 +65,8 @@ def new_funct(in_excel, key_excel, tranche, abteilung):
     ############################################
 
     # save df
-    SE.save_df_excel(df_in, f"{tranche}_{today}")
-    SE.save_doc_excel(df_doc, abteilung)
+    ExF.save_df_excel(df_in, f"{tranche}_{today}")
+    ExF.save_doc_excel(df_doc, abteilung)
 
 
 #####################

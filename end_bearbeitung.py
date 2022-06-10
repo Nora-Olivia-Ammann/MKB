@@ -18,7 +18,7 @@ from tools.key_excel import KeyExcel as KE
 from tools.modify_excel import ModifyExcel as MODEX
 from tools.NaN_check import NaN as NAN
 from tools.RegEx_patterns import RegExPattern as REPAT
-from tools.save_excel import SaveExcel as SE
+from tools.excel_functions import ExcelFunctions as ExF
 from tools.TMS_einlauf import TMSEinlauf as TMSEINL
 from tools.unique_ID import UniqueID as UID
 
@@ -82,7 +82,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
         df_in = df_not_nan
         df_in.reset_index(inplace=True)  # reset the index
         df_in.pop("index")  # when resetting the index it is saved as a new column
-        SE.save_df_excel(df_nan, f"{tranche}_{today}_Fehlende_Angaben")
+        ExF.save_df_excel(df_nan, f"{tranche}_{today}_Fehlende_Angaben")
         df_doc = df_doc.append(
             {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-", "Feld": "alle",
              "Was": "End Check", "Resultat": f"{len(df_nan)} Zeilen fehlen Angaben",
@@ -98,7 +98,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
         df_in = df_no_double
         df_in.reset_index(inplace=True)  # reset the index
         df_in.pop("index")  # when resetting the index it is saved as a new column
-        SE.save_df_excel(df_doubles, f"{tranche}_{today}_Doppelte_Inventarnummern")
+        ExF.save_df_excel(df_doubles, f"{tranche}_{today}_Doppelte_Inventarnummern")
         df_doc = df_doc.append(
             {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-", "Feld": "alle",
              "Was": "End Check", "Resultat": f"{len(df_doubles)} Doppelte Inventarnummern",
@@ -133,7 +133,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
                  "Output Dokument": f"{tranche}_{today}_Falsche_Inventarnummer",
                  "Ersetzt Hauptexcel": "unterteilt es"},
                 ignore_index=True)
-            SE.save_df_excel(df_wrong_inventar, f"{tranche}_{today}_Falsche_Inventarnummer")
+            ExF.save_df_excel(df_wrong_inventar, f"{tranche}_{today}_Falsche_Inventarnummer")
             correct_check_list.append(False)
     else:
         # it is possible that we end up using Inventarnummer that are not compliant, therefore we may not want
@@ -156,14 +156,14 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
     # Check if the program should continue if data was missing or incorrect
     if not continue_if_false_values and len(correct_check_list) != 0:
         # save the df_in, where all the correct data is stored
-        SE.save_df_excel(df_in, f"{tranche}_{today}_Alles_Korrekt")
+        ExF.save_df_excel(df_in, f"{tranche}_{today}_Alles_Korrekt")
         df_doc = df_doc.append(
             {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
              "Feld": "alle", "Was": "End Check", "Resultat": f"Das Excel hat {len(correct_check_list)} fehler, das"
                                                              f"TMS Import Excel wurde nicht erstellt.",
              "Output Dokument": f"{tranche}_{today}_Alles_Korrekt", "Ersetzt Hauptexcel": "unterteilt es"},
             ignore_index=True)
-        SE.save_doc_excel(df_doc, abteilung)
+        ExF.save_doc_excel(df_doc, abteilung)
         # raise an Exception to stop the program
         raise TrancheMissingValue("Some data is missing or incorrect, the TMS import excel was not created.")
     elif continue_if_false_values and len(correct_check_list) != 0:
@@ -223,8 +223,8 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
                           "Bemerkungen [Geographie]", "Ethniengruppe (Nation)"]
     for col in cols_must_transfer:
         df_out[col][1:] = df_in[col]
-    SE.save_df_excel(df_out, f"TMS_Import_{tranche}_{today}")
-    SE.save_doc_excel(df_doc, abteilung)
+    ExF.save_df_excel(df_out, f"TMS_Import_{tranche}_{today}")
+    ExF.save_doc_excel(df_doc, abteilung)
 
 
 # end_bearbeitung(in_excel="Metadaten_Test_Import", header_excel="_TMS_Header",

@@ -6,7 +6,7 @@ import numpy as np
 from datetime import date
 import re
 
-from save_excel import SaveExcel as SE
+from excel_functions import ExcelFunctions as ExF
 
 today = str(date.today())
 os.chdir("..")
@@ -68,7 +68,7 @@ class KeyExcel:
             df_not_dict.sort_values(by=[key_col], ascending=True, inplace=True, na_position='first', ignore_index=True)
             if is_excel:
                 # save the excel
-                SE.save_df_excel(df_not_dict, f"Schlüssel_Fehlende_{out_excel}_{tranche}_{today}")
+                ExF.save_df_excel(df_not_dict, f"Schlüssel_Fehlende_{out_excel}_{tranche}_{today}")
                 # write documentation
                 df_doc = pd.concat([df_doc, pd.DataFrame(
                     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": key_data,
@@ -77,7 +77,7 @@ class KeyExcel:
                      "Resultat": f"{len(df_not_dict)} fehlende Schlüssel",
                      "Output Dokument": f"Schlüssel_Fehlende_{out_excel}_{tranche}_{today}", "Ersetzt Hauptexcel": "-"},
                     index=[0])], ignore_index=True)
-                SE.save_doc_excel(df_doc, abteilung)
+                ExF.save_doc_excel(df_doc, abteilung)
             else:
                 return False, df_not_dict
         else:
@@ -89,7 +89,7 @@ class KeyExcel:
                                                   f"drop_uncontroled: {drop_uncontrolled}",
                      "Resultat": f"Keine fehlende Schlüssel", "Output Dokument": f"-", "Ersetzt Hauptexcel": "-"},
                     index=[0])], ignore_index=True)
-                SE.save_doc_excel(df_doc, abteilung)
+                ExF.save_doc_excel(df_doc, abteilung)
             else:
                 return True, None
 

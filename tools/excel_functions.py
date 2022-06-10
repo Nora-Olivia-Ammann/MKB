@@ -15,10 +15,28 @@ current_wdir = os.getcwd()
 pd.set_option("mode.chained_assignment", None)
 
 
-class SaveExcel:
+class ExcelFunctions:
     """
     This class contains only static functions that are employed imported like a module.
     """
+
+    @staticmethod
+    def in_excel_to_df(in_excel: str) -> pd.DataFrame:
+        """
+        Reads an excel from a designated folder.
+        :param in_excel: str of the excel without the extension
+        :return: df of that excel
+        """
+        return pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
+
+    @staticmethod
+    def doc_excel_to_df(abteilung: str) -> pd.DataFrame:
+        """
+        The documentation of the results is in another folder. That folder is hardcoded here.
+        :param abteilung: The name of the current abteilung, it is part of the excel name.
+        :return: df of that excel
+        """
+        return pd.read_excel(os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
 
     @staticmethod
     def save_df_excel(name_df: pd.DataFrame, name_excel: str) -> None:
@@ -44,6 +62,9 @@ class SaveExcel:
             os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
         name_df.to_excel(writer, sheet_name=" ", index=False)
         writer.save()
+
+
+
 
 
 if __name__ == "__main__":

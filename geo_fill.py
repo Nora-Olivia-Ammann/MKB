@@ -18,7 +18,7 @@ from tools.key_excel import KeyExcel as KE
 from tools.modify_excel import ModifyExcel as MODEX
 from tools.NaN_check import NaN as NAN
 from tools.RegEx_patterns import RegExPattern as REPAT
-from tools.save_excel import SaveExcel as SE
+from tools.excel_functions import ExcelFunctions as ExF
 from tools.TMS_einlauf import TMSEinlauf as TMSEINL
 from tools.unique_ID import UniqueID as UID
 
@@ -59,17 +59,17 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str, contin
     if df_in["Geo_ID"].isnull().any():
         # if there are save them in a new df
         df_nan = df_in[df_in["Geo_ID"].isnull()]
-        SE.save_df_excel(df_nan, f"{tranche}_{today}_Fehlende_GeoID")
+        ExF.save_df_excel(df_nan, f"{tranche}_{today}_Fehlende_GeoID")
         if not continue_if_nan:
             df_in.dropna(subset=["Geo_ID"], inplace=True)
-            SE.save_df_excel(df_in, f"{tranche}_{today}_Vollständige_GeoID")
+            ExF.save_df_excel(df_in, f"{tranche}_{today}_Vollständige_GeoID")
             # write documentation
             df_doc = pd.concat([df_doc, pd.DataFrame(
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "",
                  "Feld": "Geo_ID", "Was": "Vollständigkeit", "Resultat": f"{len(df_nan)} Geo_ID fehlen",
                  "Output Dokument": f"{tranche}_{today}_Fehlende_GeoID", "Ersetzt Hauptexcel": "zusatz"},
                 index=[0])], ignore_index=True)
-            SE.save_doc_excel(df_doc, abteilung)
+            ExF.save_doc_excel(df_doc, abteilung)
             # raise Error
             raise TrancheMissingValue("Not all rows have a Geo_ID")
         else:
@@ -88,14 +88,14 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str, contin
     result_check, df_not_complete = GEO.geo_key_completion(
         key_data=df_key, is_excel=False, drop_uncontrolled=True, tranche=None, abteilung=df_doc)
     if not result_check:
-        SE.save_df_excel(df_not_complete, f"Schlüssel_Geo_Fehlende_Angaben_{today}")
+        ExF.save_df_excel(df_not_complete, f"Schlüssel_Geo_Fehlende_Angaben_{today}")
         df_doc = pd.concat([df_doc, pd.DataFrame(
             {"Datum": today, "Tranche": tranche, "Input Dokument": "", "Schlüssel Excel": key_excel,
              "Feld": "Angaben Geo", "Was": "Vollständigkeit Geografie",
              "Resultat": f"{len(df_not_complete)} unvollständige Geo_ID",
              "Output Dokument": f"Schlüssel_Geo_Fehlende_Angaben_{today}", "Ersetzt Hauptexcel": "-"},
             index=[0])], ignore_index=True)
-        SE.save_doc_excel(df_doc, abteilung)
+        ExF.save_doc_excel(df_doc, abteilung)
         # raise error
         raise KeyDocIncomplete("Not all mandatory fields in the key document are filled.")
 
@@ -110,7 +110,7 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str, contin
             in_data=df_in, in_col="Geo_ID", key_data=df_key, key_col="Geo_ID", drop_uncontrolled=False,
             out_excel=None, is_excel=False, tranche=None, abteilung=df_doc)
         if not all_geo_isin:
-            SE.save_df_excel(df_not_all_dict, f"Schlüssel_Fehlende_Geo_ID_{tranche}_{today}")
+            ExF.save_df_excel(df_not_all_dict, f"Schlüssel_Fehlende_Geo_ID_{tranche}_{today}")
             # write documentation
             df_doc = pd.concat([df_doc, pd.DataFrame(
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
@@ -118,19 +118,19 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str, contin
                  "Resultat": f"{len(df_not_all_dict)} fehlende Schlüssel",
                  "Output Dokument": f"Schlüssel_Fehlende_Geo_ID_{tranche}_{today}", "Ersetzt Hauptexcel": "-"},
                 index=[0])], ignore_index=True)
-            SE.save_doc_excel(df_doc, abteilung)
+            ExF.save_doc_excel(df_doc, abteilung)
             # raise Error
             raise MissingKey("Not all necessary Geo_ID are in the key document.")
         # if the unchecked contains all the geo_ID we want to differentiate that in the documentation
         else:
-            SE.save_df_excel(df_not_dict, f"Schlüssel_Geo_Unkontrollierte_Angaben_{tranche}_{today}")
+            ExF.save_df_excel(df_not_dict, f"Schlüssel_Geo_Unkontrollierte_Angaben_{tranche}_{today}")
             df_doc = pd.concat([df_doc, pd.DataFrame(
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
                  "Feld": f"Geo_ID", "Was": f"Vollständigkeit im Schlüssel Excel",
                  "Resultat": f"{len(df_not_dict)} unkontrollierte, notwendige Geo_ID",
                  "Output Dokument": f"Schlüssel_Geo_Unkontrollierte_Angaben_{tranche}_{today}",
                  "Ersetzt Hauptexcel": "-"}, index=[0])], ignore_index=True)
-            SE.save_doc_excel(df_doc, abteilung)
+            ExF.save_doc_excel(df_doc, abteilung)
             raise MissingKey("Not all necessary Geo_ID were controlled.")
     df_key.dropna(subset=["Kontrolliert"], inplace=True)
     # fill the Geografiety with the default if not otherwise specified
@@ -144,13 +144,13 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str, contin
     for col in geo_col_list:
         geo_dic = dict(zip(df_key["Geo_ID"], df_key[col]))
         df_in[col] = df_in["Geo_ID"].map(geo_dic)
-    SE.save_df_excel(df_in, f"{tranche}_{today}")
+    ExF.save_df_excel(df_in, f"{tranche}_{today}")
     # write documentation
     df_doc = pd.concat([df_doc, pd.DataFrame(
         {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel, "Feld": "Geo_ID",
          "Was": "Ausfüllen Geografie", "Resultat": f"Geografie wurde gemäss Schlüssel ausgefüllt",
          "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
-    SE.save_doc_excel(df_doc, abteilung)
+    ExF.save_doc_excel(df_doc, abteilung)
 
 
 fill_geo("Metadaten_Test_Import", "Ozeanien_Geo_Schlüssel", continue_if_nan=True, tranche="Test", abteilung="Test")

@@ -6,7 +6,7 @@ import numpy as np
 from datetime import date
 import re
 
-from save_excel import SaveExcel as SE
+from excel_functions import ExcelFunctions as ExF
 
 today = str(date.today())
 os.chdir("..")

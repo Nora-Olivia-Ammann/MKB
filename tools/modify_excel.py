@@ -6,7 +6,7 @@ import numpy as np
 from datetime import date
 import re
 
-from save_excel import SaveExcel as SE
+from excel_functions import ExcelFunctions as ExF
 
 today = str(date.today())
 os.chdir("..")
@@ -45,7 +45,7 @@ class ModifyExcel:
             df_list.append(globals()[f"df_{ind}"])
         # combine the dfs into one
         df_combined = pd.concat(df_list, ignore_index=True)
-        SE.save_df_excel(df_combined, f"{name_out_excel}_{today}")
+        ExF.save_df_excel(df_combined, f"{name_out_excel}_{today}")
         # write documentation
         """df_doc = pd.concat([df_doc, pd.DataFrame(
             {"Datum": today, "Tranche": tranchen, "Input Dokument": list_in_excel, "Schlüssel Excel": "-", "Feld": "-",
@@ -55,7 +55,7 @@ class ModifyExcel:
             {"Datum": today, "Tranche": tranche, "Input Dokument": list_in_excel, "Schlüssel Excel": "",
              "Feld": "", "Was": "",
              "Resultat": f"", "Output Dokument": f"", "Ersetzt Hauptexcel": ""}, index=[0])], ignore_index=True)
-        SE.save_doc_excel(df_doc, abteilung)
+        ExF.save_doc_excel(df_doc, abteilung)
 
     # combine_excel(list_in_excel=["a_Test_combine_excel_1", "a_Test_combine_excel_2", "a_Test_combine_excel_3"],
     #               tranche="Test", name_out_excel="T1-3", abteilung="Test")
@@ -90,7 +90,7 @@ class ModifyExcel:
         df_in.drop_duplicates(subset=["Inventarnummer"], keep="first", inplace=True, ignore_index=True)
         df_in.pop("index")  # when resetting the index it is saved as a new column
         df_in.drop(index=df_in.index[num_rows + 1:], axis=0, inplace=True)
-        SE.save_df_excel(df_in, out_excel)
+        ExF.save_df_excel(df_in, out_excel)
 
     # shorten_tranchen_excel(in_excel="a_Test_shorten_excel", num_rows=20, out_excel="Test_Shortened")
 

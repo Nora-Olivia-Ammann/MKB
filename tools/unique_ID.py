@@ -6,7 +6,7 @@ import numpy as np
 from datetime import date
 import re
 
-from save_excel import SaveExcel as SE
+from excel_functions import ExcelFunctions as ExF
 
 today = str(date.today())
 os.chdir("..")
@@ -43,7 +43,7 @@ class UniqueID:
         df_in["Unique_ID"] = df_in["Unique_ID"].apply(lambda x: f"{prefix_unique_ID}_{str(x).zfill(5)}")
         if is_excel:
             # save the df
-            SE.save_df_excel(df_in, f"{tranche}_{today}")
+            ExF.save_df_excel(df_in, f"{tranche}_{today}")
         else:
             return df_in
 

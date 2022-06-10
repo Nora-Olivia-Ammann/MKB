@@ -2,7 +2,6 @@ import os
 from datetime import date
 import pandas as pd
 
-from save_excel import SaveExcel as SE
 
 today = str(date.today())
 os.chdir("..")

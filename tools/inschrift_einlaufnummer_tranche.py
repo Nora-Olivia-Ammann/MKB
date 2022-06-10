@@ -4,7 +4,7 @@ from datetime import date
 import numpy as np
 import pandas as pd
 
-from save_excel import SaveExcel as SE
+from excel_functions import ExcelFunctions as ExF
 from RegEx_patterns import RegExPattern as REPAT
 from cleaning_df import CleanDF as Clean
 
@@ -79,7 +79,7 @@ class Inschrift:
         if df_in["Inschrift falsch"].isnull().all():
             df_in.pop("Inschrift falsch")
             if is_excel:
-                SE.save_df_excel(df_in, f"{tranche}_{today}_Komplett")
+                ExF.save_df_excel(df_in, f"{tranche}_{today}_Komplett")
                 # write documentation
                 df_doc = pd.concat([df_doc, pd.DataFrame(
                     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
@@ -87,19 +87,19 @@ class Inschrift:
                      "Resultat": f"alle Angaben korrekt oder wurden korriegiert.",
                      "Output Dokument": f"{tranche}_{today}_Komplett", "Ersetzt Hauptexcel": "ja"},
                     index=[0])], ignore_index=True)
-                SE.save_doc_excel(df_doc, abteilung)
+                ExF.save_doc_excel(df_doc, abteilung)
             else:
                 return True, df_in
         else:
             if is_excel:
-                SE.save_df_excel(df_in, f"{tranche}_{today}_Komplett")
+                ExF.save_df_excel(df_in, f"{tranche}_{today}_Komplett")
                 # write documentation
                 df_doc = pd.concat([df_doc, pd.DataFrame(
                     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
                      "Feld": "Inschrift", "Was": "Compliance", "Resultat": f"Inschriften inkorrekt",
                      "Output Dokument": f"{tranche}_{today}_Komplett",
                      "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
-                SE.save_doc_excel(df_doc, abteilung)
+                ExF.save_doc_excel(df_doc, abteilung)
             else:
                 return False, df_in
 
@@ -135,7 +135,7 @@ class Inschrift:
         df_out = pd.DataFrame({"Inschrift": df_in["Inschrift"], "TMS Bearbeitet": np.nan})
         df_out.sort_values(by=["Inschrift"], ascending=True, inplace=True, ignore_index=True)
         # save the excel
-        SE.save_df_excel(df_out, f"{tranche}_Einmalige_Einlaufnummern_{today}")
+        ExF.save_df_excel(df_out, f"{tranche}_Einmalige_Einlaufnummern_{today}")
 
     # get_unique_einlauf("_Test_Tranche_Neu_Formatiert_Kurz", "Test")
 
@@ -158,7 +158,7 @@ class Inschrift:
         # drop duplicates
         df_combined.drop_duplicates(subset="Inschrift", keep='first', inplace=True, ignore_index=True)
         # save excel
-        SE.save_df_excel(df_combined, f"{out_tranche}_Einmalige_Einlaufnummern_{today}")
+        ExF.save_df_excel(df_combined, f"{out_tranche}_Einmalige_Einlaufnummern_{today}")
 
     # add_unique_einlauf("_Test_Tranche_Neu_Formatiert_Lang", "c_Test_Einmalige_Einlaufnummern", "Test_lang")
 
@@ -185,7 +185,7 @@ class Inschrift:
             df_nan.sort_values(by=["Inventarnummer"], ascending=True, inplace=True, ignore_index=True)
             if is_excel:
                 # save the df
-                SE.save_df_excel(df_nan, f"Schlüssel_Einlauf_Fehlende_Angaben_{today}")
+                ExF.save_df_excel(df_nan, f"Schlüssel_Einlauf_Fehlende_Angaben_{today}")
             else:
                 return False, df_nan
         else:

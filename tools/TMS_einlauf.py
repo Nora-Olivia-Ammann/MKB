@@ -6,7 +6,7 @@ import numpy as np
 from datetime import date
 import re
 
-from save_excel import SaveExcel as SE
+from excel_functions import ExcelFunctions as ExF
 
 today = str(date.today())
 os.chdir("..")
@@ -43,7 +43,7 @@ class TMSEinlauf:
             df_nan.sort_values(by=["Inventarnummer"], ascending=True, inplace=True, ignore_index=True)
             if is_excel:
                 # save the df
-                SE.save_df_excel(df_nan, f"Schlüssel_Einlauf_Fehlende_Angaben_{today}")
+                ExF.save_df_excel(df_nan, f"Schlüssel_Einlauf_Fehlende_Angaben_{today}")
             else:
                 return False, df_nan
         else:

@@ -6,7 +6,7 @@ import numpy as np
 from datetime import date
 import re
 
-from save_excel import SaveExcel as SE
+from excel_functions import ExcelFunctions as ExF
 from cleaning_df import CleanDF as Clean
 
 today = str(date.today())
@@ -34,7 +34,7 @@ class DoubleCheck:
         if len(df_doubles) != 0:
             ex_name = col_name.replace(" ", "_")
             ex_name = ex_name.replace("*", "_")
-            SE.save_df_excel(df_doubles, f"{tranche}_{ex_name}_{today}")
+            ExF.save_df_excel(df_doubles, f"{tranche}_{ex_name}_{today}")
         else:
             print("No doubles")
 

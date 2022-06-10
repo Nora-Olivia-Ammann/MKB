@@ -18,7 +18,7 @@ from tools.key_excel import KeyExcel as KE
 from tools.modify_excel import ModifyExcel as MODEX
 from tools.NaN_check import NaN as NAN
 from tools.RegEx_patterns import RegExPattern as REPAT
-from tools.save_excel import SaveExcel as SE
+from tools.excel_functions import ExcelFunctions as ExF
 from tools.TMS_einlauf import TMSEinlauf as TMSEINL
 from tools.unique_ID import UniqueID as UID
 
@@ -55,7 +55,7 @@ def einlauf_fill(in_excel: str, key_excel: str, tranche: str, abteilung: str, co
     if df_in["Inschrift"].isnull().any():
         # if not return a document that contains the null rows
         df_nan = df_in[df_in["Inschrift"].isnull()]
-        SE.save_df_excel(df_nan, f"{tranche}_{today}_Fehlende_Einlaufnummern")
+        ExF.save_df_excel(df_nan, f"{tranche}_{today}_Fehlende_Einlaufnummern")
         if not continue_if_nan:
             # write documentation
             df_doc = pd.concat([df_doc, pd.DataFrame(
@@ -65,7 +65,7 @@ def einlauf_fill(in_excel: str, key_excel: str, tranche: str, abteilung: str, co
                  "Resultat": f"{len(df_nan)} Zeilen fehlten die Inschrift, Programm abgebrochen",
                  "Output Dokument": f"{tranche}_{today}_Fehlende_Einlaufnummern", "Ersetzt Hauptexcel": "zusatz"},
                 index=[0])], ignore_index=True)
-            SE.save_doc_excel(df_doc, abteilung)
+            ExF.save_doc_excel(df_doc, abteilung)
             # error stop the function
             raise TrancheMissingValue("Not all row contain an Inschrift.")
         else:
@@ -86,7 +86,7 @@ def einlauf_fill(in_excel: str, key_excel: str, tranche: str, abteilung: str, co
     # check that the df key is completely filled:
     outcome_key, df_nan = INSCH.key_einlauf_completion_check(key_data=df_key, is_excel=False)
     if not outcome_key:
-        SE.save_df_excel(df_nan, f"Schlüssel_Einlauf_Fehlende_Angaben_{today}")
+        ExF.save_df_excel(df_nan, f"Schlüssel_Einlauf_Fehlende_Angaben_{today}")
         # Write documentation
         df_doc = pd.concat([df_doc, pd.DataFrame(
             {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
@@ -94,7 +94,7 @@ def einlauf_fill(in_excel: str, key_excel: str, tranche: str, abteilung: str, co
              "Resultat": f"{len(df_nan)} fehlende Angaben im Schlüssel",
              "Output Dokument": f"Schlüssel_Einlauf_Fehlende_Angaben_{today}", "Ersetzt Hauptexcel": "-"},
             index=[0])], ignore_index=True)
-        SE.save_doc_excel(df_doc, abteilung)
+        ExF.save_doc_excel(df_doc, abteilung)
         # error stop the function
         raise KeyDocIncomplete("The Einlauf Key document is incomplete")
     # check whether all keys are present, in the key file, the Inschrift column is called Inventarnummer as it is a
@@ -109,7 +109,7 @@ def einlauf_fill(in_excel: str, key_excel: str, tranche: str, abteilung: str, co
         # sort the values for easier reading
         df_not_dict.sort_values(by=["Inschrift"], ascending=True, inplace=True, na_position='last', ignore_index=True)
         # save the excel
-        SE.save_df_excel(df_not_dict, f"Schlüssel_Fehlende_Inschrift_{tranche}_{today}")
+        ExF.save_df_excel(df_not_dict, f"Schlüssel_Fehlende_Inschrift_{tranche}_{today}")
         # write documentation
         df_doc = pd.concat([df_doc, pd.DataFrame(
             {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
@@ -117,7 +117,7 @@ def einlauf_fill(in_excel: str, key_excel: str, tranche: str, abteilung: str, co
              "Resultat": f"{len(df_not_dict)} fehlende Schlüssel",
              "Output Dokument": f"Schlüssel_Fehlende_Inschrift_{tranche}_{today}", "Ersetzt Hauptexcel": "-"},
             index=[0])], ignore_index=True)
-        SE.save_doc_excel(df_doc, abteilung)
+        ExF.save_doc_excel(df_doc, abteilung)
         # raise Error
         raise MissingKey("Inschrift are missing in the key document.")
     df_key.dropna(subset=["Kontrolliert"], inplace=True)
@@ -127,14 +127,14 @@ def einlauf_fill(in_excel: str, key_excel: str, tranche: str, abteilung: str, co
     dict_objekt = dict(zip(df_key.Inventarnummer, df_key.Objektstatus))
     df_in["Objektstatus"] = df_in["Inschrift"].map(dict_objekt)
     # save the filled df to a new excel
-    SE.save_df_excel(df_in, f"{tranche}_{today}")
+    ExF.save_df_excel(df_in, f"{tranche}_{today}")
     # write documentation
     df_doc = pd.concat([df_doc, pd.DataFrame(
         {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
          "Feld": "Erwerbungsart, Objektstatus", "Was": f"Ergänzen gemäss Inschrift, continue_if_nan: {continue_if_nan}",
          "Resultat": f"Excel ergänzt", "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"},
         index=[0])], ignore_index=True)
-    SE.save_doc_excel(df_doc, abteilung)
+    ExF.save_doc_excel(df_doc, abteilung)
 
 
 # # EVERYTHING IS CORRECT

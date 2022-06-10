@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from datetime import date
 
-from save_excel import SaveExcel as SE
+from excel_functions import ExcelFunctions as ExF
 from cleaning_df import CleanDF as Clean
 
 today = str(date.today())
@@ -85,8 +85,8 @@ class ColumnsToStr:
                  "Resultat": f"Info von Spalte: '{col_list}' in neue Spalte {new_col_name}",
                  "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}, index=[0])], ignore_index=True)
             # save df
-            SE.save_df_excel(df_in, f"{tranche}_{today}")
-            SE.save_doc_excel(df_doc, abteilung)
+            ExF.save_df_excel(df_in, f"{tranche}_{today}")
+            ExF.save_doc_excel(df_doc, abteilung)
         else:
             return df_in
 

@@ -18,7 +18,7 @@ from tools.key_excel import KeyExcel as KE
 from tools.modify_excel import ModifyExcel as MODEX
 from tools.NaN_check import NaN as NAN
 from tools.RegEx_patterns import RegExPattern as REPAT
-from tools.save_excel import SaveExcel as SE
+from tools.excel_functions import ExcelFunctions as ExF
 from tools.TMS_einlauf import TMSEinlauf as TMSEINL
 from tools.unique_ID import UniqueID as UID
 
@@ -111,7 +111,7 @@ def new_tranche_excel(in_excel: str, tranche: str, abteilung: str, prefix_unique
         df_nan = df_out[df_out["Inventarnummer"].isnull()]
         df_nan = df_nan.append(df_out[df_out["Beschreibung"].isnull()], ignore_index=True)
         df_nan.drop_duplicates(subset=["Unique_ID"], keep="first", inplace=True, ignore_index=True)
-        SE.save_df_excel(df_nan, f"{tranche}_{today}_BSB_Angaben_Fehlen")
+        ExF.save_df_excel(df_nan, f"{tranche}_{today}_BSB_Angaben_Fehlen")
         df_doc = pd.concat([df_doc, pd.DataFrame(
             {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
              "Feld": "Gesamtes Dokument", "Was": "Transfer von Information in Excel für die Bearbeitung",
@@ -119,14 +119,14 @@ def new_tranche_excel(in_excel: str, tranche: str, abteilung: str, prefix_unique
              "Output Dokument": f"{tranche}_{today}_BSB_Angaben_Fehlen", "Ersetzt Hauptexcel": "neu"}, index=[0])],
                            ignore_index=True)
     # save the df
-    SE.save_df_excel(df_out, f"{tranche}_Komplett_{today}")
+    ExF.save_df_excel(df_out, f"{tranche}_Komplett_{today}")
     # write documentation
     df_doc = pd.concat([df_doc, pd.DataFrame(
         {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
          "Feld": "Gesamtes Dokument", "Was": "Transfer von Information in Excel für die Bearbeitung",
          "Resultat": f"Unique_ID: {df_out.iloc[0, 15]} - {df_out.iloc[-1, 15]}",
          "Output Dokument": f"{tranche}_{today}_Komplett", "Ersetzt Hauptexcel": "neu"}, index=[0])], ignore_index=True)
-    SE.save_doc_excel(df_doc, abteilung)
+    ExF.save_doc_excel(df_doc, abteilung)
 
 
 # # This will produce two excel one which all the data and one with rows that are missing some data

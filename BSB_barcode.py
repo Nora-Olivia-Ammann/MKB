@@ -18,7 +18,7 @@ from tools.key_excel import KeyExcel as KE
 from tools.modify_excel import ModifyExcel as MODEX
 from tools.NaN_check import NaN as NAN
 from tools.RegEx_patterns import RegExPattern as REPAT
-from tools.save_excel import SaveExcel as SE
+from tools.excel_functions import ExcelFunctions as ExF
 from tools.TMS_einlauf import TMSEinlauf as TMSEINL
 from tools.unique_ID import UniqueID as UID
 
@@ -50,7 +50,7 @@ def add_barcode_BSB(in_excel: str) -> None:
         else:
             stop += 30
     # save df
-    SE.save_df_excel(df_in, f"Test_Pilot_Barcode")
+    ExF.save_df_excel(df_in, f"Test_Pilot_Barcode")
 
 
 #add_barcode_BSB("Pilot_Original")
@@ -61,7 +61,7 @@ def get_unique_barcode(in_excel: str) -> None:
     df_out = pd.DataFrame(columns=["Barcode_BSB", "Besch_Karteikarte"], index=range(0, len(df_in)))
     df_out["Barcode_BSB"] = df_in["Barcode_BSB"]
     df_out.drop_duplicates(subset=["Barcode_BSB"], keep="first", inplace=True, ignore_index=True)
-    SE.save_df_excel(df_out, "_Test_Unique_Barcode_BSB")
+    ExF.save_df_excel(df_out, "_Test_Unique_Barcode_BSB")
 
 
 #get_unique_barcode("_Test_add_barcode_BSB_Excel_BSB")
@@ -76,8 +76,8 @@ def map_barcode_tranche(in_excel: str, bsb_excel: str, tranche: str) -> None:
     if df_tranche["Barcode_BSB"].isnull().any():
         warnings.warn("An Inventarnummer is missing.")
         df_nan = df_tranche[df_tranche["Barcode_BSB"].isnull()]
-        SE.save_df_excel(df_nan, f"{tranche}_Fehlende_Barcode")
-    SE.save_df_excel(df_tranche, f"{tranche}_{today}")
+        ExF.save_df_excel(df_nan, f"{tranche}_Fehlende_Barcode")
+    ExF.save_df_excel(df_tranche, f"{tranche}_{today}")
 
 
 #map_barcode_tranche("Pilot_Komplett_2022-02-16", "_Test_add_barcode_BSB_Excel_BSB", "Test")
@@ -89,7 +89,7 @@ def map_kk_content_barcode(in_excel: str, key_excel: str, tranche: str) -> None:
     # TODO: check if all in dict
     map_dict = dict(zip(df_key["Barcode_BSB"], df_key["Besch_Karteikarte"]))
     df_in["Besch_KarteiKarte"] = df_in["Barcode_BSB"].map(map_dict)
-    SE.save_df_excel(df_in, f"{tranche}_{today}")
+    ExF.save_df_excel(df_in, f"{tranche}_{today}")
 
 
 #map_kk_content_barcode("_Test_Tranche_Barcode", "_Test_Schlüssel_Barcode_BSB", "Test")

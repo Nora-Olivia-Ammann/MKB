@@ -6,7 +6,7 @@ import numpy as np
 from datetime import date
 import re
 
-from save_excel import SaveExcel as SE
+from excel_functions import ExcelFunctions as ExF
 from RegEx_patterns import RegExPattern as REPAT
 from cleaning_df import CleanDF as Clean
 
@@ -72,7 +72,7 @@ class Inventarnummer:
             in_df.sort_values(by=["Ordner Bild", "Inventar Sortierbar"], inplace=True, ignore_index=True)
         # if it is an excel we want an excel saved
         if is_excel:
-            SE.save_df_excel(in_df, f"{tranche}_{today}")
+            ExF.save_df_excel(in_df, f"{tranche}_{today}")
         else:
             return in_df
 
@@ -102,7 +102,7 @@ class Inventarnummer:
         if return_sorted:
             df_in.sort_values(by=["Inventar Sortierbar"], inplace=True, ignore_index=True)
         if is_excel:
-            SE.save_df_excel(df_in, f"{tranche}_{today}")
+            ExF.save_df_excel(df_in, f"{tranche}_{today}")
         else:
             return df_in
 
@@ -140,8 +140,8 @@ class Inventarnummer:
                 in_data=df_doubles, is_excel=False, return_sorted=True, tranche=None)
             df_in.drop_duplicates(subset=["Inventarnummer"], keep=False, inplace=True, ignore_index=True)
             if is_excel:
-                SE.save_df_excel(df_doubles, f"{tranche}_{today}_Inventarnummer_Dubletten")
-                SE.save_df_excel(df_in, f"{tranche}_{today}_Inventarnummer_Keine_Dubletten")
+                ExF.save_df_excel(df_doubles, f"{tranche}_{today}_Inventarnummer_Dubletten")
+                ExF.save_df_excel(df_in, f"{tranche}_{today}_Inventarnummer_Keine_Dubletten")
                 # Write documentation
                 df_doc = pd.concat([df_doc, pd.DataFrame(
                     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
@@ -149,7 +149,7 @@ class Inventarnummer:
                      "Output Dokument": f"{tranche}_{today}_Inventarnummer_Dubletten // "
                                         f"{tranche}_{today}_Inventarnummer_Keine_Dubletten",
                      "Ersetzt Hauptexcel": "unterteilt es"}, index=[0])], ignore_index=True)
-                SE.save_doc_excel(df_doc, abteilung)
+                ExF.save_doc_excel(df_doc, abteilung)
             else:
                 return True, df_doubles, df_in
         else:
@@ -159,7 +159,7 @@ class Inventarnummer:
                     {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": "-",
                      "Feld": "Inventarnummer", "Was": "Dubletten", "Resultat": f"keine dubletten",
                      "Output Dokument": f"-", "Ersetzt Hauptexcel": "-"}, index=[0])], ignore_index=True)
-                SE.save_doc_excel(df_doc, abteilung)
+                ExF.save_doc_excel(df_doc, abteilung)
             else:
                 return False, None, None
 

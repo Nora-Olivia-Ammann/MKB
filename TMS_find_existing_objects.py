@@ -18,7 +18,7 @@ from tools.key_excel import KeyExcel as KE
 from tools.modify_excel import ModifyExcel as MODEX
 from tools.NaN_check import NaN as NAN
 from tools.RegEx_patterns import RegExPattern as REPAT
-from tools.save_excel import SaveExcel as SE
+from tools.excel_functions import ExcelFunctions as ExF
 from tools.TMS_einlauf import TMSEinlauf as TMSEINL
 from tools.unique_ID import UniqueID as UID
 
@@ -64,13 +64,13 @@ def find_existing_objects(tranchen_excel: str, tms_excel: str, tranche: str, abt
              "Resultat": f"keine Daten sind bereits vorhanden.", "Output Dokument": f"-",
              "Ersetzt Hauptexcel": "kein neues excel"}, index=[0])], ignore_index=True)
         # save excel because the function stops
-        SE.save_doc_excel(df_doc, abteilung)
+        ExF.save_doc_excel(df_doc, abteilung)
         return
     else:
         doc_list = []
         # save the df
         df_in_tms = pd.DataFrame.from_records(in_tms_list)
-        SE.save_df_excel(df_in_tms, f"{tranche}_im_TMS_vorhanden_{today}")
+        ExF.save_df_excel(df_in_tms, f"{tranche}_im_TMS_vorhanden_{today}")
         # Write doc
         doc_list.append(
             {"Datum": today, "Tranche": tranche, "Input Dokument": tranchen_excel, "Schlüssel Excel": "-",
@@ -79,7 +79,7 @@ def find_existing_objects(tranchen_excel: str, tms_excel: str, tranche: str, abt
              "Output Dokument": f"{tranche}_im_TMS_vorhanden_{today}", "Ersetzt Hauptexcel": "unterteilt es"})
         # save the df
         df_not_tms = pd.DataFrame.from_records(not_tms_list)
-        SE.save_df_excel(df_not_tms, f"{tranche}_nicht_im_TMS_vorhanden_{today}")
+        ExF.save_df_excel(df_not_tms, f"{tranche}_nicht_im_TMS_vorhanden_{today}")
         # write doc
         doc_list.append(
             {"Datum": today, "Tranche": tranche, "Input Dokument": tranchen_excel, "Schlüssel Excel": "-",
@@ -88,7 +88,7 @@ def find_existing_objects(tranchen_excel: str, tms_excel: str, tranche: str, abt
              "Output Dokument": f"{tranche}_nicht_im_TMS_vorhanden_{today}", "Ersetzt Hauptexcel": "unterteilt es"})
     # save doc
     doc_tranche = pd.concat([df_doc, pd.DataFrame.from_records(doc_list)], ignore_index=True)
-    SE.save_doc_excel(doc_tranche, abteilung)
+    ExF.save_doc_excel(doc_tranche, abteilung)
 
 
 # # with double entries

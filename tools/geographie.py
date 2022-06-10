@@ -6,7 +6,7 @@ import numpy as np
 from datetime import date
 import re
 
-from save_excel import SaveExcel as SE
+from excel_functions import ExcelFunctions as ExF
 
 
 today = str(date.today())
@@ -34,7 +34,7 @@ class Geographie:
                      "Herk.4: Grossregion/gr. Insel", "Inselgruppe", "Herk.3: Gebiet/Unterregion/Kl. Insel",
                      "Departement/Provinz/Kanton", "Distrikt", "Insel", "Herk.2: Landschaft/Fluss", "Bezirk/Gemeinde",
                      "Herk.1: Ort", "Bemerkungen [Geographie]", "Geographietyp"])
-        SE.save_df_excel(df, f"{abteilung}_Geo_Schlüssel")
+        ExF.save_df_excel(df, f"{abteilung}_Geo_Schlüssel")
 
     # create_geo_key_excel("Test")
 
@@ -52,7 +52,7 @@ class Geographie:
             df_key = key_data
         df_key['Geographietyp'] = df_key['Geographietyp'].fillna("Herkunft geografisch")
         if is_excel:
-            SE.save_df_excel(df_key, f"Schlüssel_Geo_{today}")
+            ExF.save_df_excel(df_key, f"Schlüssel_Geo_{today}")
         else:
             return df_key
 
@@ -93,14 +93,14 @@ class Geographie:
             # drop any duplicates
             df_nan.drop_duplicates(subset=["Geo_ID"], keep="first", inplace=True, ignore_index=True)
             if is_excel:
-                SE.save_df_excel(df_nan, f"Schlüssel_Geo_Fehlende_Angaben_{today}")
+                ExF.save_df_excel(df_nan, f"Schlüssel_Geo_Fehlende_Angaben_{today}")
                 df_doc = pd.concat([df_doc, pd.DataFrame(
                     {"Datum": today, "Tranche": tranche, "Input Dokument": "", "Schlüssel Excel": key_data,
                      "Feld": "Angaben Geo", "Was": "Vollständigkeit Geografie",
                      "Resultat": f"{len(df_nan)} unvollständige Geo_ID",
                      "Output Dokument": f"Schlüssel_Geo_Fehlende_Angaben_{today}", "Ersetzt Hauptexcel": "-"},
                     index=[0])], ignore_index=True)
-                SE.save_doc_excel(df_doc, abteilung)
+                ExF.save_doc_excel(df_doc, abteilung)
             else:
                 return False, df_nan
         else:
@@ -110,7 +110,7 @@ class Geographie:
                      "Feld": "Angaben Geo", "Was": "Vollständigkeit Geografie",
                      "Resultat": f"keine unvollständige Geo_ID",
                      "Output Dokument": f"-", "Ersetzt Hauptexcel": "-"}, index=[0])], ignore_index=True)
-                SE.save_doc_excel(df_doc, abteilung)
+                ExF.save_doc_excel(df_doc, abteilung)
                 # as it checkes only the completion of the keys it does not do any modifications we want to keep
                 # therefore the df is not saved
             else:

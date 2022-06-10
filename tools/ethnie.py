@@ -6,7 +6,7 @@ import numpy as np
 from datetime import date
 import re
 
-from save_excel import SaveExcel as SE
+from excel_functions import ExcelFunctions as ExF
 from cleaning_df import CleanDF as Clean
 
 
@@ -44,7 +44,7 @@ class Ethnie:
         # remove all the duplicate values
         # drop duplicates keeps the first occurrence
         df_unique_info.drop_duplicates(subset=["Ethniengruppe (Nation)"], keep="first", inplace=True, ignore_index=True)
-        SE.save_df_excel(df_unique_info, f"{abteilung}_Ethnie_Schlüssel_{today}")
+        ExF.save_df_excel(df_unique_info, f"{abteilung}_Ethnie_Schlüssel_{today}")
 
     # get_unique_ethnie(in_excel="d_Test_get_unique_ethnie", abteilung="Test")
 
@@ -76,7 +76,7 @@ class Ethnie:
         # sort out the duplicates and keep the first instance
         df_combined.drop_duplicates(subset="Ethniengruppe (Nation)", keep='first', inplace=True, ignore_index=False)
         # save to an excel
-        SE.save_df_excel(df_combined, f"Schlüssel_Ethnie_{abteilung}_{today}")
+        ExF.save_df_excel(df_combined, f"Schlüssel_Ethnie_{abteilung}_{today}")
 
     # add_unique_ethnie(in_excel="d_Test_add_unique_ethnie_Tranche", key_excel="d_Test_add_unique_ethnie_Schlüssel", abteilung="Test")
 

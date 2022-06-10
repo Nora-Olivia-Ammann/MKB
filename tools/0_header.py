@@ -10,7 +10,7 @@ from cleaning_df import CleanDF as Clean
 from columns_to_string import ColumnsToStr as COLSTR
 from custom_exceptions import *
 from ethnie import Ethnie as ETHN
-from general_double_check import DoubleCheck as DOUBLE
+from double_check import DoubleCheck as DOUBLE
 from geographie import Geographie as GEO
 from inschrift_einlaufnummer_tranche import Inschrift as INSCH
 from inventarnummer import Inventarnummer as INVNR

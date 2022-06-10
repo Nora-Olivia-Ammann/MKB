@@ -91,8 +91,5 @@ class ExcelFunctions:
         ExcelFunctions.save_doc_excel(df_doc, abteilung)
 
 
-
-
-
 if __name__ == "__main__":
     pass

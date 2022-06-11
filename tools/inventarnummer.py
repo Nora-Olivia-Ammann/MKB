@@ -7,7 +7,7 @@ from datetime import date
 import re
 
 from excel_functions import ExcelFunctions as ExF
-from RegEx_patterns import RegExPattern as REPAT
+from RegEx_patterns import RegExPattern as RePat
 from cleaning_df import CleanDF as Clean
 
 today = str(date.today())
@@ -42,7 +42,7 @@ class Inventarnummer:
         # we only want to format roughly correct inventarnummer, as the true compliance check comes later
         # for the incorrect ones there is too much variation in the others to take them all into account,
         # therefore we will ignore those that do not fit
-        pattern_no_letter, pattern_letter, pattern_letter_blank = REPAT.inventar_sortierbar_re_pattern()
+        pattern_no_letter, pattern_letter, pattern_letter_blank = RePat.inventar_sortierbar_re_pattern()
         for index, value in input_df["Inventar Sortierbar"].iteritems():
             # exclude NaN cells
             # since it is very uncommon to have a missing Inventarnummer this is faster than checking if it is present

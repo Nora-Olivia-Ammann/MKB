@@ -8,6 +8,7 @@ from cleaning_df import CleanDF as Clean
 
 today = str(date.today())
 
+# TODO: review and redo the schuster geo
 
 class ColumnsToStr:
 

@@ -3,7 +3,6 @@ from datetime import date
 
 import pandas as pd
 
-from tools.RegEx_patterns import RegExPattern as REPAT
 
 today = str(date.today())
 # os.chdir("..")

@@ -4,7 +4,7 @@ from datetime import date
 
 import warnings
 from tools.custom_exceptions import *
-from tools.inschrift_tranche import Inschrift as INSCH
+from tools.inschrift_tranche import Inschrift as Insch
 from tools.key_excel import KeyExcel as KE
 from tools.excel_functions import ExcelFunctions as ExF
 
@@ -65,7 +65,7 @@ def einlauf_fill(in_excel: str, key_excel: str, tranche: str, abteilung: str, co
             df_in.pop("index")  # when resetting the index it is saved as a new column
             warnings.warn("Some Inschrift are missing, NaN document saved, function continued with non NaN df.")
     # check that the df key is completely filled:
-    outcome_key, df_nan = INSCH.key_einlauf_completion_check(key_data=df_key, is_excel=False)
+    outcome_key, df_nan = Insch.key_einlauf_completion_check(key_data=df_key, is_excel=False)
     if not outcome_key:
         ExF.save_df_excel(df_nan, f"Schlüssel_Einlauf_Fehlende_Angaben_{today}")
         # Write documentation

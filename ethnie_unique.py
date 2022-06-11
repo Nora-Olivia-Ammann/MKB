@@ -6,8 +6,8 @@ import numpy as np
 from datetime import date
 import re
 
-from excel_functions import ExcelFunctions as ExF
-from cleaning_df import CleanDF as Clean
+from tools.excel_functions import ExcelFunctions as ExF
+from tools.cleaning_df import CleanDF as Clean
 
 
 today = str(date.today())

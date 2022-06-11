@@ -34,6 +34,7 @@ class TMSEinlauf:
             # sort out the duplicates and keep the first instance
             df_nan.drop_duplicates(subset="Inventarnummer", keep='first', inplace=True, ignore_index=False)
             df_nan.sort_values(by=["Inventarnummer"], ascending=True, inplace=True, ignore_index=True)
+
             return False, df_nan
         else:
             return True, None

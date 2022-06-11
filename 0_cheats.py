@@ -5,6 +5,21 @@ from datetime import date
 
 from tools.excel_functions import ExcelFunctions as ExF
 
+from tools.beschreibung import Beschreibung as Besch
+from tools.cleaning_df import CleanDF as Clean
+from tools.columns_to_string import ColumnsToStr as ColStr
+from tools.custom_exceptions import *
+from tools.double_check import DoubleCheck as Double
+from tools.geographie import Geographie as Geo
+from tools.inschrift_tranche import Inschrift as Insch
+from tools.inventarnummer import Inventarnummer as InvNr
+from tools.key_excel import KeyExcel as KE
+from tools.modify_excel import ModifyExcel as ModE
+from tools.NaN_check import NaN as NAN
+from tools.RegEx_patterns import RegExPattern as RePat
+from tools.TMS_inschrift import TMSEinlauf as TMSInsch
+from tools.unique_ID import UniqueID as UID
+
 today = str(date.today())
 # os.chdir("..")
 current_wdir = os.getcwd()
@@ -17,8 +32,10 @@ pd.set_option("mode.chained_assignment", None)
 if __name__ == "__main__":
     pass
 
+doc_list = []
+
 """
-df_doc = pd.concat([df_doc, pd.DataFrame({
+doc_list.append({
     "Datum": today,
     "Tranche": tranche,
     "Input Dokument": in_excel,
@@ -27,23 +44,18 @@ df_doc = pd.concat([df_doc, pd.DataFrame({
     "Was": "",
     "Resultat": f"",
     "Output Dokument": f"",
-    "Ersetzt Hauptexcel": ""
-}, index=[0])], ignore_index=True)
+    "Ersetzt Hauptexcel": ""})
 """
 
-#df_doc = pd.concat([df_doc, pd.DataFrame({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "", "Feld": "", "Was": "", "Resultat": f"", "Output Dokument": f"", "Ersetzt Hauptexcel": ""}, index=[0])], ignore_index=True)
-
-#df_doc = pd.concat([df_doc, pd.DataFrame({}, index=[0])], ignore_index=True)
-
-# with doc list
-#df_doc = pd.concat([df_doc, pd.DataFrame.from_records(doc_list)], ignore_index=True)
+#doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "", "Feld": "", "Was": "", "Resultat": f"", "Output Dokument": f"", "Ersetzt Hauptexcel": ""})
 
 
 def new_funct(in_excel, key_excel, tranche, abteilung):
     # read in the excels
     df_in = ExF.in_excel_to_df(in_excel)
-    df_key = ExF.in_excel_to_df(key_excel)
     doc_list = []
+    df_key = ExF.in_excel_to_df(key_excel)
+
     ############################################
 
     # save df

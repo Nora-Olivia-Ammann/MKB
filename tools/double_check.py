@@ -1,8 +1,16 @@
 import os
 import pandas as pd
+from datetime import date
+
 from cleaning_df import CleanDF as Clean
+from excel_functions import ExcelFunctions as ExF
+
+today = str(date.today())
+os.chdir("..")
+current_wdir = os.getcwd()
 
 # TODO: complete rewrite
+
 
 class DoubleCheck:
 

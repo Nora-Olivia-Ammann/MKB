@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from datetime import date
 
-from tools.inventarnummer import Inventarnummer as INVNR
+from tools.inventarnummer import Inventarnummer as InvNr
 from tools.excel_functions import ExcelFunctions as ExF
 
 today = str(date.today())
@@ -105,7 +105,7 @@ def inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str, regex
     df_doubles = df_in[df_in["Inventarnummer"].duplicated(keep=False)]
     if len(df_doubles) != 0:
         # add the columns to document the renaming of inventarnummer
-        df_doubles = INVNR.add_rename_inventarnummer(in_data=df_doubles, is_excel=False, return_sorted=True, tranche=None)
+        df_doubles = InvNr.add_rename_inventarnummer(in_data=df_doubles, is_excel=False, return_sorted=True, tranche=None)
         # the exact name of the picture is important as it may differ from the usual schema in order to be unique
         df_doubles.insert(1, "Name Bild", np.nan)
         ExF.save_df_excel(df_doubles, f"{tranche}_{today}_Inventarnummer_Dubletten")
@@ -166,7 +166,7 @@ def inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str, regex
     if len(list_dummy) != 0:
         df_dummy = pd.DataFrame.from_records(list_dummy)
         # add the columns to document the renaming of inventarnummer
-        df_dummy = INVNR.add_rename_inventarnummer(in_data=df_dummy, is_excel=False, return_sorted=True, tranche=None)
+        df_dummy = InvNr.add_rename_inventarnummer(in_data=df_dummy, is_excel=False, return_sorted=True, tranche=None)
         # save the documentation of the changed Inventarnummer
         ExF.save_df_excel(df_dummy, f"{tranche}_{today}_Inventarnummer_Dummy")
         # Write documentation
@@ -184,7 +184,7 @@ def inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str, regex
     if len(list_wrong) != 0:
         df_wrong = pd.DataFrame.from_records(list_wrong)
         # add the columns to document the renaming of inventarnummer
-        df_wrong = INVNR.add_rename_inventarnummer(in_data=df_wrong, is_excel=False, return_sorted=True, tranche=None)
+        df_wrong = InvNr.add_rename_inventarnummer(in_data=df_wrong, is_excel=False, return_sorted=True, tranche=None)
         # save the documentation of the changed Inventarnummer
         df_wrong.sort_values(by=["Ordner Bild", "Inventar Sortierbar"], inplace=True, ignore_index=True)
         ExF.save_df_excel(df_wrong, f"{tranche}_{today}_Inventarnummer_Fehlerhafte")

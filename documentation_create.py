@@ -10,9 +10,9 @@ current_wdir = os.getcwd()
 
 ############################################
 
-#df_doc = pd.concat([df_doc, pd.DataFrame({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "", "Feld": "", "Was": "", "Resultat": f"", "Output Dokument": f"", "Ersetzt Hauptexcel": ""}, index=[0])], ignore_index=True)
+doc_list = []
 
-#df_doc = pd.concat([df_doc, pd.DataFrame({}, index=[0])], ignore_index=True)
+#doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "", "Feld": "", "Was": "", "Resultat": f"", "Output Dokument": f"", "Ersetzt Hauptexcel": ""})
 
 
 def create_documentation(abteilung: str) -> None:

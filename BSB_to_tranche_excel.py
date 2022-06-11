@@ -4,8 +4,8 @@ from datetime import date
 
 import warnings
 from tools.cleaning_df import CleanDF as Clean
-from tools.inschrift_tranche import Inschrift as INSCH
-from tools.inventarnummer import Inventarnummer as INVNR
+from tools.inschrift_tranche import Inschrift as Insch
+from tools.inventarnummer import Inventarnummer as InvNr
 from tools.excel_functions import ExcelFunctions as ExF
 from tools.unique_ID import UniqueID as UID
 
@@ -18,6 +18,7 @@ current_wdir = os.getcwd()
 # Suppress the SettingWithCopyWarning
 pd.set_option("mode.chained_assignment", None)
 
+# TODO: nested functions
 
 def new_tranche_excel(in_excel: str, tranche: str, abteilung: str, prefix_unique_ID: str, return_sorted: bool = False,
                       has_second_header: bool = False) -> None:
@@ -74,7 +75,7 @@ def new_tranche_excel(in_excel: str, tranche: str, abteilung: str, prefix_unique
     df_out["Tranche"] = tranche
     # add leading zeros to the Einlaufnummer if not already present, and add a column to mark where the einlaufnummer
     # is missing or incorrect
-    _, df_out = INSCH.einlaufnummer_bearbeiten(in_data=df_out, is_excel=False, tranche=tranche, abteilung=abteilung)
+    _, df_out = Insch.einlaufnummer_bearbeiten(in_data=df_out, is_excel=False, tranche=tranche, abteilung=abteilung)
     # for easier use and later processing get the folder name from the Beschreibung for each row and place it in
     # the column, iterate over the columns
     for index, value in df_out["Beschreibung"].iteritems():
@@ -87,7 +88,7 @@ def new_tranche_excel(in_excel: str, tranche: str, abteilung: str, prefix_unique
         except AttributeError:
             continue
     # add the sortierbare Inventarnummer
-    df_out = INVNR.inventar_sortierbar(in_data=df_out, is_excel=False, tranche=None, return_sorted=return_sorted)
+    df_out = InvNr.inventar_sortierbar(in_data=df_out, is_excel=False, tranche=None, return_sorted=return_sorted)
     # as at this stage the inventarnummer may change, there is no way to uniquely identify a row
     # therefore we create our own ID, by adding leading zeros we make this number sortable and thus preserve the
     # original order

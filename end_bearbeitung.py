@@ -3,11 +3,11 @@ import pandas as pd
 from datetime import date
 import warnings
 
-from tools.beschreibung import Beschreibung as BE
+from tools.beschreibung import Beschreibung as Besch
 from tools.cleaning_df import CleanDF as Clean
 from tools.custom_exceptions import *
-from tools.inschrift_tranche import Inschrift as INSCH
-from tools.inventarnummer import Inventarnummer as INVNR
+from tools.inschrift_tranche import Inschrift as Insch
+from tools.inventarnummer import Inventarnummer as InvNr
 from tools.NaN_check import NaN as NAN
 from tools.excel_functions import ExcelFunctions as ExF
 
@@ -19,6 +19,9 @@ current_wdir = os.getcwd()
 # Suppress the SettingWithCopyWarning
 pd.set_option("mode.chained_assignment", None)
 
+# TODO: extract nested functions
+# TODO: clean up nested functions
+# TODO: complete rewrite
 
 def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: str, regex_pattern,
                     do_inventarnummer_compliance: bool = True, continue_if_false_values: bool = False) -> None:
@@ -77,7 +80,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
         correct_check_list.append(False)
     # INVENTARNUMMER DOUBLE CHECK
     # returns True if there are doubles
-    res_doubles_check, df_doubles, df_no_double = INVNR.has_inventarnummer_double(
+    res_doubles_check, df_doubles, df_no_double = InvNr.has_inventarnummer_double(
         in_data=df_in, is_excel=False, tranche=None, abteilung=df_doc)
     if res_doubles_check:
         df_in = df_no_double
@@ -105,8 +108,8 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
             # we drop the wrong rows
             df_in.drop(index=drop_index_list, axis=0, inplace=True)
             # add the columns to document the renaming of inventarnummer
-            df_wrong_inventar = INVNR.add_rename_inventarnummer(in_data=df_wrong_inventar, is_excel=False, return_sorted=True,
-                                                          tranche=None)
+            df_wrong_inventar = InvNr.add_rename_inventarnummer(in_data=df_wrong_inventar, is_excel=False, return_sorted=True,
+                                                                tranche=None)
             doc_list.append(
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
                  "Feld": "Inventarnummer",
@@ -122,7 +125,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
     # EINLAUFNUMMER COMPLIANCE
     # the function may add leading zeros to the einlaufnummer, in that case it would not read as a false value,
     # it returns that df, therefore we replace in the df_in with that one
-    einlauf_check, df_in = INSCH.einlaufnummer_bearbeiten(
+    einlauf_check, df_in = Insch.einlaufnummer_bearbeiten(
         in_data=df_in, is_excel=False, tranche=None, abteilung=df_doc)
     if not einlauf_check:
         doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
@@ -158,7 +161,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
     # START TRANSFERRING DATA
     # before transferring data we add the Schubladenname to the Beschreibung, as it is easier to do before we add
     # the second header
-    df_in = BE.add_schublade(in_data=df_in, is_excel=False, tranche=None, abteilung=df_doc)
+    df_in = Besch.add_schublade(in_data=df_in, is_excel=False, tranche=None, abteilung=df_doc)
     # drop all the content of the header df so that only the header remains
     df_out.drop(index=df_out.index[:], axis=0, inplace=True)
     # add the information for the second header

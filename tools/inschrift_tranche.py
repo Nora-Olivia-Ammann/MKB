@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from excel_functions import ExcelFunctions as ExF
-from RegEx_patterns import RegExPattern as REPAT
+from RegEx_patterns import RegExPattern as RePat
 from cleaning_df import CleanDF as Clean
 
 today = str(date.today())
@@ -32,7 +32,7 @@ class Inschrift:
         :param abteilung: name
         :return: True if all is correct and new tranche df, False if not correct and new tranche df and faulty df
         """
-        pattern_einlauf_correct, pattern_zero, pattern_incomplete = REPAT.inschrift_re_pattern()
+        pattern_einlauf_correct, pattern_zero, pattern_incomplete = RePat.inschrift_re_pattern()
         # get the index number of the column inschrift
         index_no = input_df.columns.get_loc("Inschrift")
         # try to insert a new column to the right of it

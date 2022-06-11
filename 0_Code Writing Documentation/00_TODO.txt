@@ -1,0 +1,38 @@
+Sequence of Function writing:
+
+- write documentation in all nested functions
+- Change all the documentation style (append list)
+- make key_check_double for key_words
+- review check_key_isin
+-
+
+-	Replace all the read excel
+-	Remove all the is excel from tools
+-	Write and change concat save doc
+
+
+
+-	Herausfinden wie die original Färbung erhalten bleiben kann
+-        Schuster Geo, original stimmt etwas nicht
+-        Schuster Original Geo Leere teile Löschen (vielleicht mit liste und dann leer löschen und dann zusammenfügen?
+-        Separate mini funktionen für innerhalb tranche dubletten kontrolle, führende 0 kontrolle, sowie inschrift compliance diese dann in anfang funktion hinzufügen
+-        Umbennenung Inventarnummer In einem Excel die originalen Namen (Excel und Bilddatei), die neuen Namen zusammen mit der Unique ID dokumentieren. Dieses nach der Bearbeitung des Tranchen Excel automatisch erstellen. (Programm schreiben)
+
+-        Erstbearbeitung
+o   Inventarnummer
+§  Spalte: Dublette (x oder leer)
+§  Spalte: Fehler (x oder leer)
+§  Spalte Name Bilddatei
+§  Spalte Name Bilddatei alt
+o   Inschrift
+§  Inschrift war Falsch
+o   Zwei Excel speichern:
+§  Original Unverändert: die veränderungsspalten nicht, aber spalte mit gelöscht und unique_ID als zweites Feld
+§  Komplett: die veränderungsspalten
+
+
+
+
+ABSOLUTE END
+- review test excel change calls
+- change it in word documentation

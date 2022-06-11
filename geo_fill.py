@@ -5,7 +5,7 @@ from datetime import date
 import warnings
 from tools.cleaning_df import CleanDF as Clean
 from tools.custom_exceptions import *
-from tools.geographie import Geographie as GEO
+from tools.geographie import Geographie as Geo
 from tools.key_excel import KeyExcel as KE
 from tools.excel_functions import ExcelFunctions as ExF
 
@@ -64,7 +64,7 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str, contin
     # check if the Geo key is complete
     # here we have to assign two variables, as it returns a df in any case, if there are values missing
     # it returns a nan_df otherwise it returns the checked df that has the default values filled in
-    result_check, df_not_complete = GEO.geo_key_completion(
+    result_check, df_not_complete = Geo.geo_key_completion(
         key_data=df_key, is_excel=False, drop_uncontrolled=True, tranche=None, abteilung=df_doc)
     if not result_check:
         ExF.save_df_excel(df_not_complete, f"Schlüssel_Geo_Fehlende_Angaben_{today}")

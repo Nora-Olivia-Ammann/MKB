@@ -9,6 +9,7 @@ import re
 from excel_functions import ExcelFunctions as ExF
 from RegEx_patterns import RegExPattern as RePat
 from cleaning_df import CleanDF as Clean
+from custom_exceptions import *
 
 today = str(date.today())
 os.chdir("..")
@@ -80,7 +81,7 @@ class Inventarnummer:
     # inventar_sortierbar(indata="a_Test_inventar_sortierbar", is_excel=True, tranche="Test", return_sorted=False)
 
     @staticmethod
-    def add_rename_inventarnummer(input_df: pd.DataFrame, return_sorted: bool, tranche: str, in_excel_name) \
+    def add_rename_inventarnummer(input_df: pd.DataFrame, return_sorted: bool, tranche: str, in_excel_name: str) \
             -> pd.DataFrame or None:
         """
         Adds columns to df, that are used when having to rename any Inventarnummer. Can be used as a nested function.
@@ -90,13 +91,14 @@ class Inventarnummer:
         :param tranche: name
         :return: df / None
         """
-        # TODO: exception handling if columns already exist: maybe stop the function?
+        # TODO: exception handling
+        if "Alt Inventarnummer" in input_df.columns:
+            raise ColExistsError("The Column already exists.")
         # rename the column with the old inventarnummer
         input_df.rename(columns={"Inventarnummer": "Alt Inventarnummer"}, inplace=True)
         # add a new column to store the new Inventarnummer in
         input_df.insert(0, "Inventarnummer", np.nan)
         # add a new column to mark whether the Bilddatei was also renamed
-        input_df.insert(0, "Bild umbennennt", np.nan)
         if return_sorted:
             input_df.sort_values(by=["Inventar Sortierbar"], inplace=True, ignore_index=True)
         doc_dict = {"Datum": today,
@@ -104,7 +106,7 @@ class Inventarnummer:
                     "Input Dokument": in_excel_name,
                     "Schlüssel Excel": "-",
                     "Feld": "Inventarnummer",
-                    "Was": "Hinzufügen von Spalten: Alt Inventarnummer, Bild umbennennt",
+                    "Was": "Hinzufügen von Spalte: Alt Inventarnummer",
                     "Resultat": f"-",
                     "Output Dokument": f"-",
                     "Ersetzt Hauptexcel": "-"}

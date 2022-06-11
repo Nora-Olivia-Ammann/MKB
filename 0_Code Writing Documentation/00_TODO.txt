@@ -6,8 +6,6 @@ Sequence of Function writing:
 - review check_key_isin
 -
 
--	Replace all the read excel
--	Remove all the is excel from tools
 -	Write and change concat save doc
 
 

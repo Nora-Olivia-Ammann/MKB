@@ -17,7 +17,7 @@ class DoubleCheck:
     def has_col_double(input_df: pd.DataFrame, col_name: str, tranche: str or None = None,
                        in_excel_name: str or None = None, write_doc: bool = False) -> \
             bool and None or pd.DataFrame and None or dict:
-        # TODO: validate write description
+        # TODO: validate, write description
         # clean the df
         input_df = Clean.strip_spaces_col(input_df, col_name)
         try:
@@ -35,9 +35,9 @@ class DoubleCheck:
                             "Resultat": f"{len(df_doubles)} dubletten",
                             "Output Dokument": f"-",
                             "Ersetzt Hauptexcel": "-"}
+                return True, df_doubles, doc_dict
             else:
-                doc_dict = None
-            return True, df_doubles, doc_dict
+                return True, df_doubles, None
         else:
             if write_doc:
                 doc_dict = {"Datum": today,
@@ -49,9 +49,9 @@ class DoubleCheck:
                             "Resultat": f"Keine dubletten",
                             "Output Dokument": f"-",
                             "Ersetzt Hauptexcel": "-"}
+                return False, None, doc_dict
             else:
-                doc_dict = None
-            return False, None, doc_dict
+                return False, None, None
 
     @staticmethod
     def add_col_double_x(input_df: pd.DataFrame, col_name: str, tranche: str or None = None,
@@ -59,7 +59,7 @@ class DoubleCheck:
             -> bool and pd.DataFrame and None or dict:
         # TODO: validate
         # TODO: write description
-        # check if the column has double
+        # check if the column has double, no need to clean as is done in function
         has_double, _, _ = DoubleCheck.has_col_double(input_df, col_name, tranche, in_excel_name, False)
         # if it has doubles add the column that documents it
         # no exception handling is necessary as that is done in the has_col_double

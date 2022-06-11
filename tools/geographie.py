@@ -74,11 +74,7 @@ class Geographie:
         :return: True if all is complete or False and df with rows that miss values if not
         """
         # TODO validate
-        # TODO rethink whether we want to stop the function here or not, because, if we stop it here, we may have a
-        #  problem regarding the documentation that may be written if used as a nested function -> could do it with
-        #  exception handling if we do it with bool we need to check it everytime, while with exception handling it is
-        #  only if there is a problem, in that case it would be possible to do try: except: and then also write an
-        #  a different or additional dict entry
+        # TODO maybe do exception handling if we do not want the documentation
         # check if the Key excel has any double Geo_ID this is not allowed as they must be unique.
         has_double, df_double, _ = Double.has_col_double(input_df=input_key_df, col_name="Geo_ID")
         # if it has doubles, save it and write the documentation

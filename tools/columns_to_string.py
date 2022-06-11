@@ -8,7 +8,8 @@ from cleaning_df import CleanDF as Clean
 
 today = str(date.today())
 
-# TODO: review and redo the schuster geo
+# TODO: review
+#  redo the schuster geo
 
 class ColumnsToStr:
 
@@ -63,10 +64,15 @@ class ColumnsToStr:
                 b_str = "; ".join(besch)
             # add the string the the new_column
             input_df.loc[index, new_col_name] = b_str
-        doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
-                    "Feld": new_col_name, "Was": f"Info hinzufügen",
+        doc_dict = {"Datum": today,
+                    "Tranche": tranche,
+                    "Input Dokument": in_excel_name,
+                    "Schlüssel Excel": "-",
+                    "Feld": new_col_name,
+                    "Was": f"Info hinzufügen",
                     "Resultat": f"Info von Spalte: '{col_list}' in neue Spalte {new_col_name}",
-                    "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}
+                    "Output Dokument": f"-",
+                    "Ersetzt Hauptexcel": "-"}
         return input_df, doc_dict
 
     # # with Prefix

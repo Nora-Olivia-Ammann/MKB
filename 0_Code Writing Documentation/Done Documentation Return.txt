@@ -9,27 +9,27 @@ TOOLS
 - custom_exceptions
     -> no doc
 - double_check
-            -> wait for rewrite
+    -> done
 - excel_functions
     - > no doc
 - geographie
-
+    -> done
 - inschrift_tranche
-
+    -> done
 - inventarnummer
-
+    -> done
 - key_excel
-
+            -> wait for rewrite
 - modify_excel
-
+    -> done
 - NaN_check
-
+            -> wait for rewrite
 - RegEx_patterns
     -> no doc
 - TMS_inschrift
-
+            -> verify
 - unique_ID
-
+    -> done
 
 ##############################################
 

@@ -27,7 +27,7 @@ class ColumnsToStr:
         :param tranche: name
         :return: df and documentation dict
         """
-        input_df = Clean.strip_spaces(input_df)
+        input_df = Clean.strip_spaces_whole_df(input_df)
         # iterate over the column list that contains information that should be joined into a str
         for col in col_list:
             # check if the column contains only NaN values, if it does then it doesn't skip them and you get nan in the

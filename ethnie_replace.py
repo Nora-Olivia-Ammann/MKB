@@ -32,16 +32,15 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
     df_key = ExF.in_excel_to_df(key_excel)
     df_doc = ExF.doc_excel_to_df(abteilung)
     # check if all the elements are in the key excel and were checked
-    key_check, df_not_dict = KE.check_key_isin(in_data=df_in, in_col="Ethniengruppe (Nation)", key_data=df_key,
-                                               key_col="Ethniengruppe (Nation)", drop_uncontrolled=True, is_excel=False,
-                                               tranche=None, abteilung=df_doc, out_excel=None)
+    key_check, df_not_dict = KE.check_key_isin(in_data=df_in, key_data=df_key,
+                                               drop_uncontrolled=True, is_excel=False,
+                                               abteilung=df_doc)
     if not key_check:
         # check whether it is only because the values are marked as uncontrolled
         # because modifications were made on the dataframe in the previous check we have to read it in again
         df_key = pd.read_excel(os.path.join(current_wdir, "input", f"{key_excel}.xlsx"))
         key_check_uncontrolled, df_not_dict_uncontr = KE.check_key_isin(
-            in_data=df_in, in_col="Ethniengruppe (Nation)", key_data=df_key, key_col="Ethniengruppe (Nation)",
-            drop_uncontrolled=False, is_excel=False, tranche=None, abteilung=df_doc, out_excel=None)
+            in_data=df_in, key_data=df_key, drop_uncontrolled=False, is_excel=False, abteilung=df_doc)
         if not key_check_uncontrolled:
             out_key = pd.DataFrame(
                 {"Kontrolliert": "", "Original Schreibweise": df_not_dict_uncontr["Ethniengruppe (Nation)"],

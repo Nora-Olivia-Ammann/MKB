@@ -25,7 +25,7 @@ def get_unique_einlauf(in_excel: str, tranche: str) -> None:
     # read in_excel to df
     df_in = ExF.in_excel_to_df(in_excel)
     # clean the df
-    df_in = Clean.strip_spaces(df_in)
+    df_in = Clean.strip_spaces_col(df_in, "Inschrift")
     # drop null rows
     df_in.dropna(subset=["Inschrift"], inplace=True)
     # drop duplicates
@@ -42,11 +42,11 @@ def get_unique_einlauf(in_excel: str, tranche: str) -> None:
 def add_unique_einlauf(in_excel: str, key_excel: str, out_tranche: str) -> None:
     df_in = ExF.in_excel_to_df(in_excel)
     # clean the df
-    df_in = Clean.strip_spaces(df_in)
+    df_in = Clean.strip_spaces_col(df_in, "Inschrift")
     # read key_excel in which will provide the dictionary
     df_key = ExF.in_excel_to_df(key_excel)
     # clean the df
-    df_key = Clean.strip_spaces(df_key)
+    df_key = Clean.strip_spaces_whole_df(df_key)
     # drop null rows
     df_in.dropna(subset=["Inschrift"], inplace=True)
     # reformat the information

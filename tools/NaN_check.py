@@ -39,7 +39,6 @@ class NaN:
                 NaN / if one excel: df with nan, name for excel and df without nan
         """
         df_not_nan = input_df.dropna(subset=column_list, how="any", inplace=False)
-        # if it is not an excel we return the list of the df_f
         return_ex_name = []
         retrun_df_list = []
         # if we want a separate excel for each column

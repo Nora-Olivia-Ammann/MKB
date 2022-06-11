@@ -17,40 +17,25 @@ current_wdir = os.getcwd()
 pd.set_option("mode.chained_assignment", None)
 
 # TODO: complete rewrite
+# TODO write duplicate key check
+
 
 class KeyExcel:
 
     @staticmethod
-    def check_key_isin(in_data: str or pd.DataFrame, in_col: str, key_data: str or pd.DataFrame, key_col: str,
-                       drop_uncontrolled: bool, is_excel: bool = False, tranche: str or None = None,
-                       abteilung: str or None = None, out_excel: str or None = None) -> None or bool and pd.DataFrame:
+    def check_key_isin(df_in: str or pd.DataFrame, key_df: str or pd.DataFrame, drop_uncontrolled: bool,
+                       abteilung: str or None = None) -> None or bool and pd.DataFrame:
         """
         This function checks whether the key excel contains all the keys that are in the tranchen excel. If not used
         as a nested function it also writes the documentation.
+        :param df_in:
         :param in_data: tranche excel
-        :param in_col: column name of the key
         :param key_data: key excel
-        :param key_col: column name of the key (it may differ)
         :param drop_uncontrolled: True: drops all rows where 'Kontrolle' Column is empty
         :param is_excel: True: if it is excel
-        :param tranche: name
         :param abteilung: name
-        :param out_excel: name of the out excel
         :return: if is_excel False: Bool True if all keys are present or Bool False and a df with the missing keys
         """
-        # some keys are too long to add to the excel name, therefore we have this additional parameter
-        if is_excel:
-            # read in_excel to df
-            df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_data}.xlsx"))
-            # read the documentation excel
-            df_doc = pd.read_excel(
-                os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
-            # read key_excel in which will provide the dictionary
-            key_df = pd.read_excel(os.path.join(current_wdir, "input", f"{key_data}.xlsx"))
-        else:
-            df_in = in_data
-            key_df = key_data
-            df_doc = abteilung
         # drop the uncontrolled rows
         if drop_uncontrolled:
             key_df.dropna(subset=["Kontrolliert"], inplace=True)

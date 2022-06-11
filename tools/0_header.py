@@ -4,7 +4,6 @@ import numpy as np
 from datetime import date
 
 from excel_functions import ExcelFunctions as ExF
-
 from beschreibung import Beschreibung as Besch
 from cleaning_df import CleanDF as Clean
 from columns_to_string import ColumnsToStr as ColStr
@@ -27,6 +26,20 @@ current_wdir = os.getcwd()
 ############################################
 # Suppress the SettingWithCopyWarning
 pd.set_option("mode.chained_assignment", None)
+
+
+"""
+doc_dict = {"Datum": today,
+            "Tranche": tranche,
+            "Input Dokument": in_excel_name,
+            "Schlüssel Excel": "",
+            "Feld": "",
+            "Was": "",
+            "Resultat": f"",
+            "Output Dokument": f"",
+            "Ersetzt Hauptexcel": ""}
+"""
+
 
 if __name__ == "__main__":
     pass

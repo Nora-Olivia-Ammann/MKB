@@ -45,9 +45,15 @@ class ModifyExcel:
         ExF.save_df_excel(df_combined, f"{name_out_excel}_{today}")
         # write documentation
         ExF.doc_save_single(
-            abteilung, {"Datum": today, "Tranche": tranche, "Input Dokument": list_in_excel, "Schlüssel Excel": "-",
-                        "Feld": "-", "Was": "Zusammenfügen der Excel", "Resultat": f"",
-                        "Output Dokument": f"{name_out_excel}_{today}", "Ersetzt Hauptexcel": "fügt mehrere zusammen"})
+            abteilung, {"Datum": today,
+                        "Tranche": tranche,
+                        "Input Dokument": list_in_excel,
+                        "Schlüssel Excel": "-",
+                        "Feld": "-",
+                        "Was": "Zusammenfügen der Excel",
+                        "Resultat": f"",
+                        "Output Dokument": f"{name_out_excel}_{today}",
+                        "Ersetzt Hauptexcel": "fügt mehrere zusammen"})
 
     # combine_excel(list_in_excel=["a_Test_combine_excel_1", "a_Test_combine_excel_2", "a_Test_combine_excel_3"],
     #               tranche="Test", name_out_excel="T1-3", abteilung="Test")

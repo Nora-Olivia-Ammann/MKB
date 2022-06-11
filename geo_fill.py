@@ -34,11 +34,11 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str, contin
     # read in_excel to df, which is the one to fill with values
     df_in = ExF.in_excel_to_df(in_excel)
     # clean the df
-    df_in = Clean.strip_spaces(df_in)
+    df_in = Clean.strip_spaces_whole_df(df_in)
     # read key_excel in which will provide the dictionary
     df_key = ExF.in_excel_to_df(key_excel)
     # clean the df
-    df_key = Clean.strip_spaces(df_key)
+    df_key = Clean.strip_spaces_whole_df(df_key)
     doc_list = []
     # check whether all rows have a GeoID
     if df_in["Geo_ID"].isnull().any():
@@ -77,14 +77,14 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str, contin
         raise KeyDocIncomplete("Not all mandatory fields in the key document are filled.")
     # check if all the Geo_ID are in the Key document
     result_isin_check, df_not_dict = KE.check_key_isin(
-        in_data=df_in, in_col="Geo_ID", key_data=df_key, key_col="Geo_ID", drop_uncontrolled=True,
-        out_excel=None, is_excel=False, tranche=None, abteilung=abteilung)
+        in_data=df_in, key_data=df_key, drop_uncontrolled=True,
+        is_excel=False, abteilung=abteilung)
     if not result_isin_check:
         df_key = ExF.in_excel_to_df(key_excel)
         # check if the Geo_ID is also missing from the df that contains the unchecked Geo_IDs
         all_geo_isin, df_not_all_dict = KE.check_key_isin(
-            in_data=df_in, in_col="Geo_ID", key_data=df_key, key_col="Geo_ID", drop_uncontrolled=False,
-            out_excel=None, is_excel=False, tranche=None, abteilung=abteilung)
+            in_data=df_in, key_data=df_key, drop_uncontrolled=False,
+            is_excel=False, abteilung=abteilung)
         if not all_geo_isin:
             ExF.save_df_excel(df_not_all_dict, f"Schlüssel_Fehlende_Geo_ID_{tranche}_{today}")
             # write documentation

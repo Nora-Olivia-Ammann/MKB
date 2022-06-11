@@ -22,7 +22,7 @@ pd.set_option("mode.chained_assignment", None)
 class Inventarnummer:
 
     @staticmethod
-    def inventar_sortierbar(input_df: pd.DataFrame or str, return_sorted: bool,
+    def inventar_sortierbar(input_df: pd.DataFrame or str, in_excel_name: str, return_sorted: bool,
                             tranche: str or None = None) -> pd.DataFrame or None:
         """
         Adds a new column with a sortable Inventarnummer. The correct one which we use in the TMS has no leading zeros,
@@ -36,7 +36,7 @@ class Inventarnummer:
         :return: df or None
         """
         # clean the df
-        input_df = Clean.strip_spaces(input_df)
+        input_df = Clean.strip_spaces_whole_df(input_df)
         # overwrite the existing column with the new Inventarnummer
         input_df["Inventar Sortierbar"] = input_df["Inventarnummer"]
         # we only want to format roughly correct inventarnummer, as the true compliance check comes later
@@ -66,12 +66,22 @@ class Inventarnummer:
         # Sort the values if wished
         if return_sorted:
             input_df.sort_values(by=["Ordner Bild", "Inventar Sortierbar"], inplace=True, ignore_index=True)
-        return input_df
+        doc_dict = {"Datum": today,
+                    "Tranche": tranche,
+                    "Input Dokument": in_excel_name,
+                    "Schlüssel Excel": "-",
+                    "Feld": "Inventar Sortierbar",
+                    "Was": "Hinzufügen des Feldes",
+                    "Resultat": f"-",
+                    "Output Dokument": f"-",
+                    "Ersetzt Hauptexcel": "-"}
+        return input_df, doc_dict
 
     # inventar_sortierbar(indata="a_Test_inventar_sortierbar", is_excel=True, tranche="Test", return_sorted=False)
 
     @staticmethod
-    def add_rename_inventarnummer(input_df: pd.DataFrame, return_sorted: bool) -> pd.DataFrame or None:
+    def add_rename_inventarnummer(input_df: pd.DataFrame, return_sorted: bool, tranche: str, in_excel_name) \
+            -> pd.DataFrame or None:
         """
         Adds columns to df, that are used when having to rename any Inventarnummer. Can be used as a nested function.
         :param in_data: df / excel
@@ -80,6 +90,7 @@ class Inventarnummer:
         :param tranche: name
         :return: df / None
         """
+        # TODO: exception handling if columns already exist: maybe stop the function?
         # rename the column with the old inventarnummer
         input_df.rename(columns={"Inventarnummer": "Alt Inventarnummer"}, inplace=True)
         # add a new column to store the new Inventarnummer in
@@ -88,49 +99,20 @@ class Inventarnummer:
         input_df.insert(0, "Bild umbennennt", np.nan)
         if return_sorted:
             input_df.sort_values(by=["Inventar Sortierbar"], inplace=True, ignore_index=True)
-        return input_df
+        doc_dict = {"Datum": today,
+                    "Tranche": tranche,
+                    "Input Dokument": in_excel_name,
+                    "Schlüssel Excel": "-",
+                    "Feld": "Inventarnummer",
+                    "Was": "Hinzufügen von Spalten: Alt Inventarnummer, Bild umbennennt",
+                    "Resultat": f"-",
+                    "Output Dokument": f"-",
+                    "Ersetzt Hauptexcel": "-"}
+        return input_df, doc_dict
 
     # add_rename_inventarnummer(in_data="a_Test_rename_inventarnummer", is_excel=True, return_sorted=False,
     # tranche="Test")
 
-    @staticmethod
-    def has_inventarnummer_double(input_df: pd.DataFrame, tranche: str, in_excel_name: str) -> pd.DataFrame or None:
-        """
-        Checks whether there are any double in the column "Inventarnummer". If not excel, also returns a bool.
-        :param in_data: excel / df
-        :param is_excel: True if excel
-        :param tranche: name
-        :param abteilung: name or df_documentation if not excel
-        :return: if not excel: True if any double, df with doubles and df without, otherwise False
-        """
-        #############################
-        # clean the df
-        input_df = Clean.strip_spaces(input_df)
-        # returns df with all the doubles
-        df_doubles = input_df[input_df["Inventarnummer"].duplicated(keep=False)]
-        if len(df_doubles) != 0:
-            # add new columns for adding new Inventarnummer
-            df_doubles = Inventarnummer.add_rename_inventarnummer(input_df, False)
-            input_df.drop_duplicates(subset=["Inventarnummer"], keep=False, inplace=True, ignore_index=True)
-            doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
-                        "Feld": "Inventarnummer", "Was": "Dubletten", "Resultat": f"{len(df_doubles)} dubletten",
-                        "Output Dokument": f"{tranche}_{today}_Inventarnummer_Dubletten // "
-                                           f"{tranche}_{today}_Inventarnummer_Keine_Dubletten",
-                        "Ersetzt Hauptexcel": "unterteilt es"}
-            return True, df_doubles, input_df, doc_dict
-        else:
-            doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
-                 "Feld": "Inventarnummer", "Was": "Dubletten", "Resultat": f"keine dubletten",
-                 "Output Dokument": f"-", "Ersetzt Hauptexcel": "-"}
-            return False, None, None, doc_dict
-
-    # # Version with doubles
-    # has_inventarnummer_double(in_data="a_Test_has_inventarnummer_double_Doppelt", is_excel=True, tranche="Test",
-    #                           abteilung="Test")
-    #
-    # # Version witout doubles
-    # has_inventarnummer_double(in_data="a_Test_has_inventarnummer_double_keine_Doppel", is_excel=True, tranche="Test",
-    #                           abteilung="Test")
 
 
 if __name__ == "__main__":

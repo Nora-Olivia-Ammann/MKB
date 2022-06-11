@@ -36,10 +36,10 @@ class Ethnie:
             {"Kontrolliert": "", "Ethniengruppe (Nation)": df_in["Ethniengruppe (Nation)"], "Ethnie Neu": "",
              "Bsp: Inventarnummer": df_in["Inventarnummer"], "Bsp: Ordner Bild": df_in["Ordner Bild"],
              "Bemerkungen": ""})
+        # clean all the blank spaces
+        df_unique_info = Clean.strip_spaces_col(df_unique_info, "Ethniengruppe (Nation)")
         # drop all the rows with nan col, modify memory
         df_unique_info.dropna(subset=["Ethniengruppe (Nation)"], inplace=True)
-        # clean all the blank spaces
-        df_unique_info = Clean.strip_spaces(df_unique_info)
         # remove all the duplicate values
         # drop duplicates keeps the first occurrence
         df_unique_info.drop_duplicates(subset=["Ethniengruppe (Nation)"], keep="first", inplace=True, ignore_index=True)
@@ -60,15 +60,13 @@ class Ethnie:
         # read the new excel
         df_in = ExF.in_excel_to_df(in_excel)
         # clean the df
-        df_in = Clean.strip_spaces(df_in)
+        df_in = Clean.strip_spaces_col(df_in, "Ethniengruppe (Nation)")
         # read in the key excel
         df_key = ExF.in_excel_to_df(key_excel)
         # create a temporary df to store only the relevant columns in, that has the same structure as the other df
         temp_in = pd.DataFrame({"Kontrolliert": "", "Ethniengruppe (Nation)": df_in["Ethniengruppe (Nation)"],
                                 "Ethnie Neu": "", "Bsp: Inventarnummer": df_in["Inventarnummer"],
                                 "Bsp: Ordner Bild": df_in["Ordner Bild"], "Bemerkungen": ""})
-        # clean all the blank spaces
-        temp_in = Clean.strip_spaces(temp_in)
         # concat the two dfs, it is important that the key df is in first place since when sorting out duplicates
         # this is the one that is kept
         df_combined = pd.concat([df_key, temp_in], ignore_index=True)

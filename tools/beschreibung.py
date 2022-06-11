@@ -42,11 +42,15 @@ class Beschreibung:
                 else:
                     input_df.loc[index, "Beschreibung"] = f"{prefix_text}{source_val}"
             # skip the row if it contains NaN
-        doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
+        doc_dict = {"Datum": today,
+                    "Tranche": tranche,
+                    "Input Dokument": in_excel_name,
+                    "Schlüssel Excel": "-",
                     "Feld": "Beschreibung",
-                    "Was": f"Information ergänzen",
+                    "Was": "Information ergänzen.",
                     "Resultat": f"Info von Spalte: '{source_col}', zu Beschreibung mit Präfix: '{prefix_text}'",
-                    "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}
+                    "Output Dokument": f"-",
+                    "Ersetzt Hauptexcel": "-"}
         return input_df, doc_dict
 
     # add_str_to_beschreibung(in_data="a_Test_add_str_to_beschreibung", is_excel=True, abteilung="Test", tranche="Test",
@@ -73,6 +77,7 @@ class Beschreibung:
                 input_df.loc[index, "Beschreibung"] = ",".join(besch_spl)
             except TypeError:
                 pass
+
         doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
                     "Feld": "Beschreibung", "Was": "Hinzufügen Schubladenname", "Resultat": f"erfolgreich hinzugefügt",
                     "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}

@@ -79,8 +79,8 @@ def einlauf_fill(in_excel: str, key_excel: str, tranche: str, abteilung: str, co
     # check whether all keys are present, in the key file, the Inschrift column is called Inventarnummer as it is a
     # TMS export, where the Einläufe are registered as a virtual object
     # we do not drop the uncontrolled as it does not exist in this file
-    result_check, df_not_dict = KE.check_key_isin(in_data=df_in, key_data=df_key,
-                                                  drop_uncontrolled=False, is_excel=False, abteilung=df_doc)
+    result_check, df_not_dict = KE.key_check(in_data=df_in, key_data=df_key,
+                                             drop_uncontrolled=False, is_excel=False, abteilung=df_doc)
     if not result_check:
         # drop the duplicates, we only need one example
         df_not_dict.drop_duplicates(subset=["Inschrift"], keep="first", inplace=True, ignore_index=True)

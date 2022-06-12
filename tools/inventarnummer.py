@@ -23,8 +23,8 @@ pd.set_option("mode.chained_assignment", None)
 class Inventarnummer:
 
     @staticmethod
-    def inventar_sortierbar(input_df: pd.DataFrame or str, in_excel_name: str, return_sorted: bool,
-                            tranche: str or None = None) -> pd.DataFrame or None:
+    def add_inventar_sortierbar(input_df: pd.DataFrame or str, in_excel_name: str, return_sorted: bool,
+                                tranche: str or None = None) -> pd.DataFrame or None:
         """
         Adds a new column with a sortable Inventarnummer. The correct one which we use in the TMS has no leading zeros,
         and cannot be sorted by excel or df correctly so that 2 follows 1 instead of 10. Because there may still be
@@ -36,8 +36,9 @@ class Inventarnummer:
         :param return_sorted: if it should return sorted according to the inventarnummer: True
         :return: df or None
         """
+        # TODO: validate
         # clean the df
-        input_df = Clean.strip_spaces_whole_df(input_df)
+        input_df = Clean.strip_spaces_col(input_df, "Inventarnummer")
         # overwrite the existing column with the new Inventarnummer
         input_df["Inventar Sortierbar"] = input_df["Inventarnummer"]
         # we only want to format roughly correct inventarnummer, as the true compliance check comes later
@@ -59,6 +60,8 @@ class Inventarnummer:
                     spl_val[1] = spl_val[1].zfill(7)
                     joined = " ".join(spl_val)
                     input_df.loc[index, "Inventar Sortierbar"] = joined
+                else:
+                    continue
             # skip the row if it is NaN
             except ValueError:
                 continue
@@ -91,7 +94,7 @@ class Inventarnummer:
         :param tranche: name
         :return: df / None
         """
-        # TODO: exception handling
+        # TODO: validate
         if "Alt Inventarnummer" in input_df.columns:
             raise ColExistsError("The Column already exists.")
         # rename the column with the old inventarnummer
@@ -114,7 +117,6 @@ class Inventarnummer:
 
     # add_rename_inventarnummer(in_data="a_Test_rename_inventarnummer", is_excel=True, return_sorted=False,
     # tranche="Test")
-
 
 
 if __name__ == "__main__":

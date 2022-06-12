@@ -7,6 +7,7 @@ from datetime import date
 import re
 
 from excel_functions import ExcelFunctions as ExF
+from double_check import DoubleCheck as Double
 
 today = str(date.today())
 os.chdir("..")
@@ -16,94 +17,82 @@ current_wdir = os.getcwd()
 # Suppress the SettingWithCopyWarning
 pd.set_option("mode.chained_assignment", None)
 
-# TODO: complete rewrite
-# TODO write duplicate key check
+
+# TODO: validate
+# Todo: write description
 
 
 class KeyExcel:
 
     @staticmethod
-    def check_key_isin(df_in: str or pd.DataFrame, key_df: str or pd.DataFrame, drop_uncontrolled: bool,
-                       abteilung: str or None = None) -> None or bool and pd.DataFrame:
-        """
-        This function checks whether the key excel contains all the keys that are in the tranchen excel. If not used
-        as a nested function it also writes the documentation.
-        :param df_in:
-        :param in_data: tranche excel
-        :param key_data: key excel
-        :param drop_uncontrolled: True: drops all rows where 'Kontrolle' Column is empty
-        :param is_excel: True: if it is excel
-        :param abteilung: name
-        :return: if is_excel False: Bool True if all keys are present or Bool False and a df with the missing keys
-        """
+    def key_check(input_df: pd.DataFrame, input_key_df: pd.DataFrame, key_col: str,
+                  in_excel_name: str or None, key_excel_name: str or None, tranche: str or None,
+                  write_doc: bool = True, drop_uncontrolled: bool = True) \
+            -> bool and pd.DataFrame or None and dict or None:
         # drop the uncontrolled rows
         if drop_uncontrolled:
-            key_df.dropna(subset=["Kontrolliert"], inplace=True)
-        # TODO: checks for duplicate keys, return document with the keys and stop the function
-        raise KeyError("Please write the code to check for duplicate keys.")
+            input_key_df.dropna(subset=["Kontrolliert"], inplace=True)
+        # check if there are duplicate keys
+        col_has_double, df_double, _ = Double.has_col_double(input_df, key_col)
+        # if yes then get the duplicate keys, write doc and stop the function
+        if col_has_double:
+            if write_doc:
+                # write documentation
+                doc_dict = {"Datum": today,
+                            "Tranche": tranche,
+                            "Input Dokument": in_excel_name,
+                            "Schlüssel Excel": key_excel_name,
+                            "Feld": key_col,
+                            "Was": "Dublette",
+                            "Resultat": f"{key_col} hat {len(df_double)} dubletten.",
+                            "Output Dokument": f"-",
+                            "Ersetzt Hauptexcel": "-"}
+                # return the results
+                return False, df_double, doc_dict
+            else:
+                return False, df_double, None
+        # if not double keys exist
         # create a filter the shows false if the key is not in the in_col
-        isin_filter = df_in[in_col].isin(key_df[key_col])
-        # check if all are there
-        if not isin_filter.all():
-            # get all the rows with the missing key information
-            df_not_dict = df_in[isin_filter == False]
-            # we only need one example of the key
+        all_isin = input_df[key_col].isin(input_key_df[key_col])
+        # if not all keys are there
+        if not all_isin.all():
+            # get the keys that are not in the key excel
+            df_not_dict = input_df[all_isin == False]
             # drops all the duplicates from the col subset, keeps first instance, resets index, and overwrites df
             df_not_dict.drop_duplicates(subset=[key_col], keep="first", inplace=True, ignore_index=True)
             # sort the values
             df_not_dict.sort_values(by=[key_col], ascending=True, inplace=True, na_position='first', ignore_index=True)
-            if is_excel:
-                # save the excel
-                ExF.save_df_excel(df_not_dict, f"Schlüssel_Fehlende_{out_excel}_{tranche}_{today}")
-                # write documentation
-                df_doc = pd.concat([df_doc, pd.DataFrame(
-                    {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": key_data,
-                     "Feld": f"{key_col}", "Was": f"Vollständigkeit im Schlüssel Excel, "
-                                                  f"drop_uncontroled: {drop_uncontrolled}",
-                     "Resultat": f"{len(df_not_dict)} fehlende Schlüssel",
-                     "Output Dokument": f"Schlüssel_Fehlende_{out_excel}_{tranche}_{today}", "Ersetzt Hauptexcel": "-"},
-                    index=[0])], ignore_index=True)
-                ExF.save_doc_excel(df_doc, abteilung)
+            # write the documentation
+            if write_doc:
+                doc_dict = {"Datum": today,
+                            "Tranche": tranche,
+                            "Input Dokument": in_excel_name,
+                            "Schlüssel Excel": key_excel_name,
+                            "Feld": key_col,
+                            "Was": f"Schlüssel vorhanden",
+                            "Resultat": f"{len(df_not_dict)} Schlüssel nicht vorhanden.",
+                            "Output Dokument": f"-",
+                            "Ersetzt Hauptexcel": "-"}
+                # return the result
+                return False, df_not_dict, doc_dict
             else:
-                return False, df_not_dict
+                return False, df_not_dict, None
+        # else if all the keys are present
+        if write_doc:
+            # write the documentation
+            doc_dict = {"Datum": today,
+                        "Tranche": tranche,
+                        "Input Dokument": in_excel_name,
+                        "Schlüssel Excel": key_excel_name,
+                        "Feld": key_col,
+                        "Was": f"Schlüssel vorhanden",
+                        "Resultat": f"Alle Schlüssel sind vorhanden.",
+                        "Output Dokument": f"-",
+                        "Ersetzt Hauptexcel": "-"}
+            # return the results
+            return True, None, doc_dict
         else:
-            if is_excel:
-                # write documentation
-                df_doc = pd.concat([df_doc, pd.DataFrame(
-                    {"Datum": today, "Tranche": tranche, "Input Dokument": in_data, "Schlüssel Excel": key_data,
-                     "Feld": f"{key_col}", "Was": f"Vollständigkeit im Schlüssel Excel, "
-                                                  f"drop_uncontroled: {drop_uncontrolled}",
-                     "Resultat": f"Keine fehlende Schlüssel", "Output Dokument": f"-", "Ersetzt Hauptexcel": "-"},
-                    index=[0])], ignore_index=True)
-                ExF.save_doc_excel(df_doc, abteilung)
-            else:
-                return True, None
-
-
-    # # MISSING KEYS
-    # # here some keys that are in the Tranche Excel are missing in the key excel
-    # check_key_isin(in_data="a_Test_check_key_isin_Tranche", in_col="Schlüssel_Info",
-    #                key_data="a_Test_check_key_isin_Schlüssel_Fehlen", key_col="Schlüssel_Info", drop_uncontrolled=True,
-    #                is_excel=True, tranche="Test", abteilung="Test", out_excel="Schlüssel_Info")
-    #
-    #
-    # # KEYS UNCONTROLLED
-    # # here the all the keys are in the key excel but they are not controlled, therfore treated as missing because
-    # # the parameter drop_uncontrolled is true, therfore the keys will be labled as missing
-    # check_key_isin(in_data="a_Test_check_key_isin_Tranche", in_col="Schlüssel_Info",
-    #                key_data="a_Test_check_key_isin_Schlüssel_Korrekt_Unkontrolliert", key_col="Schlüssel_Info",
-    #                drop_uncontrolled=True, is_excel=True, tranche="Test", abteilung="Test", out_excel="Schlüssel_Info")
-    #
-    # # this is the same as above, except that drop_uncontrolled is False, this will not return an excel
-    # check_key_isin(in_data="a_Test_check_key_isin_Tranche", in_col="Schlüssel_Info",
-    #                key_data="a_Test_check_key_isin_Schlüssel_Korrekt_Unkontrolliert", key_col="Schlüssel_Info",
-    #                drop_uncontrolled=False, is_excel=True, tranche="Test", abteilung="Test", out_excel="Schlüssel_Info")
-    #
-    # # ALL CORRECT
-    # # here everyting is correct, it will not return an excel
-    # check_key_isin(in_data="a_Test_check_key_isin_Tranche", in_col="Schlüssel_Info",
-    #                key_data="a_Test_check_key_isin_Schlüssel_Korrekt", key_col="Schlüssel_Info",
-    #                drop_uncontrolled=True, is_excel=True, tranche="Test", abteilung="Test", out_excel="Schlüssel_Info")
+            return True, None, None
 
 
 if __name__ == "__main__":

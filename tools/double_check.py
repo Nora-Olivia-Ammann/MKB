@@ -60,7 +60,7 @@ class DoubleCheck:
         # TODO: validate
         # TODO: write description
         # check if the column has double, no need to clean as is done in function
-        has_double, _, _ = DoubleCheck.has_col_double(input_df, col_name, tranche, in_excel_name, False)
+        has_double, _, _ = DoubleCheck.has_col_double(input_df, col_name)
         # if it has doubles add the column that documents it
         # no exception handling is necessary as that is done in the has_col_double
         if has_double:

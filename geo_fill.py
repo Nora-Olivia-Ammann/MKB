@@ -76,13 +76,13 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str, contin
         # raise error
         raise KeyDocIncomplete("Not all mandatory fields in the key document are filled.")
     # check if all the Geo_ID are in the Key document
-    result_isin_check, df_not_dict = KE.check_key_isin(
+    result_isin_check, df_not_dict = KE.key_check(
         in_data=df_in, key_data=df_key, drop_uncontrolled=True,
         is_excel=False, abteilung=abteilung)
     if not result_isin_check:
         df_key = ExF.in_excel_to_df(key_excel)
         # check if the Geo_ID is also missing from the df that contains the unchecked Geo_IDs
-        all_geo_isin, df_not_all_dict = KE.check_key_isin(
+        all_geo_isin, df_not_all_dict = KE.key_check(
             in_data=df_in, key_data=df_key, drop_uncontrolled=False,
             is_excel=False, abteilung=abteilung)
         if not all_geo_isin:

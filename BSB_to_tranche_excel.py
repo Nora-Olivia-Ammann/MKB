@@ -88,7 +88,7 @@ def new_tranche_excel(in_excel: str, tranche: str, abteilung: str, prefix_unique
         except AttributeError:
             continue
     # add the sortierbare Inventarnummer
-    df_out = InvNr.inventar_sortierbar(in_data=df_out, is_excel=False, tranche=None, return_sorted=return_sorted)
+    df_out = InvNr.add_inventar_sortierbar(in_data=df_out, is_excel=False, tranche=None, return_sorted=return_sorted)
     # as at this stage the inventarnummer may change, there is no way to uniquely identify a row
     # therefore we create our own ID, by adding leading zeros we make this number sortable and thus preserve the
     # original order

@@ -25,10 +25,8 @@ pd.set_option("mode.chained_assignment", None)
 class KeyExcel:
 
     @staticmethod
-    def key_check(input_df: pd.DataFrame, input_key_df: pd.DataFrame, key_col: str,
-                  in_excel_name: str or None, key_excel_name: str or None, tranche: str or None,
-                  write_doc: bool = True, drop_uncontrolled: bool = True) \
-            -> bool and pd.DataFrame or None and dict or None:
+    def key_check(input_df: pd.DataFrame, input_key_df: pd.DataFrame, key_col: str, drop_uncontrolled: bool = True) \
+            -> bool and pd.DataFrame or None and str or None and dict:
         # drop the uncontrolled rows
         if drop_uncontrolled:
             input_key_df.dropna(subset=["Kontrolliert"], inplace=True)
@@ -36,21 +34,18 @@ class KeyExcel:
         col_has_double, df_double, _ = Double.has_col_double(input_df, key_col)
         # if yes then get the duplicate keys, write doc and stop the function
         if col_has_double:
-            if write_doc:
-                # write documentation
-                doc_dict = {"Datum": today,
-                            "Tranche": tranche,
-                            "Input Dokument": in_excel_name,
-                            "Schlüssel Excel": key_excel_name,
-                            "Feld": key_col,
-                            "Was": "Dublette",
-                            "Resultat": f"{key_col} hat {len(df_double)} dubletten.",
-                            "Output Dokument": f"-",
-                            "Ersetzt Hauptexcel": "-"}
-                # return the results
-                return False, df_double, doc_dict
-            else:
-                return False, df_double, None
+            # write documentation
+            doc_dict = {"Datum": today,
+                        "Tranche": "",
+                        "Input Dokument": "",
+                        "Schlüssel Excel": "",
+                        "Feld": key_col,
+                        "Was": "Dublette",
+                        "Resultat": f"{key_col} hat {len(df_double)} dubletten.",
+                        "Output Dokument": f"",
+                        "Ersetzt Hauptexcel": "nein"}
+            # return the results
+            return False, df_double, "Dubletten", doc_dict
         # if not double keys exist
         # create a filter the shows false if the key is not in the in_col
         all_isin = input_df[key_col].isin(input_key_df[key_col])
@@ -63,36 +58,30 @@ class KeyExcel:
             # sort the values
             df_not_dict.sort_values(by=[key_col], ascending=True, inplace=True, na_position='first', ignore_index=True)
             # write the documentation
-            if write_doc:
-                doc_dict = {"Datum": today,
-                            "Tranche": tranche,
-                            "Input Dokument": in_excel_name,
-                            "Schlüssel Excel": key_excel_name,
-                            "Feld": key_col,
-                            "Was": f"Schlüssel vorhanden",
-                            "Resultat": f"{len(df_not_dict)} Schlüssel nicht vorhanden.",
-                            "Output Dokument": f"-",
-                            "Ersetzt Hauptexcel": "-"}
-                # return the result
-                return False, df_not_dict, doc_dict
-            else:
-                return False, df_not_dict, None
-        # else if all the keys are present
-        if write_doc:
-            # write the documentation
             doc_dict = {"Datum": today,
-                        "Tranche": tranche,
-                        "Input Dokument": in_excel_name,
-                        "Schlüssel Excel": key_excel_name,
+                        "Tranche": "",
+                        "Input Dokument": "",
+                        "Schlüssel Excel": "",
                         "Feld": key_col,
                         "Was": f"Schlüssel vorhanden",
-                        "Resultat": f"Alle Schlüssel sind vorhanden.",
-                        "Output Dokument": f"-",
-                        "Ersetzt Hauptexcel": "-"}
-            # return the results
-            return True, None, doc_dict
-        else:
-            return True, None, None
+                        "Resultat": f"{len(df_not_dict)} Schlüssel nicht vorhanden.",
+                        "Output Dokument": f"",
+                        "Ersetzt Hauptexcel": "nein"}
+            # return the result
+            return False, df_not_dict, "Fehlende_Schlüssel", doc_dict
+        # else if all the keys are present
+            # write the documentation
+        doc_dict = {"Datum": today,
+                    "Tranche": "",
+                    "Input Dokument": "",
+                    "Schlüssel Excel": "",
+                    "Feld": key_col,
+                    "Was": f"Schlüssel vorhanden",
+                    "Resultat": f"Alle Schlüssel sind vorhanden.",
+                    "Output Dokument": f"",
+                    "Ersetzt Hauptexcel": "nein"}
+        # return the results
+        return True, None, None, doc_dict
 
 
 if __name__ == "__main__":

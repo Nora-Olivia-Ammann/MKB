@@ -72,16 +72,8 @@ class ColumnsToStr:
                     "Was": f"Info hinzufügen",
                     "Resultat": f"Info von Spalte: '{col_list}' in neue Spalte {new_col_name}",
                     "Output Dokument": f"-",
-                    "Ersetzt Hauptexcel": "-"}
+                    "Ersetzt Hauptexcel": "ja"}
         return input_df, doc_dict
-
-    # # with Prefix
-    # join_col_to_str(in_data="a_Test_join_col_to_str", is_excel=True, col_list=["Col1", "Col2", "Col3", "Col4"],
-    #                 name_list=["N1", "N2", "N3", "N4"], new_col_name="New_Col", tranche="Test", abteilung="Test")
-    #
-    # # without Prefix
-    # join_col_to_str(in_data="a_Test_join_col_to_str", is_excel=True, col_list=["Col1", "Col2", "Col3", "Col4"],
-    #                 name_list=False, new_col_name="New_Col", tranche="Test", abteilung="Test")
 
 
 if __name__ == "__main__":

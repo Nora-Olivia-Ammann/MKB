@@ -44,24 +44,20 @@ class Beschreibung:
             # skip the row if it contains NaN
         doc_dict = {"Datum": today,
                     "Tranche": tranche,
-                    "Input Dokument": in_excel_name,
-                    "Schlüssel Excel": "-",
+                    "Input Dokument": "",
+                    "Schlüssel Excel": "",
                     "Feld": "Beschreibung",
                     "Was": "Information ergänzen.",
                     "Resultat": f"Info von Spalte: '{source_col}', zu Beschreibung mit Präfix: '{prefix_text}'",
-                    "Output Dokument": f"-",
-                    "Ersetzt Hauptexcel": "-"}
+                    "Output Dokument": f"",
+                    "Ersetzt Hauptexcel": "ja"}
         return input_df, doc_dict
 
-    # add_str_to_beschreibung(in_data="a_Test_add_str_to_beschreibung", is_excel=True, abteilung="Test", tranche="Test",
-    #                         source_col="P1 Fotograf*in/Filmer*in", prefix_text="")
-
     @staticmethod
-    def add_schublade(input_df: pd.DataFrame, tranche: str, in_excel_name: str):
+    def add_schublade(input_df: pd.DataFrame) -> pd.DataFrame and dict:
         """
         Adds the name of the Schublade, to the Beschreibung after the number of the Schublade.
         :param input_df:
-        :param tranche: name
         :param abteilung: name or df_doc if not excel
         :return: df or None
         """
@@ -77,13 +73,16 @@ class Beschreibung:
                 input_df.loc[index, "Beschreibung"] = ",".join(besch_spl)
             except TypeError:
                 pass
-
-        doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
-                    "Feld": "Beschreibung", "Was": "Hinzufügen Schubladenname", "Resultat": f"erfolgreich hinzugefügt",
-                    "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}
+        doc_dict = {"Datum": today,
+                    "Tranche": "",
+                    "Input Dokument": "",
+                    "Schlüssel Excel": "-",
+                    "Feld": "Beschreibung",
+                    "Was": "Hinzufügen Schubladenname",
+                    "Resultat": f"erfolgreich hinzugefügt",
+                    "Output Dokument": f"",
+                    "Ersetzt Hauptexcel": "ja"}
         return input_df, doc_dict
-
-    # add_schublade("_Test_Tranche_Neu_Formatiert_Kurz", is_excel=True, tranche="Test", abteilung="Test")
 
 
 if __name__ == "__main__":

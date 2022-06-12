@@ -47,7 +47,27 @@ doc_list.append({
     "Ersetzt Hauptexcel": ""})
 """
 
+# mit output
+"""
+doc_dict.update(
+    {"Tranche": tranche, 
+     "Input Dokument": in_excel, 
+     "Schlüssel Excel": key_excel, 
+     "Output Dokument": output_name})
+"""
+
+# ohne output
+"""
+doc_dict.update(
+    {"Tranche": tranche, 
+     "Input Dokument": in_excel, 
+     "Schlüssel Excel": key_excel})
+"""
+
+
 #doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "", "Feld": "", "Was": "", "Resultat": f"", "Output Dokument": f"", "Ersetzt Hauptexcel": ""})
+
+
 
 
 def new_funct(in_excel, key_excel, tranche, abteilung):

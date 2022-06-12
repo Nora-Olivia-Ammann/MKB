@@ -55,9 +55,6 @@ class ModifyExcel:
                         "Output Dokument": f"{name_out_excel}_{today}",
                         "Ersetzt Hauptexcel": "fügt mehrere zusammen"})
 
-    # combine_excel(list_in_excel=["a_Test_combine_excel_1", "a_Test_combine_excel_2", "a_Test_combine_excel_3"],
-    #               tranche="Test", name_out_excel="T1-3", abteilung="Test")
-
     @staticmethod
     def shorten_tranchen_excel(in_excel: str, num_rows: int, out_excel: str) -> None:
         """
@@ -89,8 +86,6 @@ class ModifyExcel:
         df_in.pop("index")  # when resetting the index it is saved as a new column
         df_in.drop(index=df_in.index[num_rows + 1:], axis=0, inplace=True)
         ExF.save_df_excel(df_in, out_excel)
-
-    # shorten_tranchen_excel(in_excel="a_Test_shorten_excel", num_rows=20, out_excel="Test_Shortened")
 
     @staticmethod
     def excel_identical_check(excel_one: str, excel_two: str):

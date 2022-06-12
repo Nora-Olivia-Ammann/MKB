@@ -20,18 +20,15 @@ pd.set_option("mode.chained_assignment", None)
 class Inschrift:
 
     @staticmethod
-    def einlaufnummer_bearbeiten(input_df: pd.DataFrame, tranche: str, in_excel_name: str) -> None or pd.DataFrame:
+    def inschrift_incorrect(input_df: pd.DataFrame) -> bool and pd.DataFrame and dict:
         """
         Checks whether all the Einlaufnummer are in the correct format. If leading zeros are missing it fills those.
         If used as nested function it also returns a True if all is correct and the df (if leading zeros were added
         it does not appear as a fault, therefore the input df has to be overwritten), or False and the df with the column
         that marks them as such added.
-        :param in_data: excel / df
-        :param is_excel: True if excel
-        :param tranche: name
-        :param abteilung: name
-        :return: True if all is correct and new tranche df, False if not correct and new tranche df and faulty df
         """
+        # TODO: rewrite description
+        # TODO. validate
         pattern_einlauf_correct, pattern_zero, pattern_incomplete = RePat.inschrift_re_pattern()
         # get the index number of the column inschrift
         index_no = input_df.columns.get_loc("Inschrift")
@@ -45,7 +42,8 @@ class Inschrift:
             # RegEx only works with strings. Numbers (int and float) are also treated as strings,
             # you only get a type error if it is empty
             try:
-                # if the numbers are only zeros, this has to come first, as a 0 number could also match the correct RegEx
+                # if the numbers are only zeros, this has to come first,
+                # as a 0 number could also match the correct RegEx
                 if pattern_zero.match(inschrift):
                     input_df.loc[index, "Inschrift falsch"] = "x"
                 # if the numbers are valid
@@ -67,28 +65,27 @@ class Inschrift:
         # if all are correct then the column is empty
         if input_df["Inschrift falsch"].isnull().all():
             input_df.pop("Inschrift falsch")
-            doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
-                     "Feld": "Inschrift", "Was": "Compliance",
-                     "Resultat": f"alle Angaben korrekt oder wurden korriegiert.",
-                     "Output Dokument": f"{tranche}_{today}_Komplett", "Ersetzt Hauptexcel": "ja"}
+            doc_dict = {"Datum": today,
+                        "Tranche": "",
+                        "Input Dokument": "",
+                        "Schlüssel Excel": "",
+                        "Feld": "Inschrift",
+                        "Was": "Compliance",
+                        "Resultat": f"alle Angaben korrekt oder wurden korriegiert.",
+                        "Output Dokument": f"",
+                        "Ersetzt Hauptexcel": ""}
             return True, input_df, doc_dict
-        doc_dict = {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel_name, "Schlüssel Excel": "-",
-             "Feld": "Inschrift", "Was": "Compliance", "Resultat": f"Inschriften inkorrekt",
-             "Output Dokument": f"{tranche}_{today}_Komplett",
-             "Ersetzt Hauptexcel": "ja"}
-        return False, input_df, doc_dict
-
-    # # everything is correct and all the numbers are there
-    # einlaufnummer_bearbeiten(in_data="_Test_Excel/c_Test_einlaufnummer_bearbeiten_Vollständig", is_excel=True,
-    #                        tranche="Test", abteilung="Test")
-
-    # # everything is correct but some are missing
-    # einlaufnummer_bearbeiten(in_data="_Test_Excel/c_Test_einlaufnummer_bearbeiten_Korrekt", is_excel=True,
-    #                          tranche="Test", abteilung="Test")
-
-    # # many different mistakes
-    # einlaufnummer_bearbeiten(in_data="_Test_Excel/c_Test_einlaufnummer_bearbeiten_Fehler", is_excel=True,
-    #                          tranche="Test", abteilung="Test")
+        else:
+            doc_dict = {"Datum": today,
+                        "Tranche": "",
+                        "Input Dokument": "",
+                        "Schlüssel Excel": "-",
+                        "Feld": "Inschrift",
+                        "Was": "Compliance",
+                        "Resultat": f"Inschriften inkorrekt",
+                        "Output Dokument": f"",
+                        "Ersetzt Hauptexcel": ""}
+            return False, input_df, doc_dict
 
 
 if __name__ == "__main__":

@@ -14,6 +14,8 @@ current_wdir = os.getcwd()
 # Suppress the SettingWithCopyWarning
 pd.set_option("mode.chained_assignment", None)
 
+# todo complete rewrite -> make it so that it only calls nested functions
+
 
 def inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str, regex_pattern):
     """
@@ -34,6 +36,7 @@ def inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str, regex
     # to concat in the end
     doc_list = []
     # NAN CHECK
+    # todo replace with nested function
     # Check if all rows have an "Inventarnummer", also one cannot perform a RegEx check on a NaN so the programme
     # would stop and throw an error
     if df_in["Inventarnummer"].isnull().any():
@@ -57,6 +60,7 @@ def inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str, regex
              "Output Dokument": f"-", "Ersetzt Hauptexcel": "unterteilt es"})
     # get the RegEx pattern
     pattern_correct, pattern_leading_zero, pattern_dummy = regex_pattern
+    # todo: make leading zero function
     ###########
     # LEADING ZERO
     list_leading_zero = []
@@ -99,6 +103,7 @@ def inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str, regex
             {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Führende Null", "Resultat": f"keine führende null",
              "Output Dokument": f"-", "Ersetzt Hauptexcel": "-"})
+    # todo nested function integration
     #######################################
     # DUPLICATE CHECK
     # returns df with all the doubles
@@ -122,6 +127,7 @@ def inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str, regex
             {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Dubletten", "Resultat": f"keine dubletten",
              "Output Dokument": f"-", "Ersetzt Hauptexcel": "unterteilt es"})
+    # todo do nested function to call
     #######################################
     # COMPLIANCE CHECK
     # iterate over the items in the column from the second row onwards col_items returns a tuple
@@ -200,14 +206,4 @@ def inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str, regex
              "Feld": "Inventarnummer", "Was": "Falsche Formate", "Resultat": f"keine falsche Formate",
              "Output Dokument": f"-", "Ersetzt Hauptexcel": "unterteilt es"})
     ExF.doc_save_list(doc_list, abteilung)
-
-
-# # EXCEL WITH WRONG INVENTARNUMMER
-# inventarnummer_compliance(in_data="_Test_Excel/b_Test_inventarnummer_compliance_Fehler", tranche="Test", abteilung="Test")
-#
-# # EXCEL WITH ONLY CORRECT INVENTARNUMMER
-# inventarnummer_compliance(in_data="_Test_Excel/b_Test_inventarnummer_compliance_Korrekt", tranche="Pilot", abteilung="Test")
-# inventarnummer_compliance(in_data="Pilot_Komplett_2022-02-16", tranche="Pilot", abteilung="Test")
-
-
 

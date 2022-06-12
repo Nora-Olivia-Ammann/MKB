@@ -62,7 +62,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
     mandatory_fields = ["Beschreibung", "Inventarnummer", "Erwerbungsart", "Objektstatus", "Inschrift", "Geographietyp",
                         "Herk.9: Kontinent", "Herk.7: Subkontinent", "Datierung"]
     # the fourth return is the df with the NaN columns dropped, therefore we give it the
-    res_nan_check, df_nan, ex_name, df_not_nan = NAN.has_columns_NaN(
+    res_nan_check, df_nan, ex_name, df_not_nan = NAN.has_columns_nan(
         in_data=df_in, is_excel=False, tranche=None, abteilung=df_doc, column_list=mandatory_fields,
         separate_excel_columns=False)
     # check if any are empty
@@ -125,7 +125,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
     # EINLAUFNUMMER COMPLIANCE
     # the function may add leading zeros to the einlaufnummer, in that case it would not read as a false value,
     # it returns that df, therefore we replace in the df_in with that one
-    einlauf_check, df_in = Insch.einlaufnummer_bearbeiten(
+    einlauf_check, df_in = Insch.inschrift_incorrect(
         in_data=df_in, is_excel=False, tranche=None, abteilung=df_doc)
     if not einlauf_check:
         doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
@@ -161,7 +161,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
     # START TRANSFERRING DATA
     # before transferring data we add the Schubladenname to the Beschreibung, as it is easier to do before we add
     # the second header
-    df_in = Besch.add_schublade(in_data=df_in, is_excel=False, tranche=None, abteilung=df_doc)
+    df_in = Besch.add_schublade(in_data=df_in, is_excel=False, abteilung=df_doc)
     # drop all the content of the header df so that only the header remains
     df_out.drop(index=df_out.index[:], axis=0, inplace=True)
     # add the information for the second header

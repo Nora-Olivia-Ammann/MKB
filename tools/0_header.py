@@ -31,7 +31,7 @@ pd.set_option("mode.chained_assignment", None)
 """
 doc_dict = {"Datum": today,
             "Tranche": tranche,
-            "Input Dokument": in_excel_name,
+            "Input Dokument": "",
             "Schlüssel Excel": "",
             "Feld": "",
             "Was": "",

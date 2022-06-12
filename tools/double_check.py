@@ -14,9 +14,7 @@ current_wdir = os.getcwd()
 class DoubleCheck:
 
     @staticmethod
-    def has_col_double(input_df: pd.DataFrame, col_name: str, tranche: str or None = None,
-                       in_excel_name: str or None = None, write_doc: bool = False) -> \
-            bool and None or pd.DataFrame and None or dict:
+    def has_col_double(input_df: pd.DataFrame, col_name: str) -> bool and None or pd.DataFrame and dict:
         # TODO: validate, write description
         # clean the df
         input_df = Clean.strip_spaces_col(input_df, col_name)
@@ -25,38 +23,30 @@ class DoubleCheck:
         except KeyError:
             raise KeyError("Column doesn't exist.")
         if len(df_doubles) != 0:
-            if write_doc:
-                doc_dict = {"Datum": today,
-                            "Tranche": tranche,
-                            "Input Dokument": in_excel_name,
-                            "Schlüssel Excel": "-",
-                            "Feld": col_name,
-                            "Was": "Dubletten",
-                            "Resultat": f"{len(df_doubles)} dubletten",
-                            "Output Dokument": f"-",
-                            "Ersetzt Hauptexcel": "-"}
-                return True, df_doubles, doc_dict
-            else:
-                return True, df_doubles, None
+            doc_dict = {"Datum": today,
+                        "Tranche": "",
+                        "Input Dokument": "",
+                        "Schlüssel Excel": "",
+                        "Feld": col_name,
+                        "Was": "Dubletten",
+                        "Resultat": f"{len(df_doubles)} dubletten",
+                        "Output Dokument": f"",
+                        "Ersetzt Hauptexcel": ""}
+            return True, df_doubles, doc_dict
         else:
-            if write_doc:
-                doc_dict = {"Datum": today,
-                            "Tranche": tranche,
-                            "Input Dokument": in_excel_name,
-                            "Schlüssel Excel": "-",
-                            "Feld": col_name,
-                            "Was": "Dubletten",
-                            "Resultat": f"Keine dubletten",
-                            "Output Dokument": f"-",
-                            "Ersetzt Hauptexcel": "-"}
-                return False, None, doc_dict
-            else:
-                return False, None, None
+            doc_dict = {"Datum": today,
+                        "Tranche": "",
+                        "Input Dokument": "",
+                        "Schlüssel Excel": "",
+                        "Feld": col_name,
+                        "Was": "Dubletten",
+                        "Resultat": f"Keine dubletten",
+                        "Output Dokument": f"",
+                        "Ersetzt Hauptexcel": "nein"}
+            return False, None, doc_dict
 
     @staticmethod
-    def add_col_double_x(input_df: pd.DataFrame, col_name: str, tranche: str or None = None,
-                         in_excel_name: str or None = None, write_doc: bool = False) \
-            -> bool and pd.DataFrame and None or dict:
+    def add_col_double_x(input_df: pd.DataFrame, col_name: str) -> bool and pd.DataFrame or None and dict:
         # TODO: validate
         # TODO: write description
         # check if the column has double, no need to clean as is done in function
@@ -69,35 +59,29 @@ class DoubleCheck:
                             value=input_df.duplicated(subset=col_name, keep=False))
             # replace all the True with 'x' and the False with np.nan
             input_df[f"{col_name} Dublette"].replace(to_replace={True: "x", False: np.nan}, inplace=True)
-            if write_doc:
-                doc_dict = {"Datum": today,
-                            "Tranche": tranche,
-                            "Input Dokument": in_excel_name,
-                            "Schlüssel Excel": "-",
-                            "Feld": f"{col_name}, {col_name} Dublette",
-                            "Was": f"Hinzufügen von 'x' in '{col_name} Dublette'",
-                            "Resultat": f"-",
-                            "Output Dokument": f"-",
-                            "Ersetzt Hauptexcel": "-"}
-                # return df and doc list
-                return input_df, doc_dict
-            else:
-                return input_df, None
+            doc_dict = {"Datum": today,
+                        "Tranche": "",
+                        "Input Dokument": "",
+                        "Schlüssel Excel": "",
+                        "Feld": f"{col_name}, {col_name} Dublette",
+                        "Was": f"Hinzufügen von 'x' in '{col_name} Dublette'",
+                        "Resultat": f"-",
+                        "Output Dokument": f"",
+                        "Ersetzt Hauptexcel": "ja"}
+            # return df and doc list
+            return True, input_df, doc_dict
         # if it doesn't have doubles
         else:
-            if write_doc:
-                doc_dict = {"Datum": today,
-                            "Tranche": tranche,
-                            "Input Dokument": in_excel_name,
-                            "Schlüssel Excel": "-",
-                            "Feld": f"{col_name}",
-                            "Was": f"hat keine Dubletten",
-                            "Resultat": f"-",
-                            "Output Dokument": f"-",
-                            "Ersetzt Hauptexcel": "-"}
-                return input_df, doc_dict
-            else:
-                return input_df, None
+            doc_dict = {"Datum": today,
+                        "Tranche": "",
+                        "Input Dokument": "",
+                        "Schlüssel Excel": "",
+                        "Feld": f"{col_name}",
+                        "Was": f"hat keine Dubletten",
+                        "Resultat": f"-",
+                        "Output Dokument": f"-",
+                        "Ersetzt Hauptexcel": "nein"}
+            return False, None, doc_dict
 
 
 if __name__ == "__main__":

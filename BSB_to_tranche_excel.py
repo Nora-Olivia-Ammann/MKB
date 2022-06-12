@@ -75,7 +75,7 @@ def new_tranche_excel(in_excel: str, tranche: str, abteilung: str, prefix_unique
     df_out["Tranche"] = tranche
     # add leading zeros to the Einlaufnummer if not already present, and add a column to mark where the einlaufnummer
     # is missing or incorrect
-    _, df_out = Insch.einlaufnummer_bearbeiten(in_data=df_out, is_excel=False, tranche=tranche, abteilung=abteilung)
+    _, df_out = Insch.inschrift_incorrect(in_data=df_out, is_excel=False, tranche=tranche, abteilung=abteilung)
     # for easier use and later processing get the folder name from the Beschreibung for each row and place it in
     # the column, iterate over the columns
     for index, value in df_out["Beschreibung"].iteritems():

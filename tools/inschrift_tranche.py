@@ -20,7 +20,7 @@ pd.set_option("mode.chained_assignment", None)
 class Inschrift:
 
     @staticmethod
-    def inschrift_incorrect(input_df: pd.DataFrame) -> bool and pd.DataFrame and dict:
+    def inschrift_incorrect(input_df: pd.DataFrame, tranche: str, in_excel_name: str) -> bool and pd.DataFrame and dict:
         """
         Checks whether all the Einlaufnummer are in the correct format. If leading zeros are missing it fills those.
         If used as nested function it also returns a True if all is correct and the df (if leading zeros were added
@@ -66,25 +66,25 @@ class Inschrift:
         if input_df["Inschrift falsch"].isnull().all():
             input_df.pop("Inschrift falsch")
             doc_dict = {"Datum": today,
-                        "Tranche": "",
-                        "Input Dokument": "",
-                        "Schlüssel Excel": "",
+                        "Tranche": tranche,
+                        "Input Dokument": in_excel_name,
+                        "Schlüssel Excel": "-",
                         "Feld": "Inschrift",
                         "Was": "Compliance",
                         "Resultat": f"alle Angaben korrekt oder wurden korriegiert.",
-                        "Output Dokument": f"",
-                        "Ersetzt Hauptexcel": ""}
+                        "Output Dokument": np.nan,
+                        "Ersetzt Hauptexcel": "ja"}
             return True, input_df, doc_dict
         else:
             doc_dict = {"Datum": today,
-                        "Tranche": "",
-                        "Input Dokument": "",
+                        "Tranche": tranche,
+                        "Input Dokument": in_excel_name,
                         "Schlüssel Excel": "-",
                         "Feld": "Inschrift",
                         "Was": "Compliance",
                         "Resultat": f"Inschriften inkorrekt",
-                        "Output Dokument": f"",
-                        "Ersetzt Hauptexcel": ""}
+                        "Output Dokument": np.nan,
+                        "Ersetzt Hauptexcel": "ja"}
             return False, input_df, doc_dict
 
 

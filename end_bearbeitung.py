@@ -108,8 +108,8 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
             # we drop the wrong rows
             df_in.drop(index=drop_index_list, axis=0, inplace=True)
             # add the columns to document the renaming of inventarnummer
-            df_wrong_inventar = InvNr.add_rename_inventarnummer(in_data=df_wrong_inventar, is_excel=False, return_sorted=True,
-                                                                tranche=None)
+            df_wrong_inventar = InvNr.add_inventarnummer_alt(in_data=df_wrong_inventar, is_excel=False, return_sorted=True,
+                                                             tranche=None)
             doc_list.append(
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
                  "Feld": "Inventarnummer",

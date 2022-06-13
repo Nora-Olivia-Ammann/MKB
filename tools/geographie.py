@@ -59,8 +59,8 @@ class Geographie:
         return input_key_df
 
     @staticmethod
-    def geo_key_completion(input_key_df: pd.DataFrame, drop_uncontrolled: bool = True) \
-            -> bool and pd.DataFrame or None and dict:
+    def geo_key_completion(input_key_df: pd.DataFrame, tranche: str, in_excel_name: str,
+                           drop_uncontrolled: bool = True) -> bool and pd.DataFrame or None and dict:
         """
         There are not many columns that have to be filled for each Geo_ID, it checks those. A bool decides whether the
         uncontrolled rows should also be checked
@@ -79,25 +79,25 @@ class Geographie:
             # If fields are missing drop any duplicates, this because if one row has several missing fields,
             # it would be added twice, we only want one row for each Geo_ID
             df_nan.drop_duplicates(subset=["Geo_ID"], keep="first", inplace=True, ignore_index=True)
-            doc_dict = ({"Datum": today,
-                         "Tranche": "",
-                         "Input Dokument": "",
-                         "Schlüssel Excel": "",
-                         "Feld": "Angaben Geo",
-                         "Was": "Vollständigkeit Geografie",
-                         "Resultat": f"{len(df_nan)} unvollständige Geo_ID",
-                         "Output Dokument": f"",
-                         "Ersetzt Hauptexcel": "nein"})
+            doc_dict = {"Datum": today,
+                        "Tranche": tranche,
+                        "Input Dokument": in_excel_name,
+                        "Schlüssel Excel": "",
+                        "Feld": "Angaben Geo",
+                        "Was": "Vollständigkeit Geografie",
+                        "Resultat": f"{len(df_nan)} unvollständige Geo_ID",
+                        "Output Dokument": np.nan,
+                        "Ersetzt Hauptexcel": "nein"}
             return False, df_nan, doc_dict
         else:
             doc_dict = {"Datum": today,
-                        "Tranche": "",
-                        "Input Dokument": "",
+                        "Tranche": tranche,
+                        "Input Dokument": in_excel_name,
                         "Schlüssel Excel": "",
                         "Feld": "Angaben Geo",
                         "Was": "Vollständigkeit Geografie",
                         "Resultat": f"Keine unvollständige Geo_ID",
-                        "Output Dokument": f"",
+                        "Output Dokument": np.nan,
                         "Ersetzt Hauptexcel": "nein"}
             # return True as everyting is good, and no df as there aren't faulty entries
             return True, None, doc_dict

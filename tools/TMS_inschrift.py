@@ -43,7 +43,7 @@ class TMSEinlauf:
                 "Feld": "Erwerbungsart, Objektstatus",
                 "Was": "Information vollständig.",
                 "Resultat": f"Es fehlend bei {len(df_nan)} Inschriften Angaben.",
-                "Output Dokument": f"Fehlen_Angaben_{key_excel_name}_{today}",
+                "Output Dokument": np.nan,
                 "Ersetzt Hauptexcel": "-"}
             return False, df_nan, doc_dict
         else:

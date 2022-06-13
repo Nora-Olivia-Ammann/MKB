@@ -1,8 +1,8 @@
 import os
 from datetime import date
 
+import numpy as np
 import pandas as pd
-
 
 today = str(date.today())
 # os.chdir("..")
@@ -11,14 +11,11 @@ current_wdir = os.getcwd()
 ############################################
 # Suppress the SettingWithCopyWarning
 pd.set_option("mode.chained_assignment", None)
-doc_list = []
 
-doc_dict = {1: 1, 2: 2}
-doc_list.append(doc_dict)
+a = False
+b = False
 
-doc_dict = {3: 3}
-doc_list.append(doc_dict)
-
-
-print(doc_list)
-
+if all(result == False for result in (a, b)):
+    print("All False")
+else:
+    print("Not all False")

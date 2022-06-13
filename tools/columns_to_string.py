@@ -71,7 +71,7 @@ class ColumnsToStr:
                     "Feld": new_col_name,
                     "Was": f"Info hinzufügen",
                     "Resultat": f"Info von Spalte: '{col_list}' in neue Spalte {new_col_name}",
-                    "Output Dokument": f"-",
+                    "Output Dokument": np.nan,
                     "Ersetzt Hauptexcel": "ja"}
         return input_df, doc_dict
 

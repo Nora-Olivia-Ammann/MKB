@@ -47,8 +47,8 @@ class PictureFiles:
                     "Feld": "Bild umbenennt",
                     "Was": "hinzugefügt",
                     "Resultat": f"-",
-                    "Output Dokument": f"-",
-                    "Ersetzt Hauptexcel": "-"}
+                    "Output Dokument": np.nan,
+                    "Ersetzt Hauptexcel": "ja"}
         return input_df, doc_dict
 
 

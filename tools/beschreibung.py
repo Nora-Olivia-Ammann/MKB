@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import numpy as np
 from datetime import date
 
 today = str(date.today())
@@ -44,7 +45,7 @@ class Beschreibung:
             # skip the row if it contains NaN
         doc_dict = {"Datum": today,
                     "Tranche": tranche,
-                    "Input Dokument": "",
+                    "Input Dokument": in_excel_name,
                     "Schlüssel Excel": "",
                     "Feld": "Beschreibung",
                     "Was": "Information ergänzen.",
@@ -54,7 +55,7 @@ class Beschreibung:
         return input_df, doc_dict
 
     @staticmethod
-    def add_schublade(input_df: pd.DataFrame) -> pd.DataFrame and dict:
+    def add_schublade(input_df: pd.DataFrame, tranche: str, in_excel_name: str) -> pd.DataFrame and dict:
         """
         Adds the name of the Schublade, to the Beschreibung after the number of the Schublade.
         :param input_df:
@@ -74,13 +75,13 @@ class Beschreibung:
             except TypeError:
                 pass
         doc_dict = {"Datum": today,
-                    "Tranche": "",
-                    "Input Dokument": "",
+                    "Tranche": tranche,
+                    "Input Dokument": in_excel_name,
                     "Schlüssel Excel": "-",
                     "Feld": "Beschreibung",
                     "Was": "Hinzufügen Schubladenname",
                     "Resultat": f"erfolgreich hinzugefügt",
-                    "Output Dokument": f"",
+                    "Output Dokument": np.nan,
                     "Ersetzt Hauptexcel": "ja"}
         return input_df, doc_dict
 

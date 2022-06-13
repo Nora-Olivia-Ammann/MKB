@@ -16,6 +16,7 @@ from tools.inventarnummer import Inventarnummer as InvNr
 from tools.key_excel import KeyExcel as KE
 from tools.modify_excel import ModifyExcel as ModE
 from tools.NaN_check import NaN as NAN
+from tools.picture_files import PictureFiles as Pic
 from tools.RegEx_patterns import RegExPattern as RePat
 from tools.TMS_inschrift import TMSEinlauf as TMSInsch
 from tools.unique_ID import UniqueID as UID

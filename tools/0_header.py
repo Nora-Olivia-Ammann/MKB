@@ -27,16 +27,16 @@ current_wdir = os.getcwd()
 # Suppress the SettingWithCopyWarning
 pd.set_option("mode.chained_assignment", None)
 
-
+# , tranche: str, in_excel_name: str
 """
 doc_dict = {"Datum": today,
             "Tranche": tranche,
-            "Input Dokument": "",
-            "Schlüssel Excel": "",
+            "Input Dokument": in_excel_name,
+            "Schlüssel Excel": "-",
             "Feld": "",
             "Was": "",
             "Resultat": f"",
-            "Output Dokument": f"",
+            "Output Dokument": np.nan,
             "Ersetzt Hauptexcel": ""}
 """
 

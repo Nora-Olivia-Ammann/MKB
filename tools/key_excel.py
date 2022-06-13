@@ -24,14 +24,16 @@ pd.set_option("mode.chained_assignment", None)
 
 class KeyExcel:
 
+    # TODO: rewrite without double
     @staticmethod
-    def key_check(input_df: pd.DataFrame, input_key_df: pd.DataFrame, key_col: str, drop_uncontrolled: bool = True) \
+    def key_check(input_df: pd.DataFrame, input_key_df: pd.DataFrame, key_col: str, tranche: str, in_excel_name: str,
+                  key_excel_name: str, drop_uncontrolled: bool = True) \
             -> bool and pd.DataFrame or None and str or None and dict:
         # drop the uncontrolled rows
         if drop_uncontrolled:
             input_key_df.dropna(subset=["Kontrolliert"], inplace=True)
         # check if there are duplicate keys
-        col_has_double, df_double, _ = Double.has_col_double(input_df, key_col)
+        col_has_double, df_double, _ = Double.separate_double_col(input_df, key_col)
         # if yes then get the duplicate keys, write doc and stop the function
         if col_has_double:
             # write documentation
@@ -59,26 +61,26 @@ class KeyExcel:
             df_not_dict.sort_values(by=[key_col], ascending=True, inplace=True, na_position='first', ignore_index=True)
             # write the documentation
             doc_dict = {"Datum": today,
-                        "Tranche": "",
-                        "Input Dokument": "",
-                        "Schlüssel Excel": "",
+                        "Tranche": tranche,
+                        "Input Dokument": in_excel_name,
+                        "Schlüssel Excel": key_excel_name,
                         "Feld": key_col,
                         "Was": f"Schlüssel vorhanden",
                         "Resultat": f"{len(df_not_dict)} Schlüssel nicht vorhanden.",
-                        "Output Dokument": f"",
+                        "Output Dokument": np.nan,
                         "Ersetzt Hauptexcel": "nein"}
             # return the result
             return False, df_not_dict, "Fehlende_Schlüssel", doc_dict
         # else if all the keys are present
             # write the documentation
         doc_dict = {"Datum": today,
-                    "Tranche": "",
-                    "Input Dokument": "",
-                    "Schlüssel Excel": "",
+                    "Tranche": tranche,
+                    "Input Dokument": in_excel_name,
+                    "Schlüssel Excel": key_excel_name,
                     "Feld": key_col,
                     "Was": f"Schlüssel vorhanden",
                     "Resultat": f"Alle Schlüssel sind vorhanden.",
-                    "Output Dokument": f"",
+                    "Output Dokument": np.nan,
                     "Ersetzt Hauptexcel": "nein"}
         # return the results
         return True, None, None, doc_dict

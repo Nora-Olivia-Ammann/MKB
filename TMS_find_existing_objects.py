@@ -36,7 +36,7 @@ def find_existing_objects(tranchen_excel: str, tms_excel: str, tranche: str, abt
             not_tms_list.append(row)
     # if the list has no entries, we only need the documentation, no new excel is needed (as it would be identical)
     if len(in_tms_list) == 0:
-        ExF.doc_save_single(
+        ExF.save_doc_single(
             abteilung, {"Datum": today, "Tranche": tranche, "Input Dokument": tranchen_excel, "Schlüssel Excel": "-",
              "Feld": "-", "Was": "Abgleich mit bereits im TMS vorhandenen Datensätzen",
              "Resultat": f"keine Daten sind bereits vorhanden.", "Output Dokument": f"-",
@@ -64,7 +64,7 @@ def find_existing_objects(tranchen_excel: str, tms_excel: str, tranche: str, abt
              "Resultat": f"{len(not_tms_list)} Daten sind nicht vorhanden.",
              "Output Dokument": f"{tranche}_nicht_im_TMS_vorhanden_{today}", "Ersetzt Hauptexcel": "unterteilt es"})
     # save doc
-    ExF.doc_save_list(doc_list, abteilung)
+    ExF.save_doc_list(doc_list, abteilung)
 
 
 # # with double entries

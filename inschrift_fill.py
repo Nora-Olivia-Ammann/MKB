@@ -41,7 +41,7 @@ def einlauf_fill(in_excel: str, key_excel: str, tranche: str, abteilung: str, co
         ExF.save_df_excel(df_nan, f"{tranche}_{today}_Fehlende_Einlaufnummern")
         if not continue_if_nan:
             # write documentation
-            ExF.doc_save_single(
+            ExF.save_doc_single(
                 abteilung, {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
                  "Feld": "Erwerbungsart, Objektstatus",
                  "Was": f"Ergänzen gemäss Inschrift, continue_if_nan: {continue_if_nan}",
@@ -73,7 +73,7 @@ def einlauf_fill(in_excel: str, key_excel: str, tranche: str, abteilung: str, co
              "Feld": f"Inschrift", "Was": f"Vollständigkeit im Schlüssel Excel",
              "Resultat": f"{len(df_nan)} fehlende Angaben im Schlüssel",
              "Output Dokument": f"Schlüssel_Einlauf_Fehlende_Angaben_{today}", "Ersetzt Hauptexcel": "-"})
-        ExF.doc_save_list(doc_list, abteilung)
+        ExF.save_doc_list(doc_list, abteilung)
         # error stop the function
         raise KeyDocIncomplete("The Einlauf Key document is incomplete")
     # check whether all keys are present, in the key file, the Inschrift column is called Inventarnummer as it is a
@@ -93,7 +93,7 @@ def einlauf_fill(in_excel: str, key_excel: str, tranche: str, abteilung: str, co
              "Feld": f"Inschrift", "Was": f"Vollständigkeit im Schlüssel Excel, continue_if_nan: {continue_if_nan}",
              "Resultat": f"{len(df_not_dict)} fehlende Schlüssel",
              "Output Dokument": f"Schlüssel_Fehlende_Inschrift_{tranche}_{today}", "Ersetzt Hauptexcel": "-"})
-        ExF.doc_save_list(doc_list, abteilung)
+        ExF.save_doc_list(doc_list, abteilung)
         # raise Error
         raise MissingKey("Inschrift are missing in the key document.")
     df_key.dropna(subset=["Kontrolliert"], inplace=True)
@@ -108,7 +108,7 @@ def einlauf_fill(in_excel: str, key_excel: str, tranche: str, abteilung: str, co
     doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
          "Feld": "Erwerbungsart, Objektstatus", "Was": f"Ergänzen gemäss Inschrift, continue_if_nan: {continue_if_nan}",
          "Resultat": f"Excel ergänzt", "Output Dokument": f"{tranche}_{today}", "Ersetzt Hauptexcel": "ja"})
-    ExF.doc_save_list(doc_list, abteilung)
+    ExF.save_doc_list(doc_list, abteilung)
 
 
 # # EVERYTHING IS CORRECT

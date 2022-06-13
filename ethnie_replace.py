@@ -49,7 +49,7 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
             # save the excel
             ExF.save_df_excel(out_key, f"Schlüssel_Fehlende_Ethnie_{tranche}_{today}")
             # write documentation
-            ExF.doc_save_single(
+            ExF.save_doc_single(
                 abteilung,
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
                  "Feld": f"Ethniengruppe (Nation)", "Was": f"Vollständigkeit im Schlüssel Excel",
@@ -65,7 +65,7 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
             # save the excel
             ExF.save_df_excel(out_key, f"Schlüssel_Unkontrolliert_Ethnie_{tranche}_{today}")
             # write documentation
-            ExF.doc_save_single(
+            ExF.save_doc_single(
                 abteilung,
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
                  "Feld": f"Ethniengruppe (Nation)", "Was": f"Vollständigkeit im Schlüssel Excel",
@@ -79,7 +79,7 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
     if df_key["Ethnie Neu"].isnull().any():
         df_nan = df_key[df_key["Ethnie Neu"].isnull()]
         ExF.save_df_excel(df_nan, f"Schlüssel_Fehlende_Angaben_{today}")
-        ExF.doc_save_single(
+        ExF.save_doc_single(
             abteilung, {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
                         "Feld": f"Ethniengruppe (Nation)", "Was": f"Vollständigkeit im Schlüssel Excel",
                         "Resultat": f"{len(df_nan)} Schlüssel fehlen Angaben",
@@ -94,7 +94,7 @@ def replace_ethnie(in_excel: str, key_excel: str, tranche: str, abteilung: str) 
     df_in.replace(to_replace=ethno_dict, inplace=True)
     # save excel
     ExF.save_df_excel(df_in, f"{tranche}_{today}")
-    ExF.doc_save_single(
+    ExF.save_doc_single(
         abteilung, {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": key_excel,
                     "Feld": f"Ethniengruppe (Nation)", "Was": f"Ersetzten mit neuer Schreibweise",
                     "Resultat": f"Erfolgreich ersetzt", "Output Dokument": f"{tranche}_{today}",

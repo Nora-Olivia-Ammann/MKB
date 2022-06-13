@@ -13,16 +13,7 @@ class Beschreibung:
     @staticmethod
     def add_str_to_beschreibung(input_df: pd.DataFrame, in_excel_name: str, source_col: str, prefix_text: str,
                                 tranche: str or None = None) -> pd.DataFrame and dict:
-        """
-        Adds the value from one column to the Beschreibung column.
-        :param in_data: excel
-        :param is_excel: True: if it is excel
-        :param abteilung: name
-        :param tranche: name
-        :param source_col: Value that should be added to Beschreibung
-        :param prefix_text: if not Prefix is wished then write "", otherwise a set Prefix (e.g. "Photo: ")
-        :return: if not excel: df
-        """
+        # TODO validate, description
         # iterate over the rows
         for index, source_val in input_df[source_col].iteritems():
             # if this is not done this way but with try and except to cach the errors of the NaN, it adds the 'nan' as a
@@ -56,12 +47,7 @@ class Beschreibung:
 
     @staticmethod
     def add_schublade(input_df: pd.DataFrame, tranche: str, in_excel_name: str) -> pd.DataFrame and dict:
-        """
-        Adds the name of the Schublade, to the Beschreibung after the number of the Schublade.
-        :param input_df:
-        :param abteilung: name or df_doc if not excel
-        :return: df or None
-        """
+        # TODO validate, description
         for index, row in input_df.iterrows():
             besch_spl = row["Beschreibung"].split(",")
             try:

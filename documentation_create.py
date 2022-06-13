@@ -25,7 +25,7 @@ def create_documentation(abteilung: str) -> None:
     """
     df = pd.DataFrame(columns=["Datum", "Tranche", "Input Dokument", "Schlüssel Excel", "Feld", "Was", "Resultat",
                                "Output Dokument", "Ersetzt Hauptexcel"])
-    ExF.save_doc_excel(df, abteilung)
+    ExF.excel_save_doc(df, abteilung)
 
 
 #create_documentation("Test")
@@ -39,7 +39,7 @@ def create_to_do() -> None:
     """
     df = pd.DataFrame(
         columns=["Erledigt", "Tranche", "Dokument", "Was", "Status", "Bemerkung"])
-    ExF.save_doc_excel(df, "Nora_ToDo")
+    ExF.excel_save_doc(df, "Nora_ToDo")
 
 
 if __name__ == "__main__":

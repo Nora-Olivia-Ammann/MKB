@@ -80,7 +80,7 @@ def add_x_inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str,
         # save the excel
         ExF.save_df_excel(df_in, out_name)
     # save the documentation in any case
-    ExF.doc_save_list(doc_list, abteilung)
+    ExF.save_doc_list(doc_list, abteilung)
 
 
 # TODO: write separate_inventarnummer_compliance

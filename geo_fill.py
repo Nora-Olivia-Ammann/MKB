@@ -42,7 +42,7 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str) -> Non
              "Input Dokument": in_excel,
              "Schlüssel Excel": key_excel,
              "Output Dokument": output_name})
-        ExF.doc_save_single(abteilung, doc_dict)
+        ExF.save_doc_single(abteilung, doc_dict)
         raise TrancheMissingValue("Not all rows have a Geo_ID")
     else:
         # write the documentation that all is ok
@@ -62,7 +62,7 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str) -> Non
              "Input Dokument": in_excel,
              "Schlüssel Excel": key_excel,
              "Output Dokument": output_name}))
-        ExF.doc_save_list(doc_list, abteilung)
+        ExF.save_doc_list(doc_list, abteilung)
         raise KeyDocIncomplete("Not all mandatory fields are filled.")
     # check if all the Geo_ID are in the Key document
     key_all_there_dropped, bad_df_dropped, problem_dropped, doc_dict_dropped = KE.key_check(df_in, df_key, "Geo_ID")
@@ -79,7 +79,7 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str) -> Non
                  "Input Dokument": in_excel,
                  "Schlüssel Excel": key_excel,
                  "Output Dokument": output_name}))
-            ExF.doc_save_list(doc_list, abteilung)
+            ExF.save_doc_list(doc_list, abteilung)
             # raise Error
             raise MissingKey(f"{problem_undropped} with the Key Excel.")
         # if the unchecked contains all the geo_ID we want to differentiate that in the documentation
@@ -91,7 +91,7 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str) -> Non
                  "Input Dokument": in_excel,
                  "Schlüssel Excel": key_excel,
                  "Output Dokument": output_name}))
-            ExF.doc_save_list(doc_list, abteilung)
+            ExF.save_doc_list(doc_list, abteilung)
             # raise Error
             raise MissingKey(f"{problem_undropped} with the Key Excel.")
     df_key.dropna(subset=["Kontrolliert"], inplace=True)
@@ -117,7 +117,7 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str) -> Non
                      "Resultat": f"Geografie wurde gemäss Schlüssel ausgefüllt",
                      "Output Dokument": output_name,
                      "Ersetzt Hauptexcel": "ja"})
-    ExF.doc_save_list(doc_list, abteilung)
+    ExF.save_doc_list(doc_list, abteilung)
 
 
 if __name__ == '__main__':

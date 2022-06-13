@@ -20,7 +20,7 @@ pd.set_option("mode.chained_assignment", None)
 class Inschrift:
 
     @staticmethod
-    def inschrift_incorrect(input_df: pd.DataFrame, tranche: str, in_excel_name: str) -> bool and pd.DataFrame and dict:
+    def add_x_inschrift_incorrect(input_df: pd.DataFrame, tranche: str, in_excel_name: str) -> bool and pd.DataFrame and dict:
         """
         Checks whether all the Einlaufnummer are in the correct format. If leading zeros are missing it fills those.
         If used as nested function it also returns a True if all is correct and the df (if leading zeros were added

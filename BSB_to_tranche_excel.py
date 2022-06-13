@@ -71,7 +71,7 @@ def new_tranche_excel(in_excel: str, tranche: str, abteilung: str, prefix_unique
     # TODO: inventarnummer compliance from the original nested functions
     # add leading zeros to the Einlaufnummer if not already present, and add a column to mark where the einlaufnummer
     # is missing or incorrect
-    _, df_out = Insch.inschrift_incorrect(in_data=df_out, is_excel=False, tranche=tranche, abteilung=abteilung)
+    _, df_out = Insch.add_x_inschrift_incorrect(in_data=df_out, is_excel=False, tranche=tranche, abteilung=abteilung)
     # for easier use and later processing get the folder name from the Beschreibung for each row and place it in
     # the column, iterate over the columns
     for index, value in df_out["Beschreibung"].iteritems():
@@ -110,7 +110,7 @@ def new_tranche_excel(in_excel: str, tranche: str, abteilung: str, prefix_unique
                      # TODO: change this from iloc to loc with the UID name
                      "Resultat": f"Unique_ID: {df_out.iloc[0, 15]} - {df_out.iloc[-1, 15]}",
                      "Output Dokument": f"{tranche}_{today}_Komplett", "Ersetzt Hauptexcel": "neu"})
-    ExF.doc_save_list(doc_list, abteilung)
+    ExF.save_doc_list(doc_list, abteilung)
 
 
 if __name__ == '__main__':

@@ -140,4 +140,4 @@ def inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str, regex
             {"Datum": today, "Tranche": tranche, "Input Dokument": df_in, "Schlüssel Excel": "-",
              "Feld": "Inventarnummer", "Was": "Falsche Formate", "Resultat": f"keine falsche Formate",
              "Output Dokument": f"-", "Ersetzt Hauptexcel": "unterteilt es"})
-    ExF.doc_save_list(doc_list, abteilung)
+    ExF.save_doc_list(doc_list, abteilung)

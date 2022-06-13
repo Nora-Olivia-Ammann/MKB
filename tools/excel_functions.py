@@ -45,7 +45,7 @@ class ExcelFunctions:
         return pd.read_excel(os.path.join(current_wdir, "output", "_dokumentation", f"{abteilung}_Dokumentation.xlsx"))
 
     @staticmethod
-    def save_doc_excel(name_df: pd.DataFrame, abteilung: str) -> None:
+    def excel_save_doc(name_df: pd.DataFrame, abteilung: str) -> None:
         """
         Saves the documentation excel in the _documentation folder within the output folder.
         :param name_df: name of the dataframe
@@ -58,11 +58,10 @@ class ExcelFunctions:
         writer.save()
 
     @staticmethod
-    def doc_save_list(list_dict: list[dict], abteilung: str) -> None:
+    def save_doc_list(list_dict: list[dict], abteilung: str) -> None:
         """
         If a function generates several documentation lines, these will be saved in a list of dictionaries.
         From those a df will be created which then is concat with the existing documentation excel and saved.
-        :param original_df: read in from the excel
         :param list_dict: list of dictionaries that contain new information
         :param abteilung: in order to read the correct doc excel
         :return: None
@@ -70,10 +69,10 @@ class ExcelFunctions:
         original_df = ExcelFunctions.doc_excel_to_df(abteilung)
         df_from_list = pd.DataFrame.from_records(list_dict)
         df_doc = pd.concat([original_df, df_from_list], ignore_index=True)
-        ExcelFunctions.save_doc_excel(df_doc, abteilung)
+        ExcelFunctions.excel_save_doc(df_doc, abteilung)
 
     @staticmethod
-    def doc_save_single(abteilung: str, doc_dict: dict) -> None:
+    def save_doc_single(abteilung: str, doc_dict: dict) -> None:
         """
         Reads in the existing documentation, concats it with the new documentation, which is a single line and
         given as a dictionary and lastly saves it.
@@ -83,7 +82,7 @@ class ExcelFunctions:
         """
         df_doc = ExcelFunctions.doc_excel_to_df(abteilung)
         df_doc = pd.concat([df_doc, pd.DataFrame(doc_dict, index=[0])], ignore_index=True)
-        ExcelFunctions.save_doc_excel(df_doc, abteilung)
+        ExcelFunctions.excel_save_doc(df_doc, abteilung)
 
 
 if __name__ == "__main__":

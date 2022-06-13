@@ -125,7 +125,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
     # EINLAUFNUMMER COMPLIANCE
     # the function may add leading zeros to the einlaufnummer, in that case it would not read as a false value,
     # it returns that df, therefore we replace in the df_in with that one
-    einlauf_check, df_in = Insch.inschrift_incorrect(
+    einlauf_check, df_in = Insch.add_x_inschrift_incorrect(
         in_data=df_in, is_excel=False, tranche=None, abteilung=df_doc)
     if not einlauf_check:
         doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
@@ -141,7 +141,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
              "Feld": "alle", "Was": "End Check", "Resultat": f"Das Excel hat {len(correct_check_list)} fehler, das"
                                                              f"TMS Import Excel wurde nicht erstellt.",
              "Output Dokument": f"{tranche}_{today}_Alles_Korrekt", "Ersetzt Hauptexcel": "unterteilt es"})
-        ExF.doc_save_list(doc_list, abteilung)
+        ExF.save_doc_list(doc_list, abteilung)
         # raise an Exception to stop the program
         raise TrancheMissingValue("Some data is missing or incorrect, the TMS import excel was not created.")
     elif continue_if_false_values and len(correct_check_list) != 0:
@@ -199,7 +199,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
     for col in cols_must_transfer:
         df_out[col][1:] = df_in[col]
     ExF.save_df_excel(df_out, f"TMS_Import_{tranche}_{today}")
-    ExF.doc_save_list(doc_list, abteilung)
+    ExF.save_doc_list(doc_list, abteilung)
 
 
 # end_bearbeitung(in_excel="Metadaten_Test_Import", header_excel="_TMS_Header",

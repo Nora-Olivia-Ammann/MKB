@@ -44,7 +44,7 @@ class ModifyExcel:
         df_combined = pd.concat(df_list, ignore_index=True)
         ExF.save_df_excel(df_combined, f"{name_out_excel}_{today}")
         # write documentation
-        ExF.doc_save_single(
+        ExF.save_doc_single(
             abteilung, {"Datum": today,
                         "Tranche": tranche,
                         "Input Dokument": list_in_excel,

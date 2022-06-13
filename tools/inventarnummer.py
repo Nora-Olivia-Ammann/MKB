@@ -32,7 +32,7 @@ class Inventarnummer:
         faulty Inventarnummer, of a format we may not be able to anticipate, we only add the zeros to ones that are
         roughly in the correct format. Once Inventarnummern have been corrected this program can be run again.
         """
-        # TODO: validate
+        # TODO: validate, write description
         # clean the df
         input_df = Clean.strip_spaces_col(input_df, "Inventarnummer")
         # if it exists we want to overwrite the existing column with the new Inventarnummer
@@ -84,7 +84,7 @@ class Inventarnummer:
         Adds columns to df, that are used when having to rename any Inventarnummer. Can be used as a nested function.
         """
         # TODO: validate, description
-        if "Alt Inventarnummer" in input_df.columns:
+        if "Inventarnummer Alt" in input_df.columns:
             raise ColExistsError("The Column already exists.")
         # get the index of the Inventarnummer Column
         index = input_df.columns.get_loc("Inventarnummer")
@@ -122,7 +122,7 @@ class Inventarnummer:
                         "Input Dokument": in_excel_name,
                         "Schlüssel Excel": "-",
                         "Feld": "Inventarnummer",
-                        "Was": "Hinzufügen von Spalte: Alt Inventarnummer",
+                        "Was": "Hinzufügen von Spalte: Inventarnummer Alt",
                         "Resultat": f"Neue Spalte",
                         "Output Dokument": np.nan,
                         "Ersetzt Hauptexcel": "ja"}

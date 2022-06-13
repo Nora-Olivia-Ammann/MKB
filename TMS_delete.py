@@ -59,12 +59,12 @@ def tms_inventarnummer_delete(in_excel: str, inventarnummer: str) -> None:
         df_out.pop("Medien")
         # save the df as an excel which will be used to delete the Inventarnummer in the system
         ExF.save_df_excel(df_out, f"{inventarnummer}_zu_Löschen_{today}")
-        ExF.doc_save_single("TMS_Löschen_Dokumentation",
+        ExF.save_doc_single("TMS_Löschen_Dokumentation",
                             {"Datum": today, "Inventarnummer": inventarnummer, "Input Dokument": in_excel,
                              "Resultat": f"{len(df_out)} Inventarnummern zu Löschen",
                              "Output Dokument": f"{inventarnummer}_zu_Löschen_{today}"})
     else:
-        ExF.doc_save_single("TMS_Löschen_Dokumentation",
+        ExF.save_doc_single("TMS_Löschen_Dokumentation",
                             {"Datum": today, "Inventarnummer": inventarnummer, "Input Dokument": in_excel,
                              "Resultat": "Keine leeren Inventarnummern", "Output Dokument": "-"})
 

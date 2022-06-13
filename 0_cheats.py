@@ -81,7 +81,7 @@ def new_funct(in_excel, key_excel, tranche, abteilung):
 
     # save df
     ExF.save_df_excel(df_in, f"{tranche}_{today}")
-    ExF.doc_save_list(doc_list, abteilung)
+    ExF.save_doc_list(doc_list, abteilung)
 
 
 #####################

@@ -141,3 +141,7 @@ def inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str, regex
              "Feld": "Inventarnummer", "Was": "Falsche Formate", "Resultat": f"keine falsche Formate",
              "Output Dokument": f"-", "Ersetzt Hauptexcel": "unterteilt es"})
     ExF.save_doc_list(doc_list, abteilung)
+
+
+if __name__ == '__main__':
+    pass

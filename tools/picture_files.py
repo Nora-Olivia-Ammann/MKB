@@ -23,6 +23,7 @@ today = str(date.today())
 os.chdir("..")
 current_wdir = os.getcwd()
 
+
 ###############################
 
 
@@ -30,7 +31,7 @@ class PictureFiles:
 
     @staticmethod
     def add_rename_picture_col(input_df: pd.DataFrame, tranche: str, in_excel_name: str) \
-        -> pd.DataFrame and dict or None:
+            -> pd.DataFrame and dict or None:
         # TODO: write description
         # TODO: validate
         # check if the column exists, we do not want to overwrite anything
@@ -39,7 +40,7 @@ class PictureFiles:
         # get the index for the inventarnummer so we can add the column next to it
         ind_invnr = input_df.columns.get_loc("Inventarnummer")
         # add the new column
-        input_df.insert(ind_invnr+1, "Bild umbenennt", np.nan)
+        input_df.insert(ind_invnr + 1, "Bild umbenennt", np.nan)
         doc_dict = {"Datum": today,
                     "Tranche": tranche,
                     "Input Dokument": in_excel_name,
@@ -52,3 +53,5 @@ class PictureFiles:
         return input_df, doc_dict
 
 
+if __name__ == '__main__':
+    pass

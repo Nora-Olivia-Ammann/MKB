@@ -86,3 +86,6 @@ def add_x_inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str,
 # TODO: write separate_inventarnummer_compliance
 
 
+
+if __name__ == '__main__':
+    pass

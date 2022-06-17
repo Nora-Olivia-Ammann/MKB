@@ -61,7 +61,10 @@ class DoubleCheck:
             raise KeyError("Column doesn't exist.")
         # if it exists we check if it has duplicates
         if input_df[col_name].duplicated().any():
+            # get the index of the column
             index = input_df.columns.get_loc(col_name)
+            # add a column that adds bool for the nan
+            # the in the value parameter we give that we want a bool of that column
             input_df.insert(loc=index+1, column=f"{col_name} Dublette",
                             value=input_df.duplicated(subset=col_name, keep=False))
             # replace all the True with 'x' and the False with np.nan
@@ -79,6 +82,7 @@ class DoubleCheck:
             return True, input_df, doc_dict
         # if it doesn't have doubles
         else:
+
             doc_dict = {"Datum": today,
                         "Tranche": tranche,
                         "Input Dokument": in_excel_name,

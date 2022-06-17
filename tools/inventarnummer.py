@@ -236,7 +236,7 @@ class Inventarnummer:
         if input_df["Führende 0"].isnull().all():
             # remove the column
             input_df.pop("Führende 0")
-            # write the documentaiton
+            # write the documentation
             doc_dict = {"Datum": today,
                         "Tranche": tranche,
                         "Input Dokument": in_excel_name,
@@ -248,7 +248,7 @@ class Inventarnummer:
                         "Ersetzt Hauptexcel": "nein"}
             return False, None, doc_dict
         else:
-            # write the documentaiton
+            # write the documentation
             doc_dict = {"Datum": today,
                         "Tranche": tranche,
                         "Input Dokument": in_excel_name,

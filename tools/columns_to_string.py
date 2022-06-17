@@ -9,7 +9,7 @@ from cleaning_df import CleanDF as Clean
 today = str(date.today())
 
 # TODO: review
-#  redo the schuster geo
+# TODO: redo the schuster geo
 
 class ColumnsToStr:
 

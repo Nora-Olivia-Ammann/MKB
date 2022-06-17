@@ -12,10 +12,6 @@ today = str(date.today())
 os.chdir("..")
 current_wdir = os.getcwd()
 
-############################################
-# Suppress the SettingWithCopyWarning
-pd.set_option("mode.chained_assignment", None)
-
 
 class TMSEinlauf:
 
@@ -25,8 +21,6 @@ class TMSEinlauf:
         """
         Checks whether all the mandatory information in the Excel from the TMS export is there.
         If used as a nested function it returns True if all is correct.
-        :param input_key_df: Dataframe that is to be checked
-        :return: True if all is good, False if values are missing and df with rows that miss values.
         """
         # none of these should be empty
         if input_key_df[["Erwerbungsart", "Objektstatus"]].isnull().any().any():

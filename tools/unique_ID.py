@@ -12,10 +12,6 @@ today = str(date.today())
 os.chdir("..")
 current_wdir = os.getcwd()
 
-############################################
-# Suppress the SettingWithCopyWarning
-pd.set_option("mode.chained_assignment", None)
-
 
 class UniqueID:
 
@@ -24,7 +20,7 @@ class UniqueID:
                       tranche: str) -> pd.DataFrame or None:
         """
         Adds a new column if not existing to a df with a Unique_ID. If not Tranche will get the same prefix, then
-        the ID will be unique amongst all Tranchen. This helps to difinitively identify a row.
+        the ID will be unique amongst all Tranchen. This helps to definitively identify a row.
         """
         if "Unique_ID" in input_df.columns:
             doc_dict = {"Datum": today,

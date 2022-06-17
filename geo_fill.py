@@ -33,7 +33,7 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str) -> Non
     df_key = Clean.strip_spaces_whole_df(df_key)
     doc_list = []
     # check whether all rows of the tranche excel have a GeoID
-    has_geo_id_nan, nan_df, doc_dict = NaN.has_columns_nan(df_in, "Geo_ID")
+    has_geo_id_nan, nan_df, doc_dict = NaN.separate_nan_col(df_in, "Geo_ID")
     if has_geo_id_nan:
         output_name = f"{tranche}_{today}_fehlende_Geo_ID"
         ExF.save_df_excel(nan_df, output_name)
@@ -50,6 +50,7 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str) -> Non
             {"Tranche": tranche,
              "Input Dokument": in_excel,
              "Schlüssel Excel": key_excel}))
+    # TODO: dublette check geo key
     # check if the Geo key is complete
     # here we have to assign several variables, as it returns a df in any case, if there are values missing
     # it returns a nan_df otherwise it returns the checked df that has the default values filled in
@@ -65,14 +66,14 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str) -> Non
         ExF.save_doc_list(doc_list, abteilung)
         raise KeyDocIncomplete("Not all mandatory fields are filled.")
     # check if all the Geo_ID are in the Key document
-    key_all_there_dropped, bad_df_dropped, problem_dropped, doc_dict_dropped = KE.key_check(df_in, df_key, "Geo_ID")
+    # TODO: rewrite the geo_key_completion check
+    key_all_there_dropped, bad_df_dropped, doc_dict_dropped = KE.key_all_there(df_in, df_key, "Geo_ID")
     if not key_all_there_dropped:
         # check if the Geo_ID is also missing from the df that contains the unchecked Geo_IDs
-        key_all_there_undropped, bad_df_undropped, problem_undropped, doc_dict_undropped = \
-            KE.key_check(df_in, df_key, "Geo_ID", False)
+        key_all_there_undropped, bad_df_undropped, doc_dict_undropped = KE.key_all_there(df_in, df_key, "Geo_ID", False)
         if not key_all_there_undropped:
             # we save the undropped one as it may contain more problems
-            output_name = f"{abteilung}_Geo_Schlüssel_{today}_{problem_undropped}"
+            output_name = f"{abteilung}_Geo_Schlüssel_{today}"
             ExF.save_df_excel(bad_df_undropped, output_name)
             doc_list.append(doc_dict_undropped.update(
                 {"Tranche": tranche,
@@ -81,10 +82,10 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str) -> Non
                  "Output Dokument": output_name}))
             ExF.save_doc_list(doc_list, abteilung)
             # raise Error
-            raise MissingKey(f"{problem_undropped} with the Key Excel.")
+            raise MissingKey(f"Problem with the Key Excel.")
         # if the unchecked contains all the geo_ID we want to differentiate that in the documentation
         else:
-            output_name = f"{abteilung}_Geo_Schlüssel_{today}_{problem_dropped}"
+            output_name = f"{abteilung}_Geo_Schlüssel_{today}"
             ExF.save_df_excel(bad_df_dropped, output_name)
             doc_list.append(doc_dict_dropped.update(
                 {"Tranche": tranche,

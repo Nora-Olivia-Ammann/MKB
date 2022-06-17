@@ -76,3 +76,6 @@ def map_kk_content_barcode(in_excel: str, key_excel: str, tranche: str) -> None:
 
 #map_kk_content_barcode("_Test_Tranche_Barcode", "_Test_Schlüssel_Barcode_BSB", "Test")
 
+
+if __name__ == '__main__':
+    pass

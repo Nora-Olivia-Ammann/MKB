@@ -22,3 +22,7 @@ class CleanDF:
         :return: cleaned df
         """
         return input_df.apply(func=lambda x: x.strip if isinstance(x is str) else x, axis=col_name)
+
+
+if __name__ == '__main__':
+    pass

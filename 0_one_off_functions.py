@@ -90,3 +90,6 @@ def add_dublette_check(in_excel, name_excel):
 
 
 
+if __name__ == '__main__':
+    pass
+

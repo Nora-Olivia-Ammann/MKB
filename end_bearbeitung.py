@@ -62,7 +62,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
     mandatory_fields = ["Beschreibung", "Inventarnummer", "Erwerbungsart", "Objektstatus", "Inschrift", "Geographietyp",
                         "Herk.9: Kontinent", "Herk.7: Subkontinent", "Datierung"]
     # the fourth return is the df with the NaN columns dropped, therefore we give it the
-    res_nan_check, df_nan, ex_name, df_not_nan = NAN.has_columns_nan(
+    res_nan_check, df_nan, ex_name, df_not_nan = NAN.separate_nan_col(
         in_data=df_in, is_excel=False, tranche=None, abteilung=df_doc, column_list=mandatory_fields,
         separate_excel_columns=False)
     # check if any are empty
@@ -234,3 +234,7 @@ all_cols = ["Inventarnummer", "Abteilung", "Klassifizierung", "Erwerbungsart", "
             "Herk.1: Ort", "Bezirk/Gemeinde", "Herk.2: Landschaft/Fluss", "Herk. 8: Politische Region",
             "Herk.7: Subkontinent", "Inselgruppe", "Insel", "Herk.4: Grossregion/gr. Insel",
             "Herk.3: Gebiet/Unterregion/Kl. Insel", "Bemerkungen [Geographie]", "Ethniengruppe (Nation)"]
+
+
+if __name__ == '__main__':
+    pass

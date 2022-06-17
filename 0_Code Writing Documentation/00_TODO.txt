@@ -2,8 +2,6 @@ Sequence of Function writing:
 
 - write documentation in all nested functions
 - Change all the documentation style (append list)
-- make key_check_double for key_words
-- review check_key_isin
 -
 
 -	Write and change concat save doc

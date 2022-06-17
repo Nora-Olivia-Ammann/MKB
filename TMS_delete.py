@@ -69,3 +69,7 @@ def tms_inventarnummer_delete(in_excel: str, inventarnummer: str) -> None:
                              "Resultat": "Keine leeren Inventarnummern", "Output Dokument": "-"})
 
 # tms_inventarnummer_delete("III_2022-03-10", "(F)III")
+
+
+if __name__ == '__main__':
+    pass

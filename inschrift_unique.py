@@ -60,3 +60,7 @@ def add_unique_einlauf(in_excel: str, key_excel: str, out_tranche: str) -> None:
     ExF.save_df_excel(df_combined, f"{out_tranche}_Einmalige_Einlaufnummern_{today}")
 
 # add_unique_einlauf("_Test_Tranche_Neu_Formatiert_Lang", "c_Test_Einmalige_Einlaufnummern", "Test_lang")
+
+
+if __name__ == '__main__':
+    pass

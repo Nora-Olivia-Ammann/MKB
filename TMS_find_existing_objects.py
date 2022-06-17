@@ -80,3 +80,7 @@ def find_existing_objects(tranchen_excel: str, tms_excel: str, tranche: str, abt
 
 # find_existing_objects(tranchen_excel="Oz1-3_Inventarnummern", tms_excel="(F)Vabc_2022-03-10",
 #                       tranche="Oz1-3", abteilung="Test")
+
+
+if __name__ == '__main__':
+    pass

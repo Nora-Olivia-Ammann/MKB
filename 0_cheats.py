@@ -29,7 +29,6 @@ current_wdir = os.getcwd()
 # Suppress the SettingWithCopyWarning
 pd.set_option("mode.chained_assignment", None)
 
-
 if __name__ == "__main__":
     pass
 
@@ -66,9 +65,7 @@ doc_dict.update(
 """
 
 
-#doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "", "Feld": "", "Was": "", "Resultat": f"", "Output Dokument": f"", "Ersetzt Hauptexcel": ""})
-
-
+# doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "", "Feld": "", "Was": "", "Resultat": f"", "Output Dokument": f"", "Ersetzt Hauptexcel": ""})
 
 
 def new_funct(in_excel, key_excel, tranche, abteilung):
@@ -106,7 +103,7 @@ df_merged = pd.concat([df_in, pd.DataFrame({}, index=[0])], ignore_index=True)
 # index, name, value
 df_in.insert(0, "Col_Name", np.nan)
 # get index number of specific column by name
-df_in.columns.get_loc("Col_Name")
+ind = df_in.columns.get_loc("Col_Name")
 
 # check if column exists
 if "col_name" in df_in.columns:
@@ -116,8 +113,22 @@ if "col_name" in df_in.columns:
 if {"Col1", "Col2"}.issubset(df_in.columns):
     raise ColExistsError("The Column already exists.")
 
+######################
+# BOOLEAN COLUMNS
 
+# get the index of the column we want to evaluate
+index = df_in.columns.get_loc("Col")
 
+# NaN Bool
+# insert the column to the right that states true for all np.nan
+df_in.insert(loc=index + 1, column=f"Col_Nan", value=df_in["Col"].isnull())
+
+# Duplicate Bool
+# makes a bool column to the right that states true for all doubles
+df_in.insert(loc=index + 1, column=f"Col_Double", value=df_in.duplicated(subset="Col", keep=False))
+
+# Replace the bool values of the column with the values according to the dict
+df[f"BoolCol"].replace(to_replace={True: "x", False: np.nan}, inplace=True)
 
 #####################
 # SORTING VALUES
@@ -138,7 +149,7 @@ df_in.pop("index")  # when resetting the index it is saved as a new column
 # get only the first row of the df (second header), does not modify df (inplace)
 df_head = df_in.iloc[0, :]
 
-# CANNOT BE USED IN A LOOP AS THE DF MAY BECOME SMALLER THAN THE INDEX NUMBER (IndexError)
+# .drop() CANNOT BE USED IN A LOOP AS THE DF MAY BECOME SMALLER THAN THE INDEX NUMBER (IndexError)
 # drop all the content of a df so that only the header remains
 df_in.drop(index=df_in.index[:], axis=0, inplace=True)
 
@@ -151,7 +162,7 @@ df_in.drop(index=drop_index_list, axis="index", inplace=True)
 
 df_in.drop(columns=["col list"], inplace=True)  # dropping a list of columns
 
-df_in.pop("col")  # dropping a single column does not work for multiples changes df in memory
+df_in.pop("col")  # dropping a single column, does not work for multiples, changes df in memory
 
 #####################
 # FILLING COLUMNS
@@ -174,7 +185,7 @@ df_doubles = df_in[df_in["Col"].duplicated(keep=False)]  # returns df with all t
 # drops all the duplicates from the col subset, keeps no duplicates, resets index, and overwrites df
 df_in.drop_duplicates(subset=["col"], keep=False, inplace=True, ignore_index=True)
 
-# drop duplicates keeps the first occurance
+# drop duplicates keeps the first occurrence
 df_in.drop_duplicates(subset=["col"], keep="first", inplace=True, ignore_index=True)
 
 # Drop duplicates based on several columns (all column values have to be identical), removes and resets index
@@ -182,8 +193,6 @@ df_in.drop_duplicates(subset=['Col1', 'Col2'], keep='first', inplace=True)
 
 # assigns boolean array to column with true if a value in the specified column appears several times
 df_in["Dublette"] = df_in.duplicated(subset="Dublette_Check_Col", keep=False)
-
-
 
 #####################
 # NULL CHECK
@@ -205,8 +214,6 @@ df_in.dropna(subset=["col"], inplace=True)
 
 # drop all the rows that are only NaN
 df_in.dropna(axis=0, how='all', inplace=True)
-# drop all the columns that are only NaN
-df_in.dropna(axis=1, how='all', inplace=True)
 
 #####################
 # FILTER
@@ -229,7 +236,6 @@ for index, value in df_in["col"].iteritems():
 # ITERATE OVER ROW
 for index, row in df_in.iterrows():
     print(row)
-
 
 #####################
 # MAP A COLUMN

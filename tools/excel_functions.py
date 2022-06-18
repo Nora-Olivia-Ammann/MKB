@@ -1,10 +1,10 @@
+from os.path import dirname as up
 import os
 from datetime import date
 import pandas as pd
 
 today = str(date.today())
-os.chdir("..")
-current_wdir = os.getcwd()
+current_wdir = up(up(up(__file__)))
 
 ############################################
 

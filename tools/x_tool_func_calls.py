@@ -1,4 +1,4 @@
-import os
+from os.path import dirname as up
 import pandas as pd
 import numpy as np
 from datetime import date
@@ -21,23 +21,17 @@ from unique_ID import UniqueID as UID
 
 today = str(date.today())
 
-############################################
-# Suppress the SettingWithCopyWarning
-pd.set_option("mode.chained_assignment", None)
+################################
 
-# , tranche: str, in_excel_name: str
-"""
-doc_dict = {"Datum": today,
-            "Tranche": tranche,
-            "Input Dokument": in_excel_name,
-            "Schlüssel Excel": "-",
-            "Feld": "",
-            "Was": "",
-            "Resultat": f"",
-            "Output Dokument": np.nan,
-            "Ersetzt Hauptexcel": ""}
-"""
+if __name__ == '__main__':
+    # Beschreibung Call
 
+    file_name = "Test_add_str_to_beschreibung"
+    file_path = "_Test_Excel/" + file_name
 
-if __name__ == "__main__":
-    pass
+    in_df = ExF.in_excel_to_df(file_path)
+    out_df, dict_df = Besch.add_str_to_beschreibung(
+        in_df, in_excel_name="Test", source_col="Schubladen Beschriftung",
+        prefix_text="Schublade: ", tranche="Test")
+
+    print(1)

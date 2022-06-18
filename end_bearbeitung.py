@@ -1,27 +1,15 @@
 import os
 import pandas as pd
-import numpy as np
 from datetime import date
-import re
 import warnings
 
-from tools.beschreibung import Beschreibung as BE
+from tools.beschreibung import Beschreibung as Besch
 from tools.cleaning_df import CleanDF as Clean
-from tools.columns_to_string import ColumnsToStr as COLSTR
 from tools.custom_exceptions import *
-from tools.ethnie import Ethnie as ETHN
-from tools.double_check import DoubleCheck as DOUBLE
-from tools.geographie import Geographie as GEO
-from tools.inschrift_einlaufnummer_tranche import Inschrift as INSCH
-from tools.inventarnummer import Inventarnummer as INVNR
-from tools.key_excel import KeyExcel as KE
-from tools.modify_excel import ModifyExcel as MODEX
+from tools.inschrift_tranche import Inschrift as Insch
+from tools.inventarnummer import Inventarnummer as InvNr
 from tools.NaN_check import NaN as NAN
-from tools.RegEx_patterns import RegExPattern as REPAT
-from tools.save_excel import SaveExcel as SE
-from tools.TMS_einlauf import TMSEinlauf as TMSEINL
-from tools.unique_ID import UniqueID as UID
-
+from tools.excel_functions import ExcelFunctions as ExF
 
 today = str(date.today())
 # os.chdir("..")
@@ -31,6 +19,9 @@ current_wdir = os.getcwd()
 # Suppress the SettingWithCopyWarning
 pd.set_option("mode.chained_assignment", None)
 
+# TODO: extract nested functions
+# TODO: clean up nested functions
+# TODO: complete rewrite
 
 def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: str, regex_pattern,
                     do_inventarnummer_compliance: bool = True, continue_if_false_values: bool = False) -> None:
@@ -56,14 +47,13 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
     :return: None
     """
     # read in_excel to df, which is the one to fill with values
-    df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
+    df_in = ExF.in_excel_to_df(in_excel)
     # clean the df
-    df_in = Clean.strip_spaces(df_in)
+    df_in = Clean.strip_spaces_whole_df(df_in)
     # read in the header excel which is the output format
-    df_out = pd.read_excel(os.path.join(current_wdir, "input", f"{header_excel}.xlsx"))
+    df_out = ExF.in_excel_to_df(header_excel)
     # read the documentation excel
-    df_doc = pd.read_excel(
-        os.path.join(current_wdir, "output", "_dokumentation", f"{tranche}_Dokumentation.xlsx"))
+    doc_list = []
     ############################################
     # add a list to store the information whether anything is wrong
     correct_check_list = []
@@ -72,7 +62,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
     mandatory_fields = ["Beschreibung", "Inventarnummer", "Erwerbungsart", "Objektstatus", "Inschrift", "Geographietyp",
                         "Herk.9: Kontinent", "Herk.7: Subkontinent", "Datierung"]
     # the fourth return is the df with the NaN columns dropped, therefore we give it the
-    res_nan_check, df_nan, ex_name, df_not_nan = NAN.has_columns_NaN(
+    res_nan_check, df_nan, ex_name, df_not_nan = NAN.separate_nan_col(
         in_data=df_in, is_excel=False, tranche=None, abteilung=df_doc, column_list=mandatory_fields,
         separate_excel_columns=False)
     # check if any are empty
@@ -82,35 +72,29 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
         df_in = df_not_nan
         df_in.reset_index(inplace=True)  # reset the index
         df_in.pop("index")  # when resetting the index it is saved as a new column
-        SE.save_df_excel(df_nan, f"{tranche}_{today}_Fehlende_Angaben")
-        df_doc = df_doc.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-", "Feld": "alle",
+        ExF.save_df_excel(df_nan, f"{tranche}_{today}_Fehlende_Angaben")
+        doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-", "Feld": "alle",
              "Was": "End Check", "Resultat": f"{len(df_nan)} Zeilen fehlen Angaben",
-             "Output Dokument": f"{tranche}_{today}_Fehlende_Angaben", "Ersetzt Hauptexcel": "unterteilt es"},
-            ignore_index=True)
+             "Output Dokument": f"{tranche}_{today}_Fehlende_Angaben", "Ersetzt Hauptexcel": "unterteilt es"})
         # append that a mistake was found
         correct_check_list.append(False)
     # INVENTARNUMMER DOUBLE CHECK
     # returns True if there are doubles
-    res_doubles_check, df_doubles, df_no_double = INVNR.has_inventarnummer_double(
+    res_doubles_check, df_doubles, df_no_double = InvNr.has_inventarnummer_double(
         in_data=df_in, is_excel=False, tranche=None, abteilung=df_doc)
     if res_doubles_check:
         df_in = df_no_double
         df_in.reset_index(inplace=True)  # reset the index
         df_in.pop("index")  # when resetting the index it is saved as a new column
-        SE.save_df_excel(df_doubles, f"{tranche}_{today}_Doppelte_Inventarnummern")
-        df_doc = df_doc.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-", "Feld": "alle",
+        ExF.save_df_excel(df_doubles, f"{tranche}_{today}_Doppelte_Inventarnummern")
+        doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-", "Feld": "alle",
              "Was": "End Check", "Resultat": f"{len(df_doubles)} Doppelte Inventarnummern",
-             "Output Dokument": f"{tranche}_{today}_Doppelte_Inventarnummern", "Ersetzt Hauptexcel": "unterteilt es"},
-            ignore_index=True)
+             "Output Dokument": f"{tranche}_{today}_Doppelte_Inventarnummern", "Ersetzt Hauptexcel": "unterteilt es"})
         # append that a mistake was found
         correct_check_list.append(False)
     # INVENTARNUMMER COMPLIANCE
     # as we do not want to perform an extensive analysis of the wrong Inventarnummer, we do a simple test here
     if do_inventarnummer_compliance:
-        #################
-        # OZEANIEN PATTERN
         pattern_correct, _, _ = regex_pattern
         # we can only drop the rows according to their index, at the end, because otherwise we might get an
         # IndexError because the number is greater than the size of the df
@@ -124,16 +108,15 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
             # we drop the wrong rows
             df_in.drop(index=drop_index_list, axis=0, inplace=True)
             # add the columns to document the renaming of inventarnummer
-            df_wrong_inventar = INVNR.add_rename_inventarnummer(in_data=df_wrong_inventar, is_excel=False, return_sorted=True,
-                                                          tranche=None)
-            df_doc = df_doc.append(
+            df_wrong_inventar = InvNr.add_inventarnummer_alt(in_data=df_wrong_inventar, is_excel=False, return_sorted=True,
+                                                             tranche=None)
+            doc_list.append(
                 {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
                  "Feld": "Inventarnummer",
                  "Was": "End Check", "Resultat": f"{len(df_wrong_inventar)} Falsche Inventarnummern",
                  "Output Dokument": f"{tranche}_{today}_Falsche_Inventarnummer",
-                 "Ersetzt Hauptexcel": "unterteilt es"},
-                ignore_index=True)
-            SE.save_df_excel(df_wrong_inventar, f"{tranche}_{today}_Falsche_Inventarnummer")
+                 "Ersetzt Hauptexcel": "unterteilt es"})
+            ExF.save_df_excel(df_wrong_inventar, f"{tranche}_{today}_Falsche_Inventarnummer")
             correct_check_list.append(False)
     else:
         # it is possible that we end up using Inventarnummer that are not compliant, therefore we may not want
@@ -142,51 +125,43 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
     # EINLAUFNUMMER COMPLIANCE
     # the function may add leading zeros to the einlaufnummer, in that case it would not read as a false value,
     # it returns that df, therefore we replace in the df_in with that one
-    einlauf_check, df_in = INSCH.einlaufnummer_bearbeiten(
+    einlauf_check, df_in = Insch.add_x_inschrift_incorrect(
         in_data=df_in, is_excel=False, tranche=None, abteilung=df_doc)
     if not einlauf_check:
-        df_doc = df_doc.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
+        doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
              "Feld": "Inschrift", "Was": "End Check", "Resultat": f"Es hat Falsche Einlaufnummern",
              "Output Dokument": f"{tranche}_{today}_Falsche_Inschrift",
-             "Ersetzt Hauptexcel": "unterteilt es"},
-            ignore_index=True)
+             "Ersetzt Hauptexcel": "unterteilt es"})
         correct_check_list.append(False)
-
     # Check if the program should continue if data was missing or incorrect
     if not continue_if_false_values and len(correct_check_list) != 0:
         # save the df_in, where all the correct data is stored
-        SE.save_df_excel(df_in, f"{tranche}_{today}_Alles_Korrekt")
-        df_doc = df_doc.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
+        ExF.save_df_excel(df_in, f"{tranche}_{today}_Alles_Korrekt")
+        doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
              "Feld": "alle", "Was": "End Check", "Resultat": f"Das Excel hat {len(correct_check_list)} fehler, das"
                                                              f"TMS Import Excel wurde nicht erstellt.",
-             "Output Dokument": f"{tranche}_{today}_Alles_Korrekt", "Ersetzt Hauptexcel": "unterteilt es"},
-            ignore_index=True)
-        SE.save_doc_excel(df_doc, abteilung)
+             "Output Dokument": f"{tranche}_{today}_Alles_Korrekt", "Ersetzt Hauptexcel": "unterteilt es"})
+        ExF.save_doc_list(doc_list, abteilung)
         # raise an Exception to stop the program
         raise TrancheMissingValue("Some data is missing or incorrect, the TMS import excel was not created.")
     elif continue_if_false_values and len(correct_check_list) != 0:
         warnings.warn("Some data is missing or incorrect, the program will continue to create the TMS import excel,"
                       "with the remaining correct data.")
-        df_doc = df_doc.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
+        doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
              "Feld": "alle", "Was": "End Check",
              "Resultat": f"Das Excel hat {len(correct_check_list)} Fehler, mit den Korrekten Zeilen wurde das TMS "
                          f"Import Excel erstellt.",
              "Output Dokument": f"TMS_Import_{tranche}_{today}",
-             "Ersetzt Hauptexcel": "ja"},
-            ignore_index=True)
+             "Ersetzt Hauptexcel": "ja"})
     else:
-        df_doc = df_doc.append(
-            {"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
+        doc_list.append({"Datum": today, "Tranche": tranche, "Input Dokument": in_excel, "Schlüssel Excel": "-",
              "Feld": "alle", "Was": "End Check",
              "Resultat": f"All notwendigen Angaben sind vorhanden, Daten werden transferiert",
-             "Output Dokument": f"TMS_Import_{tranche}_{today}", "Ersetzt Hauptexcel": "ja"}, ignore_index=True)
+             "Output Dokument": f"TMS_Import_{tranche}_{today}", "Ersetzt Hauptexcel": "ja"})
     # START TRANSFERRING DATA
     # before transferring data we add the Schubladenname to the Beschreibung, as it is easier to do before we add
     # the second header
-    df_in = BE.add_schublade(in_data=df_in, is_excel=False, tranche=None, abteilung=df_doc)
+    df_in = Besch.add_schublade(in_data=df_in, is_excel=False, abteilung=df_doc)
     # drop all the content of the header df so that only the header remains
     df_out.drop(index=df_out.index[:], axis=0, inplace=True)
     # add the information for the second header
@@ -223,8 +198,8 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
                           "Bemerkungen [Geographie]", "Ethniengruppe (Nation)"]
     for col in cols_must_transfer:
         df_out[col][1:] = df_in[col]
-    SE.save_df_excel(df_out, f"TMS_Import_{tranche}_{today}")
-    SE.save_doc_excel(df_doc, abteilung)
+    ExF.save_df_excel(df_out, f"TMS_Import_{tranche}_{today}")
+    ExF.save_doc_list(doc_list, abteilung)
 
 
 # end_bearbeitung(in_excel="Metadaten_Test_Import", header_excel="_TMS_Header",
@@ -259,3 +234,7 @@ all_cols = ["Inventarnummer", "Abteilung", "Klassifizierung", "Erwerbungsart", "
             "Herk.1: Ort", "Bezirk/Gemeinde", "Herk.2: Landschaft/Fluss", "Herk. 8: Politische Region",
             "Herk.7: Subkontinent", "Inselgruppe", "Insel", "Herk.4: Grossregion/gr. Insel",
             "Herk.3: Gebiet/Unterregion/Kl. Insel", "Bemerkungen [Geographie]", "Ethniengruppe (Nation)"]
+
+
+if __name__ == '__main__':
+    pass

@@ -2,6 +2,8 @@ import warnings
 import re
 
 
+# general call for RegEx pattern
+# pattern_correct, pattern_leading_zero, pattern_dummy = regex_function
 ############################################
 
 class RegExPattern:
@@ -53,6 +55,7 @@ class RegExPattern:
         pattern_letter = re.compile(r"^\(F\)[a-zA-Z]+\s[0-9]*[a-z]+$")
         # we need to differentiate between these two as otherwise the number of leading zeros would be incorrect
         pattern_letter_blank = re.compile(r"^\(F\)[a-zA-Z]+\s[0-9]*\s[a-z]+$")
+        # pattern_no_letter, pattern_letter, pattern_letter_blank = REPAT.inventar_sortierbar_re_pattern()
         return pattern_no_letter, pattern_letter, pattern_letter_blank
 
     @staticmethod
@@ -81,7 +84,6 @@ lis = ["(F)VB 16670", " (F)V 123", "(F) Vb 123", "(F)Vb 01245", "(F)bs 12356 ", 
        "(F)Vb DU-0118", "(F)Vb DU-0", "(F)Vb 0", "(F)Vb DU-", "", "(F)Vc 00", "(F)Vc 001"]
 
 leading_zero_list = ["(F)Vb 01245", "(F)Vb 0", "(F)Vc 00", "(F)Vc 001", "(F)Vc 01", "(F)Vb 00205"]
-
 
 if __name__ == "__main__":
     pass

@@ -1,0 +1,66 @@
+TOOLS
+
+- beschreibung
+    -> done
+- cleaning_df
+    -> no doc
+- columns_to_string
+    -> done
+- custom_exceptions
+    -> no doc
+- double_check
+    -> done
+- excel_functions
+    - > no doc
+- geographie
+    -> done
+- inschrift_tranche
+    -> done
+- inventarnummer
+    -> done
+- key_excel
+            -> wait for rewrite
+- modify_excel
+    -> done
+- NaN_check
+            -> wait for rewrite
+- RegEx_patterns
+    -> no doc
+- TMS_inschrift
+            -> verify
+- unique_ID
+    -> done
+
+##############################################
+
+REGULAR FUNCTIONS
+
+- BSB_barcode
+
+- BSB_to_tranche_excel
+
+- documentation_create
+
+- end_bearbeitung
+
+- ethnie_replace
+
+- ethnie_unique
+
+- geo_fill
+
+- inschrift_fill
+
+- inschrift_unique
+
+- inventarnummer_compliance
+
+- schuster_karten
+
+- TMS_delete
+
+- TMS_find_existing_objects
+
+
+
+

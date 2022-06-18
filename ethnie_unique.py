@@ -6,17 +6,15 @@ import numpy as np
 from datetime import date
 import re
 
-from save_excel import SaveExcel as SE
-from cleaning_df import CleanDF as Clean
+from tools.excel_functions import ExcelFunctions as ExF
+from tools.cleaning_df import CleanDF as Clean
 
 
 today = str(date.today())
-os.chdir("..")
+os.chdir("")
 current_wdir = os.getcwd()
 
 ############################################
-# Suppress the SettingWithCopyWarning
-pd.set_option("mode.chained_assignment", None)
 
 
 class Ethnie:
@@ -32,19 +30,20 @@ class Ethnie:
         :return: None
         """
         # read in_excel to df
-        df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
+        df_in = ExF.in_excel_to_df(in_excel)
         # create a new df in which to store the info and copy the column
-        df_unique_info = pd.DataFrame({"Kontrolliert": "", "Ethniengruppe (Nation)": df_in["Ethniengruppe (Nation)"],
-                                       "Ethnie Neu": "", "Bsp: Inventarnummer": df_in["Inventarnummer"],
-                                       "Bsp: Ordner Bild": df_in["Ordner Bild"], "Bemerkungen": ""})
+        df_unique_info = pd.DataFrame(
+            {"Kontrolliert": "", "Ethniengruppe (Nation)": df_in["Ethniengruppe (Nation)"], "Ethnie Neu": "",
+             "Bsp: Inventarnummer": df_in["Inventarnummer"], "Bsp: Ordner Bild": df_in["Ordner Bild"],
+             "Bemerkungen": ""})
+        # clean all the blank spaces
+        df_unique_info = Clean.strip_spaces_col(df_unique_info, "Ethniengruppe (Nation)")
         # drop all the rows with nan col, modify memory
         df_unique_info.dropna(subset=["Ethniengruppe (Nation)"], inplace=True)
-        # clean all the blank spaces
-        df_unique_info = Clean.strip_spaces(df_unique_info)
         # remove all the duplicate values
         # drop duplicates keeps the first occurrence
         df_unique_info.drop_duplicates(subset=["Ethniengruppe (Nation)"], keep="first", inplace=True, ignore_index=True)
-        SE.save_df_excel(df_unique_info, f"{abteilung}_Ethnie_Schlüssel_{today}")
+        ExF.save_df_excel(df_unique_info, f"{abteilung}_Ethnie_Schlüssel_{today}")
 
     # get_unique_ethnie(in_excel="d_Test_get_unique_ethnie", abteilung="Test")
 
@@ -59,24 +58,22 @@ class Ethnie:
         """
         # TO THE ALREADY EXISTING LIST OF UNIQUE ETHNIE
         # read the new excel
-        df_in = pd.read_excel(os.path.join(current_wdir, "input", f"{in_excel}.xlsx"))
+        df_in = ExF.in_excel_to_df(in_excel)
         # clean the df
-        df_in = Clean.strip_spaces(df_in)
+        df_in = Clean.strip_spaces_col(df_in, "Ethniengruppe (Nation)")
         # read in the key excel
-        df_key = pd.read_excel(os.path.join(current_wdir, "input", f"{key_excel}.xlsx"))
+        df_key = ExF.in_excel_to_df(key_excel)
         # create a temporary df to store only the relevant columns in, that has the same structure as the other df
         temp_in = pd.DataFrame({"Kontrolliert": "", "Ethniengruppe (Nation)": df_in["Ethniengruppe (Nation)"],
                                 "Ethnie Neu": "", "Bsp: Inventarnummer": df_in["Inventarnummer"],
                                 "Bsp: Ordner Bild": df_in["Ordner Bild"], "Bemerkungen": ""})
-        # clean all the blank spaces
-        temp_in = Clean.strip_spaces(temp_in)
         # concat the two dfs, it is important that the key df is in first place since when sorting out duplicates
         # this is the one that is kept
         df_combined = pd.concat([df_key, temp_in], ignore_index=True)
         # sort out the duplicates and keep the first instance
         df_combined.drop_duplicates(subset="Ethniengruppe (Nation)", keep='first', inplace=True, ignore_index=False)
         # save to an excel
-        SE.save_df_excel(df_combined, f"Schlüssel_Ethnie_{abteilung}_{today}")
+        ExF.save_df_excel(df_combined, f"Schlüssel_Ethnie_{abteilung}_{today}")
 
     # add_unique_ethnie(in_excel="d_Test_add_unique_ethnie_Tranche", key_excel="d_Test_add_unique_ethnie_Schlüssel", abteilung="Test")
 

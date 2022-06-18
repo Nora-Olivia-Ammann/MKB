@@ -1,9 +1,8 @@
 import os
 from datetime import date
 
+import numpy as np
 import pandas as pd
-
-from tools.RegEx_patterns import RegExPattern as REPAT
 
 today = str(date.today())
 # os.chdir("..")
@@ -13,13 +12,10 @@ current_wdir = os.getcwd()
 # Suppress the SettingWithCopyWarning
 pd.set_option("mode.chained_assignment", None)
 
+a = False
+b = False
 
-def check_para(function_name: str or None):
-    if function_name:
-        print(function_name)
-    else:
-        print(None)
-
-
-check_para(None)
-
+if all(result == False for result in (a, b)):
+    print("All False")
+else:
+    print("Not all False")

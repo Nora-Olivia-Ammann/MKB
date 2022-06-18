@@ -1,24 +1,37 @@
-import pandas as pd
 import os
+import pandas as pd
 import numpy as np
 from datetime import date
+import warnings
+
+from excel_functions import ExcelFunctions as ExF
 
 today = str(date.today())
-os.chdir("..")
-current_wdir = os.getcwd()
 
 
 class Beschreibung:
 
     @staticmethod
     def add_str_to_beschreibung(input_df: pd.DataFrame, in_excel_name: str, source_col: str, prefix_text: str,
-                                tranche: str or None = None) -> pd.DataFrame and dict:
+                                tranche: str) -> pd.DataFrame and dict:
+        """
+        This only works if the Beschreibung is enclosed in curly brackets { }
+        Test_Excel: Test_add_str_to_beschreibung
+        :param input_df: Tranchen Excel df
+        :param in_excel_name: Name of the Excel (in_excel of the enclosing function)
+        :param source_col: The string that should be added to the Beschreibung
+        :param prefix_text:
+        :param tranche:
+        :return:
+        """
+        warnings.warn("Only works if the Beschreibung is enclosed in { }")
         # TODO validate, description
+        # TODO: error handling for both columns
         # iterate over the rows
         for index, source_val in input_df[source_col].iteritems():
             # if this is not done this way but with try and except to cach the errors of the NaN, it adds the 'nan' as a
             # string to the beschreibung. Therefore it will only be done if it is indeed of type string
-            if type(source_val) == str:
+            try:
                 # get the value in the Beschreibung
                 besch_str = input_df["Beschreibung"][index]
                 # check if they are a str, if they are empty they are not str
@@ -33,7 +46,8 @@ class Beschreibung:
                 # if the Beschreibung does not contain a string (NaN), just insert the value
                 else:
                     input_df.loc[index, "Beschreibung"] = f"{prefix_text}{source_val}"
-            # skip the row if it contains NaN
+            except ValueError:
+                continue
         doc_dict = {"Datum": today,
                     "Tranche": tranche,
                     "Input Dokument": in_excel_name,
@@ -74,3 +88,13 @@ class Beschreibung:
 
 if __name__ == "__main__":
     pass
+
+    file_name = "Test_add_str_to_beschreibung"
+    file_path = "_Test_Excel/" + file_name
+
+    # in_df = ExF.in_excel_to_df(file_path)
+    # out_df, dict_df = Beschreibung.add_str_to_beschreibung(
+    #     in_df, in_excel_name="Test", source_col="Schubladen Beschriftung",
+    #     prefix_text="Schublade: ", tranche="Test")
+
+    print(1)

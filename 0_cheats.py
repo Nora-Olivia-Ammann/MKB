@@ -21,9 +21,6 @@ from tools.RegEx_patterns import RegExPattern as RePat
 from tools.TMS_inschrift import TMSEinlauf as TMSInsch
 from tools.unique_ID import UniqueID as UID
 
-today = str(date.today())
-# os.chdir("..")
-current_wdir = os.getcwd()
 
 ############################################
 # Suppress the SettingWithCopyWarning

@@ -31,7 +31,7 @@ def add_x_inventarnummer_compliance(in_excel: str, tranche: str, abteilung: str,
         df_in, picture_doc = Pic.add_rename_picture_col(df_in, tranche, in_excel)
         doc_list.append(picture_doc)
     # if the column already exists we do not want to overwrite it
-    except ColExistsError:
+    except ColumnExistsError:
         pass
     # first check for leading zeros, this is done first as there may be 'hidden' doubles
     has_zero, zero_df, zero_doc = InvNr.add_x_leading_zero(df_in, tranche, in_excel, regex_pattern)

@@ -36,7 +36,7 @@ class PictureFiles:
         # TODO: validate
         # check if the column exists, we do not want to overwrite anything
         if "Bild umbenennt" in input_df.columns:
-            raise ColExistsError("The Column already exists.")
+            raise ColumnExistsError("The Column already exists.")
         # get the index for the inventarnummer so we can add the column next to it
         ind_invnr = input_df.columns.get_loc("Inventarnummer")
         # add the new column

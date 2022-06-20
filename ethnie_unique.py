@@ -37,7 +37,7 @@ class Ethnie:
              "Bsp: Inventarnummer": df_in["Inventarnummer"], "Bsp: Ordner Bild": df_in["Ordner Bild"],
              "Bemerkungen": ""})
         # clean all the blank spaces
-        df_unique_info = Clean.strip_spaces_col(df_unique_info, "Ethniengruppe (Nation)")
+        df_unique_info = Clean.strip_spaces(df_unique_info)
         # drop all the rows with nan col, modify memory
         df_unique_info.dropna(subset=["Ethniengruppe (Nation)"], inplace=True)
         # remove all the duplicate values
@@ -60,7 +60,7 @@ class Ethnie:
         # read the new excel
         df_in = ExF.in_excel_to_df(in_excel)
         # clean the df
-        df_in = Clean.strip_spaces_col(df_in, "Ethniengruppe (Nation)")
+        df_in = Clean.strip_spaces(df_in)
         # read in the key excel
         df_key = ExF.in_excel_to_df(key_excel)
         # create a temporary df to store only the relevant columns in, that has the same structure as the other df

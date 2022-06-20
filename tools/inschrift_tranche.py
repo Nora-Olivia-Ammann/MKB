@@ -31,7 +31,10 @@ class Inschrift:
         # TODO. validate
         pattern_einlauf_correct, pattern_zero, pattern_incomplete = RePat.inschrift_re_pattern()
         # get the index number of the column inschrift
-        index_no = input_df.columns.get_loc("Inschrift")
+        try:
+            index_no = input_df.columns.get_loc("Inschrift")
+        except KeyError:
+            raise KeyError("Column doesn't exist.")
         # try to insert a new column to the right of it
         try:
             input_df.insert(index_no + 1, "Inschrift falsch", np.nan)
@@ -40,13 +43,13 @@ class Inschrift:
             input_df["Inschrift falsch"] = np.nan
         for index, inschrift in input_df["Inschrift"].iteritems():
             # RegEx only works with strings. Numbers (int and float) are also treated as strings,
-            # you only get a type error if it is empty
+            # you only get a type error if it is empty, meaning a np.nan
             try:
                 # if the numbers are only zeros, this has to come first,
                 # as a 0 number could also match the correct RegEx
                 if pattern_zero.match(inschrift):
                     input_df.loc[index, "Inschrift falsch"] = "x"
-                # if the numbers are valid
+                # if the numbers are valid (most will be)
                 elif pattern_einlauf_correct.match(inschrift):
                     continue
                 elif pattern_incomplete.match(inschrift):
@@ -71,7 +74,7 @@ class Inschrift:
                         "Schlüssel Excel": "-",
                         "Feld": "Inschrift",
                         "Was": "Compliance",
-                        "Resultat": f"alle Angaben korrekt oder wurden korriegiert.",
+                        "Resultat": f"alle Angaben korrekt oder wurden korrigiert.",
                         "Output Dokument": np.nan,
                         "Ersetzt Hauptexcel": "ja"}
             return True, input_df, doc_dict
@@ -82,7 +85,7 @@ class Inschrift:
                         "Schlüssel Excel": "-",
                         "Feld": "Inschrift",
                         "Was": "Compliance",
-                        "Resultat": f"Inschriften inkorrekt",
+                        "Resultat": f"Einige Inschriften inkorrekt.",
                         "Output Dokument": np.nan,
                         "Ersetzt Hauptexcel": "ja"}
             return False, input_df, doc_dict

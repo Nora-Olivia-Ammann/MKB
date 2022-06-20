@@ -26,11 +26,11 @@ def fill_geo(in_excel: str, key_excel: str, tranche: str, abteilung: str) -> Non
     # read in_excel to df, which is the one to fill with values
     df_in = ExF.in_excel_to_df(in_excel)
     # clean the df
-    df_in = Clean.strip_spaces_col(df_in, "Geo_ID")
+    df_in = Clean.strip_spaces(df_in)
     # read key_excel which will provide the dictionary
     df_key = ExF.in_excel_to_df(key_excel)
     # clean the df, we don't want any spaces in the whole df
-    df_key = Clean.strip_spaces_whole_df(df_key)
+    df_key = Clean.strip_spaces(df_key)
     doc_list = []
     # check whether all rows of the tranche excel have a GeoID
     has_geo_id_nan, nan_df, doc_dict = NaN.separate_nan_col(df_in, "Geo_ID")

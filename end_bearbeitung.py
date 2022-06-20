@@ -49,7 +49,7 @@ def end_bearbeitung(in_excel: str, header_excel: str, tranche: str, abteilung: s
     # read in_excel to df, which is the one to fill with values
     df_in = ExF.in_excel_to_df(in_excel)
     # clean the df
-    df_in = Clean.strip_spaces_whole_df(df_in)
+    df_in = Clean.strip_spaces(df_in)
     # read in the header excel which is the output format
     df_out = ExF.in_excel_to_df(header_excel)
     # read the documentation excel

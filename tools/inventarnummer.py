@@ -34,7 +34,7 @@ class Inventarnummer:
         """
         # TODO: validate, write description
         # clean the df
-        input_df = Clean.strip_spaces_col(input_df, "Inventarnummer")
+        input_df = Clean.strip_spaces(input_df)
         # if it exists we want to overwrite the existing column with the new Inventarnummer
         input_df["Inventar Sortierbar"] = input_df["Inventarnummer"]
         # we only want to format roughly correct inventarnummer, as the true compliance check comes later
@@ -85,7 +85,7 @@ class Inventarnummer:
         """
         # TODO: validate, description
         if "Inventarnummer Alt" in input_df.columns:
-            raise ColExistsError("The Column already exists.")
+            raise ColumnExistsError("The Column already exists.")
         # get the index of the Inventarnummer Column
         index = input_df.columns.get_loc("Inventarnummer")
         # add a new column to store the new Inventarnummer
@@ -130,42 +130,57 @@ class Inventarnummer:
 
     @staticmethod
     def remove_leading_zero(inventarnummer: str) -> str:
-        # TODO: validate, write description
+        """
+        It takes a string which is an inventarnummer of the format with leading zeroes, removes those and returns
+        the Inventarnummer in the correct format. The error handling is just a safety net as this function should
+        only be applied to Inventarnummern that are through RegEx identified to have leading zeroes.
+        :param inventarnummer: string of an Inventarnummer, eg. (F)Vb 000008
+        :return: string of correct Inventarnummer, eg. (F)Vb 8
+        """
         # split the Inventarnummer at the blank space
-        splt_inventar = inventarnummer.split(" ")
-        # strip the 0 on the left side from the number and replace the old value with that
-        splt_inventar[1] = splt_inventar[1].lstrip("0")
-        # join the strings from the list
-        joined = " ".join(splt_inventar)
-        return joined
+        try:
+            splt_inventar = inventarnummer.split(" ")
+            # strip the 0 on the left side from the number and replace the old value with that
+            splt_inventar[1] = splt_inventar[1].lstrip("0")
+            # join the strings from the list
+            joined = " ".join(splt_inventar)
+            return joined
+        # if it does not have blank spaces it would give an index error (as there is no list with several elements)
+        except IndexError:
+            return inventarnummer
+        # if it is a np.nan it would give an attribute error
+        except AttributeError:
+            return inventarnummer
 
     @staticmethod
     def separate_leading_zero(input_df: pd.DataFrame, tranche: str, in_excel_name: str, regex_function) \
             -> bool and pd.DataFrame and pd.DataFrame or None and dict:
+        # TODO: validate and write description
         # clean the df
-        input_df = Clean.strip_spaces_col(input_df, "Inventarnummer")
+        input_df = Clean.strip_spaces(input_df)
         # get the RegEx pattern for leading zero
         _, pattern_leading_zero, _ = regex_function
         list_leading_zero = []
         # remove the leading zeros from Inventarnummer
-        for index, value in input_df["Inventarnummer"].iteritems():
+        for index, invnr in input_df["Inventarnummer"].iteritems():
             # RegEx only takes str if it is an int or float it will throw an error
             try:
                 # check for Inventarnummer with leading zero
-                if pattern_leading_zero.match(value):
-                    # get the new value
-                    new_invnr = Inventarnummer.remove_leading_zero(value)
-                    # replace the value in the in_df
+                if pattern_leading_zero.match(invnr):
+                    # get the new invnr
+                    new_invnr = Inventarnummer.remove_leading_zero(invnr)
+                    # replace the invnr in the in_df
                     input_df.loc[index, "Inventarnummer"] = new_invnr
                     # add the new number to the documentation df
                     list_leading_zero.append(
-                        {"Alte Inventarnummer": value,
+                        {"Bilddatei kontrolliert": np.nan,
+                         "Alte Inventarnummer": invnr,
                          "Neue Inventarnummer": new_invnr,
                          "Tranche": input_df.loc[index, "Tranche"],
                          "Ordner Bild": input_df.loc[index, "Ordner Bild"],
                          "Unique_ID": input_df.loc[index, "Unique_ID"],
-                         "Inventar Sortierbar": input_df.loc[index, "Inventar Sortierbar"],
-                         "Bilddatei kontrolliert": np.nan})
+                         "Inventar Sortierbar": input_df.loc[index, "Inventar Sortierbar"]})
+            # in case of np.nan
             except TypeError:
                 continue
         if len(list_leading_zero) != 0:
@@ -201,7 +216,7 @@ class Inventarnummer:
             -> bool and pd.DataFrame or None and dict:
         # TODO validate, write description
         # clean the column
-        input_df = Clean.strip_spaces_col(input_df, "Inventarnummer")
+        input_df = Clean.strip_spaces(input_df)
         # get the RegEx pattern for leading zero
         _, pattern_leading_zero, _ = regex_function
         # get the index of the Inventarnummer Column
@@ -213,19 +228,19 @@ class Inventarnummer:
         except ValueError:
             input_df["Führende 0"] = np.nan
         try:
-            input_df = Inventarnummer.add_inventarnummer_alt(input_df=input_df, in_excel_name=in_excel_name,
-                                                             tranche=tranche, return_sorted=False)
+            input_df = Inventarnummer.add_inventarnummer_alt(
+                input_df=input_df, in_excel_name=in_excel_name, tranche=tranche, return_sorted=False)
         # if the column exists we do not want to overwrite it as it may contain important data
-        except ColExistsError:
+        except ColumnExistsError:
             pass
         # iterate over the df
-        for index, value in input_df["Inventarnummer"].iteritems():
+        for index, invnr in input_df["Inventarnummer"].iteritems():
             # RegEx only takes str if it is an int or float it will throw an error
             try:
                 # check for Inventarnummer with leading zero
-                if pattern_leading_zero.match(value):
+                if pattern_leading_zero.match(invnr):
                     # get the new value
-                    new_invnr = Inventarnummer.remove_leading_zero(value)
+                    new_invnr = Inventarnummer.remove_leading_zero(invnr)
                     # replace the value in the in_df
                     input_df.loc[index, "Inventarnummer"] = new_invnr
                     input_df.loc[index, "Führende 0"] = "x"
@@ -265,15 +280,15 @@ class Inventarnummer:
             -> bool and pd.DataFrame and pd.DataFrame or None and list[dict]:
         # TODO: validate add description
         # clean the column
-        input_df = Clean.strip_spaces_col(input_df, "Inventarnummer")
+        input_df = Clean.strip_spaces(input_df)
         # get the RegEx pattern
         pattern_correct, _, _ = regex_function
         # add or overwrite the column (maybe error handling?) that marks the Inventarnummer where something is wrong
         try:
-            input_df = Inventarnummer.add_inventarnummer_alt(input_df=input_df, in_excel_name=in_excel_name,
-                                                             tranche=tranche, return_sorted=False)
+            input_df = Inventarnummer.add_inventarnummer_alt(
+                input_df=input_df, in_excel_name=in_excel_name, tranche=tranche, return_sorted=False)
         # if the column exists we do not want to overwrite it as it may contain important data
-        except ColExistsError:
+        except ColumnExistsError:
             pass
         # get the index of the Inventarnummer Column
         index = input_df.columns.get_loc("Inventarnummer")
@@ -323,3 +338,4 @@ class Inventarnummer:
 
 if __name__ == "__main__":
     pass
+

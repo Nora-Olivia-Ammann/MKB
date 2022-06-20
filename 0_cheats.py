@@ -104,11 +104,11 @@ ind = df_in.columns.get_loc("Col_Name")
 
 # check if column exists
 if "col_name" in df_in.columns:
-    raise ColExistsError("The Column already exists.")
+    raise ColumnExistsError("The Column already exists.")
 # check if more than one column already exists
 # in order for the Exception to be raised both have to already exist, if only one exists no Exception will be raised
 if {"Col1", "Col2"}.issubset(df_in.columns):
-    raise ColExistsError("The Column already exists.")
+    raise ColumnExistsError("The Column already exists.")
 
 ######################
 # BOOLEAN COLUMNS

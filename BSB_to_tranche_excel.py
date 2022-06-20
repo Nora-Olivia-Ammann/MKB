@@ -36,7 +36,7 @@ def new_tranche_excel(in_excel: str, tranche: str, abteilung: str, prefix_unique
     # read in the excel with the data
     df_in = ExF.in_excel_to_df(in_excel)
     # clean the df
-    df_in = Clean.strip_spaces_whole_df(df_in)
+    df_in = Clean.strip_spaces(df_in)
     # create empty list to save the documentation
     doc_list = []
     if has_second_header:

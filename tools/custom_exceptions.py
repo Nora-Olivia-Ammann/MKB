@@ -24,6 +24,6 @@ class DoubleGeoIDError(Exception):
         super().__init__(message)
 
 
-class ColExistsError(Exception):
+class ColumnExistsError(Exception):
     def __init__(self, message):
         super().__init__(message)

@@ -41,3 +41,13 @@ doc_dict = {"Datum": today,
 
 if __name__ == "__main__":
     pass
+
+    file_name = ""
+    file_path = os.path.join("_Test_Excel", file_name)
+    df = ExF.in_excel_to_df(file_path)
+
+    # function call
+
+
+    ExF.save_doc_single("Test", doc)
+    ExF.save_df_excel(df, "Test")

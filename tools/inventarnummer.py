@@ -24,15 +24,20 @@ pd.set_option("mode.chained_assignment", None)
 class Inventarnummer:
 
     @staticmethod
-    def add_inventar_sortierbar(input_df: pd.DataFrame, return_sorted: bool, tranche: str, in_excel_name: str) \
+    def add_inventar_sortierbar(input_df: pd.DataFrame, tranche: str, in_excel_name: str, return_sorted: bool = False) \
             -> pd.DataFrame and dict:
         """
         Adds a new column with a sortable Inventarnummer. The correct one which we use in the TMS has no leading zeros,
         and cannot be sorted by excel or df correctly so that 2 follows 1 instead of 10. Because there may still be
         faulty Inventarnummer, of a format we may not be able to anticipate, we only add the zeros to ones that are
         roughly in the correct format. Once Inventarnummern have been corrected this program can be run again.
+        Test Excel: Test_inventarnummer_compliance_Fehler
+        :param input_df: df that gets Inventarnummer sortierbar
+        :param tranche: Name of Tranche
+        :param in_excel_name: Str name of excel
+        :param return_sorted: True if yes, default False
+        :return: altered df and dictionary with documentation
         """
-        # TODO: validate, write description
         # clean the df
         input_df = Clean.strip_spaces(input_df)
         # if it exists we want to overwrite the existing column with the new Inventarnummer
@@ -78,84 +83,68 @@ class Inventarnummer:
         return input_df, doc_dict
 
     @staticmethod
-    def add_inventarnummer_alt(input_df: pd.DataFrame, return_sorted: bool, tranche: str, in_excel_name: str) \
+    def add_inventarnummer_alt(input_df: pd.DataFrame, tranche: str, in_excel_name: str) \
             -> pd.DataFrame and dict:
         """
         Adds columns to df, that are used when having to rename any Inventarnummer. Can be used as a nested function.
+        :param input_df: df that should be transformed
+        :param tranche: str of tranche
+        :param in_excel_name: name of excel
+        :return: df with added column, dict with documentation
         """
-        # TODO: validate, description
         if "Inventarnummer Alt" in input_df.columns:
             raise ColumnExistsError("The Column already exists.")
         # get the index of the Inventarnummer Column
         index = input_df.columns.get_loc("Inventarnummer")
         # add a new column to store the new Inventarnummer
         input_df.insert(index + 1, "Inventarnummer Alt", np.nan)
-        # add a new column to mark whether the Bilddatei was also renamed
-        if return_sorted:
-            # if the column does not exist we would get an error
-            try:
-                input_df.sort_values(by=["Inventar Sortierbar"], inplace=True, ignore_index=True)
-            except KeyError:
-                # if it doesn't exist we add the column
-                new_df, _ = Inventarnummer.add_inventar_sortierbar(input_df, True, tranche, in_excel_name)
-        # if we added the new column we write a different doc and return the other df
-        # as the variable only exists if the KeyError happened we check if it does
-        # it is easier if we write both info in one doc as we must otherwise return a list or several which makes it
-        # more complicated later on
-        if "new_df" in locals():
-            # write documentation
-            doc_dict = {"Datum": today,
-                        "Tranche": tranche,
-                        "Input Dokument": in_excel_name,
-                        "Schlüssel Excel": "-",
-                        "Feld": "Inventarnummer, Inventarnummer Sortierbar",
-                        "Was": "Hinzufügen von Spalten",
-                        "Resultat": f"Neue Spalten",
-                        "Output Dokument": np.nan,
-                        "Ersetzt Hauptexcel": "ja"}
-            return new_df, doc_dict
-        # if the variable does not exist we continue as normal
-        else:
-            # write documentation
-            doc_dict = {"Datum": today,
-                        "Tranche": tranche,
-                        "Input Dokument": in_excel_name,
-                        "Schlüssel Excel": "-",
-                        "Feld": "Inventarnummer",
-                        "Was": "Hinzufügen von Spalte: Inventarnummer Alt",
-                        "Resultat": f"Neue Spalte",
-                        "Output Dokument": np.nan,
-                        "Ersetzt Hauptexcel": "ja"}
-            return input_df, doc_dict
+        # write documentation
+        doc_dict = {"Datum": today,
+                    "Tranche": tranche,
+                    "Input Dokument": in_excel_name,
+                    "Schlüssel Excel": "-",
+                    "Feld": "Inventarnummer",
+                    "Was": "Hinzufügen von Spalte: Inventarnummer Alt",
+                    "Resultat": f"Neue Spalte",
+                    "Output Dokument": np.nan,
+                    "Ersetzt Hauptexcel": "ja"}
+        return input_df, doc_dict
 
     @staticmethod
     def remove_leading_zero(inventarnummer: str) -> str:
         """
         It takes a string which is an inventarnummer of the format with leading zeroes, removes those and returns
-        the Inventarnummer in the correct format. The error handling is just a safety net as this function should
-        only be applied to Inventarnummern that are through RegEx identified to have leading zeroes.
+        the Inventarnummer in the correct format. This does not have error handling for NaN or Inventarnummer that do
+        not match the pattern as it should only be applied when the RegEx is done, therefore eliminating that
+        possibility.
         :param inventarnummer: string of an Inventarnummer, eg. (F)Vb 000008
         :return: string of correct Inventarnummer, eg. (F)Vb 8
         """
         # split the Inventarnummer at the blank space
-        try:
-            splt_inventar = inventarnummer.split(" ")
-            # strip the 0 on the left side from the number and replace the old value with that
-            splt_inventar[1] = splt_inventar[1].lstrip("0")
-            # join the strings from the list
-            joined = " ".join(splt_inventar)
-            return joined
-        # if it does not have blank spaces it would give an index error (as there is no list with several elements)
-        except IndexError:
-            return inventarnummer
-        # if it is a np.nan it would give an attribute error
-        except AttributeError:
-            return inventarnummer
+        splt_inventar = inventarnummer.split(" ")
+        # strip the 0 on the left side from the number and replace the old value with that
+        splt_inventar[1] = splt_inventar[1].lstrip("0")
+        # join the strings from the list
+        joined = " ".join(splt_inventar)
+        return joined
 
     @staticmethod
     def separate_leading_zero(input_df: pd.DataFrame, tranche: str, in_excel_name: str, regex_function) \
             -> bool and pd.DataFrame and pd.DataFrame or None and dict:
-        # TODO: validate and write description
+        """
+        Generates a separate df with the Inventarnummern from which leading zeros (eg. (F)Vb 00001) were removed from
+        the main df. The input df still has the numbers without the leading zeros (eg. (F)Vb 1), the separate df
+        is for documentary purposes and so that the picture filenames can be checked.
+        Test Excel: Test_inventarnummer_compliance_Fehler
+        Test Excel: Test_inventarnummer_compliance_Korrekt
+        :param input_df: df with zeros
+        :param tranche: Name of tranche
+        :param in_excel_name: name of excel
+        :param regex_function: name of the RegEx function (the whole function has to be imported)
+        :return: bool (True if leading zeros were present), df without the leading zeros, df lists of leading zeros,
+            documentation dict
+            if there were no leading zeros then no dfs will be returns just the documentation
+        """
         # clean the df
         input_df = Clean.strip_spaces(input_df)
         # get the RegEx pattern for leading zero
@@ -214,7 +203,20 @@ class Inventarnummer:
     @staticmethod
     def add_x_leading_zero(input_df: pd.DataFrame, tranche: str, in_excel_name: str, regex_function) \
             -> bool and pd.DataFrame or None and dict:
-        # TODO validate, write description
+        """
+        Checks for Inventarnummer with leading zero (eg. (F)Vb 0001), they have to have the general correct pattern, so
+        if something else is wrong like a space after the (F) then it won't be recognised. It then adds a column to mark
+        those with an x, removes the leading zeroes and replaces it in the column, then saves the old number in the
+        column with the Inventarnummer alt. It overwrites the 'x' in the leading zero column as we only want the new
+        ones.
+        Test Excel: Test_inventarnummer_compliance_Fehler
+        Test Excel: Test_Inventarnummer_add_x_already_some -> error handling test and adding new
+        :param input_df:
+        :param tranche:
+        :param in_excel_name:
+        :param regex_function:
+        :return:
+        """
         # clean the column
         input_df = Clean.strip_spaces(input_df)
         # get the RegEx pattern for leading zero
@@ -225,11 +227,13 @@ class Inventarnummer:
         try:
             input_df.insert(index + 1, "Führende 0", np.nan)
         # if the column exists we get a value error, in that case we simply overwrite the results as it may have changed
+        # and we only want to have those marked who are new
         except ValueError:
             input_df["Führende 0"] = np.nan
+        # add a column to document the old inventarnummer
         try:
-            input_df = Inventarnummer.add_inventarnummer_alt(
-                input_df=input_df, in_excel_name=in_excel_name, tranche=tranche, return_sorted=False)
+            input_df, _ = Inventarnummer.add_inventarnummer_alt(
+                input_df=input_df, in_excel_name=in_excel_name, tranche=tranche)
         # if the column exists we do not want to overwrite it as it may contain important data
         except ColumnExistsError:
             pass
@@ -239,14 +243,15 @@ class Inventarnummer:
             try:
                 # check for Inventarnummer with leading zero
                 if pattern_leading_zero.match(invnr):
-                    # get the new value
+                    # get the new invnr
                     new_invnr = Inventarnummer.remove_leading_zero(invnr)
-                    # replace the value in the in_df
+                    # replace the invnr in the in_df
                     input_df.loc[index, "Inventarnummer"] = new_invnr
+                    input_df.loc[index, "Inventarnummer Alt"] = invnr
                     input_df.loc[index, "Führende 0"] = "x"
             # if it is nan it raises a type error
             except TypeError:
-                continue
+                pass
         # check if all the columns are NaN meaning there are no leading zeros
         if input_df["Führende 0"].isnull().all():
             # remove the column
@@ -278,6 +283,21 @@ class Inventarnummer:
     @staticmethod
     def add_x_wrong_inventarnummer(input_df: pd.DataFrame, tranche: str, in_excel_name: str, regex_function) \
             -> bool and pd.DataFrame and pd.DataFrame or None and list[dict]:
+        """
+        It checks if the Inventarnummer is of the correct format. Inventarnummer with leading zeros are also marked
+        therefore if both are used then this one should come after as otherwise they are marked in both columns.
+        If columns Inventarnummer Alt and Falsch do not exist it adds those. If Inventarnummer Falsch exists then
+        it overwrites the values as we only want new ones.
+        Test Excel: Test_inventarnummer_compliance_Korrekt -> check that nothing happens
+        Test Excel: Test_inventarnummer_compliance_Fehler -> check that it adds everything correctly
+        Test Excel: Test_Inventarnummer_add_x_already_some -> check that it doesn't overwrite
+        :param input_df: df to be checked
+        :param tranche: name of tranche
+        :param in_excel_name: name of excel of the df
+        :param regex_function: regex function to be used. If using a specific Abteilung function then it will mark the
+        'correct' ones with another abteilung prefix also as wrong.
+        :return: bool if there are any, df if there are any, documentation dict
+        """
         # TODO: validate add description
         # clean the column
         input_df = Clean.strip_spaces(input_df)
@@ -285,8 +305,8 @@ class Inventarnummer:
         pattern_correct, _, _ = regex_function
         # add or overwrite the column (maybe error handling?) that marks the Inventarnummer where something is wrong
         try:
-            input_df = Inventarnummer.add_inventarnummer_alt(
-                input_df=input_df, in_excel_name=in_excel_name, tranche=tranche, return_sorted=False)
+            input_df, _ = Inventarnummer.add_inventarnummer_alt(
+                input_df=input_df, in_excel_name=in_excel_name, tranche=tranche)
         # if the column exists we do not want to overwrite it as it may contain important data
         except ColumnExistsError:
             pass
@@ -339,3 +359,13 @@ class Inventarnummer:
 if __name__ == "__main__":
     pass
 
+    # file_name = "Test_inventarnummer_compliance_Fehler"
+    # file_path = os.path.join("_Test_Excel", file_name)
+    #
+    # df = ExF.in_excel_to_df(file_path)
+    #
+    # boo, out_df, doc = Inventarnummer.add_x_wrong_inventarnummer(
+    #     df, "Test", in_excel_name="Test", regex_function=RePat.general_re_pattern())
+    #
+    # ExF.save_df_excel(out_df, "Test")
+    # ExF.save_doc_single("Test", doc)

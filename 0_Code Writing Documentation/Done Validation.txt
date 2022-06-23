@@ -1,0 +1,48 @@
+BESCHREIBUNG
+    - add_str_to_beschreibung
+    - add_schublade
+
+CLEANING_DF
+
+
+COLUMNS_TO_STRING
+
+
+DOUBLE_CHECK
+
+
+EXCEL_FUNCTIONS
+    - done
+
+GEOGRAPHIE
+
+
+INSCHRIFT_TRANCHE
+
+
+INVENTARNUMMER
+    - add_inventar_sortierbar
+    - add_inventarnummer_alt
+    - separate_leading_zero
+    - add_x_wrong_inventarnummer
+
+KEY_EXCEL
+
+
+MODIFY_EXCEL
+
+
+NAN_CHECK
+
+
+PICTURE_FILES
+
+
+REGEX_PATTERNS
+
+
+TMS_INSCHRIFT
+
+
+UNIQUE_ID
+

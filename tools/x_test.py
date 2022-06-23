@@ -1,4 +1,4 @@
-from os.path import dirname as up
+import os
 import pandas as pd
 import numpy as np
 from datetime import date
@@ -21,17 +21,5 @@ from unique_ID import UniqueID as UID
 
 today = str(date.today())
 
-################################
+##########################################
 
-if __name__ == '__main__':
-    # Beschreibung Call
-
-    file_name = "Test_add_str_to_beschreibung"
-    file_path = "_Test_Excel/" + file_name
-
-    in_df = ExF.in_excel_to_df(file_path)
-    out_df, dict_df = Besch.add_str_to_beschreibung(
-        in_df, in_excel_name="Test", source_col="Schubladen Beschriftung",
-        prefix_text="Schublade: ", tranche="Test")
-
-    print(1)

@@ -1,10 +1,8 @@
-import os
-import pandas as pd
-import numpy as np
-from datetime import date
 import warnings
+from datetime import date
 
-from excel_functions import ExcelFunctions as ExF
+import numpy as np
+import pandas as pd
 
 today = str(date.today())
 
@@ -25,29 +23,24 @@ class Beschreibung:
         :return:
         """
         warnings.warn("Only works if the Beschreibung is enclosed in { }")
-        # TODO validate, description
-        # TODO: error handling for both columns
         # iterate over the rows
         for index, source_val in input_df[source_col].iteritems():
-            # if this is not done this way but with try and except to cach the errors of the NaN, it adds the 'nan' as a
-            # string to the beschreibung. Therefore it will only be done if it is indeed of type string
-            try:
-                # get the value in the Beschreibung
-                besch_str = input_df["Beschreibung"][index]
-                # check if they are a str, if they are empty they are not str
-                if type(besch_str) == str:
-                    # partition at the bracket
-                    partitioned = list(besch_str.rpartition("}"))
-                    # this way no values that may come after the bracket will be lost
-                    # insert the information before the bracket
-                    partitioned.insert(1, f", {prefix_text}{source_val}")
-                    # join the items of the list and assign them into the Beschreibung
-                    input_df.loc[index, "Beschreibung"] = "".join(partitioned)
-                # if the Beschreibung does not contain a string (NaN), just insert the value
-                else:
-                    input_df.loc[index, "Beschreibung"] = f"{prefix_text}{source_val}"
-            except ValueError:
-                continue
+            # if this is not done this way but with try and except to cach the errors of the NaN, it adds the 'nan' as
+            # a string to the beschreibung. Therefore it will only be done if it is indeed of type string
+            # get the value in the Beschreibung
+            besch_str = input_df["Beschreibung"][index]
+            # check if they are a str, if they are empty they are not str
+            if type(besch_str) == str:
+                # partition at the bracket
+                partitioned = list(besch_str.rpartition("}"))
+                # this way no values that may come after the bracket will be lost
+                # insert the information before the bracket
+                partitioned.insert(1, f", {prefix_text}{source_val}")
+                # join the items of the list and assign them into the Beschreibung
+                input_df.loc[index, "Beschreibung"] = "".join(partitioned)
+            # if the Beschreibung does not contain a string (NaN), just insert the value
+            else:
+                input_df.loc[index, "Beschreibung"] = f"{prefix_text}{source_val}"
         doc_dict = {"Datum": today,
                     "Tranche": tranche,
                     "Input Dokument": in_excel_name,
@@ -61,7 +54,15 @@ class Beschreibung:
 
     @staticmethod
     def add_schublade(input_df: pd.DataFrame, tranche: str, in_excel_name: str) -> pd.DataFrame and dict:
-        # TODO validate, description
+        """
+        The Schublade Number is the same as the Number of the Ordner of the picture file. This is also added
+        as additional metadata into the Beschreibung. In future Tranche this will not be necessary as we do not get
+        the information as string in the Beschreibung but separately.
+        :param input_df: df to modify
+        :param tranche: Name of the Tranche
+        :param in_excel_name: Name of the excel that provides the df
+        :return: df and dictionary with documentation
+        """
         for index, row in input_df.iterrows():
             besch_spl = row["Beschreibung"].split(",")
             try:
@@ -70,6 +71,7 @@ class Beschreibung:
             except IndexError:
                 index_res = [ind for ind, word in enumerate(besch_spl) if word.startswith(" (F)")][0]
             try:
+                # insert the Schubladen Info into the Beschreibung.
                 besch_spl.insert(index_res + 1, row["Schubladen Beschriftung"])
                 input_df.loc[index, "Beschreibung"] = ",".join(besch_spl)
             except TypeError:
@@ -97,4 +99,4 @@ if __name__ == "__main__":
     #     in_df, in_excel_name="Test", source_col="Schubladen Beschriftung",
     #     prefix_text="Schublade: ", tranche="Test")
 
-    print(1)
+

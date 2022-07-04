@@ -104,11 +104,11 @@ ind = df_in.columns.get_loc("Col_Name")
 
 # check if column exists
 if "col_name" in df_in.columns:
-    raise ColExistsError("The Column already exists.")
+    raise ColumnExistsError("The Column already exists.")
 # check if more than one column already exists
 # in order for the Exception to be raised both have to already exist, if only one exists no Exception will be raised
 if {"Col1", "Col2"}.issubset(df_in.columns):
-    raise ColExistsError("The Column already exists.")
+    raise ColumnExistsError("The Column already exists.")
 
 ######################
 # BOOLEAN COLUMNS
@@ -135,6 +135,10 @@ df_in.sort_values(by=["Ordner Bild", "Inventar Sortierbar"], inplace=True, ignor
 
 #####################
 # SELECTING AND DROPPING
+
+# get a specific location (row, column)
+df.iloc[1, 2]
+
 df_in["col"][1:]  # from the second row onwards
 
 # drop first row, modifies memory of df (inplace)

@@ -4,9 +4,7 @@ import warnings
 import pandas as pd
 import numpy as np
 from datetime import date
-import re
 
-from excel_functions import ExcelFunctions as ExF
 
 today = str(date.today())
 os.chdir("..")
@@ -14,6 +12,8 @@ current_wdir = os.getcwd()
 
 
 class UniqueID:
+
+    # TODO: rewrite with raising col exists error
 
     @staticmethod
     def add_unique_id(input_df: pd.DataFrame, prefix_unique_id: str, in_excel_name: str,

@@ -5,8 +5,6 @@ from datetime import date
 import numpy as np
 import pandas as pd
 
-from cleaning_df import CleanDF as Clean
-
 today = str(date.today())
 os.chdir("..")
 current_wdir = os.getcwd()

@@ -1,15 +1,15 @@
-import os
-import pandas as pd
-import numpy as np
 from datetime import date
 
-from excel_functions import ExcelFunctions as ExF
-from cleaning_df import CleanDF as Clean
+import numpy as np
+import pandas as pd
+
+from sourcetree_code.tools.cleaning_df import CleanDF as Clean
 
 today = str(date.today())
 
 # TODO: review
 # TODO: redo the schuster geo
+
 
 class ColumnsToStr:
 
@@ -28,7 +28,7 @@ class ColumnsToStr:
         :param tranche: name
         :return: df and documentation dict
         """
-        input_df = Clean.strip_spaces_whole_df(input_df)
+        input_df = Clean.strip_spaces(input_df)
         # iterate over the column list that contains information that should be joined into a str
         for col in col_list:
             # check if the column contains only NaN values, if it does then it doesn't skip them and you get nan in the
@@ -62,7 +62,7 @@ class ColumnsToStr:
             # otherwise we join the list, if there is only one value it does not add the "; "
             else:
                 b_str = "; ".join(besch)
-            # add the string the the new_column
+            # add the string the new_column
             input_df.loc[index, new_col_name] = b_str
         doc_dict = {"Datum": today,
                     "Tranche": tranche,

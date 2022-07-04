@@ -1,1 +1,11 @@
+TOOLS:
+
+- beschreibung
+    - add_str_to_beschreibung
+    - add_schublade
+
+- inventarnummer
+    - remove_leading_zero
+
+
 

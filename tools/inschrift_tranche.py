@@ -4,9 +4,7 @@ from datetime import date
 import numpy as np
 import pandas as pd
 
-from excel_functions import ExcelFunctions as ExF
-from RegEx_patterns import RegExPattern as RePat
-from cleaning_df import CleanDF as Clean
+from sourcetree_code.tools.RegEx_patterns import RegExPattern as RePat
 
 today = str(date.today())
 os.chdir("..")
@@ -26,15 +24,16 @@ class Inschrift:
         If used as nested function it also returns a True if all is correct and the df (if leading zeros were added
         it does not appear as a fault, therefore the input df has to be overwritten), or False and the df with the column
         that marks them as such added.
+        Test Excel: Test_inschrift_compliance_Fehler -> will have x, fills some leading zeroes
+        Test Excel: Test_inschrift_compliance_Korrekt -> all correct, fills some leading zeroes
+        :param input_df: df that will be changed
+        :param tranche: name of tranche
+        :param in_excel_name: name of excel
+        :return: new df, documentation
         """
-        # TODO: rewrite description
-        # TODO. validate
         pattern_einlauf_correct, pattern_zero, pattern_incomplete = RePat.inschrift_re_pattern()
         # get the index number of the column inschrift
-        try:
-            index_no = input_df.columns.get_loc("Inschrift")
-        except KeyError:
-            raise KeyError("Column doesn't exist.")
+        index_no = input_df.columns.get_loc("Inschrift")
         # try to insert a new column to the right of it
         try:
             input_df.insert(index_no + 1, "Inschrift falsch", np.nan)
@@ -93,3 +92,15 @@ class Inschrift:
 
 if __name__ == "__main__":
     pass
+
+    # file_name = "Test_inschrift_compliance_Korrekt"
+    # file_path = os.path.join("_Test_Excel", file_name)
+    # df = ExF.in_excel_to_df(file_path)
+    #
+    # # function call
+    # boo, out_df, doc = Inschrift.add_x_inschrift_incorrect(df, "Test", "Test")
+    #
+    # print(boo)
+    # ExF.save_doc_single("Test", doc)
+    # if out_df is not None:
+    #     ExF.save_df_excel(out_df, "Test")

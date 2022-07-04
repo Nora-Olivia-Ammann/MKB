@@ -135,6 +135,10 @@ df_in.sort_values(by=["Ordner Bild", "Inventar Sortierbar"], inplace=True, ignor
 
 #####################
 # SELECTING AND DROPPING
+
+# get a specific location (row, column)
+df.iloc[1, 2]
+
 df_in["col"][1:]  # from the second row onwards
 
 # drop first row, modifies memory of df (inplace)

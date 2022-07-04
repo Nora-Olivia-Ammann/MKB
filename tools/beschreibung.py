@@ -1,10 +1,8 @@
-import os
-import pandas as pd
-import numpy as np
-from datetime import date
 import warnings
+from datetime import date
 
-from excel_functions import ExcelFunctions as ExF
+import numpy as np
+import pandas as pd
 
 today = str(date.today())
 

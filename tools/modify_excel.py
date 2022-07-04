@@ -1,12 +1,10 @@
 import os
-import warnings
+import re
+from datetime import date
 
 import pandas as pd
-import numpy as np
-from datetime import date
-import re
 
-from excel_functions import ExcelFunctions as ExF
+from sourcetree_code.tools.excel_functions import ExcelFunctions as ExF
 
 today = str(date.today())
 os.chdir("..")

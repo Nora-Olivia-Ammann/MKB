@@ -62,7 +62,7 @@ def new_tranche_excel(in_excel: str, tranche: str, abteilung: str, prefix_unique
     # TODO: revise in and out columns
     in_cols = ["Inventarnummer", "Abteilung", "Person oder Institution1", "Datierung", "Beschreibung", "Inschrift"]
     out_cols = ["Inventarnummer", "Schubladen Beschriftung", "P1 Fotograf*in/Filmer*in", "Datierung", "Beschreibung",
-                "Inschrift"]
+                "Inschrift", "Bilddatei"]
     for in_col, out_col in zip(in_cols, out_cols):
         df_out[out_col] = df_in[in_col]
     # assign the tranche name, this is relevant as at a later point different tranche will be merged, while the picture

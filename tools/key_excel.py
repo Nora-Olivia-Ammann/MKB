@@ -1,12 +1,8 @@
 import os
-import warnings
-
-import pandas as pd
-import numpy as np
 from datetime import date
-import re
 
-from excel_functions import ExcelFunctions as ExF
+import numpy as np
+import pandas as pd
 
 today = str(date.today())
 os.chdir("..")

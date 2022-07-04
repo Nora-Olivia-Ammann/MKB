@@ -1,16 +1,12 @@
 import os
-import warnings
-
-import pandas as pd
-import numpy as np
 from datetime import date
-import re
 
-from excel_functions import ExcelFunctions as ExF
-from RegEx_patterns import RegExPattern as RePat
-from cleaning_df import CleanDF as Clean
-from custom_exceptions import *
-from double_check import DoubleCheck as Double
+import numpy as np
+import pandas as pd
+
+from sourcetree_code.tools.RegEx_patterns import RegExPattern as RePat
+from sourcetree_code.tools.cleaning_df import CleanDF as Clean
+from sourcetree_code.tools.custom_exceptions import *
 
 today = str(date.today())
 os.chdir("..")
@@ -298,7 +294,6 @@ class Inventarnummer:
         'correct' ones with another abteilung prefix also as wrong.
         :return: bool if there are any, df if there are any, documentation dict
         """
-        # TODO: validate add description
         # clean the column
         input_df = Clean.strip_spaces(input_df)
         # get the RegEx pattern

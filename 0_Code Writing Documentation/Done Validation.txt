@@ -9,7 +9,8 @@ COLUMNS_TO_STRING
 
 
 DOUBLE_CHECK
-
+    - separate_double_col
+    - add_x_col_double
 
 EXCEL_FUNCTIONS
     - done
@@ -18,7 +19,7 @@ GEOGRAPHIE
 
 
 INSCHRIFT_TRANCHE
-
+    - add_x_inschrift_incorrect
 
 INVENTARNUMMER
     - add_inventar_sortierbar
@@ -36,7 +37,7 @@ NAN_CHECK
 
 
 PICTURE_FILES
-
+    - add_old_picture_name
 
 REGEX_PATTERNS
 

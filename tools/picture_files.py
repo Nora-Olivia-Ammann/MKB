@@ -6,6 +6,7 @@ import pandas as pd
 
 from mkb_code.tools.custom_exceptions import *
 from mkb_code.tools.excel_functions import ExcelFunctions as ExF
+from mkb_code.tools.inventarnummer import Inventarnummer as InvNr
 
 today = str(date.today())
 os.chdir("..")
@@ -52,16 +53,33 @@ class PictureFiles:
                     "Ersetzt Hauptexcel": "ja"}
         return input_df, doc_dict
 
+    @staticmethod
+    def rename_picture_file(file_name, out_excel_name):
+        # read in the excel
+        in_df = ExF.in_excel_to_df(file_name)
+        # format the new df to save the picture names
+        out_df = pd.DataFrame({"Ordner Bild": in_df["Ordner Bild"], "Inventarnummer": in_df["Inventarnummer"],
+                               "Bilddatei Alt": np.nan, "Bilddatei Neu": np.nan})
+        # remove the leading zeros, this is relevant because there may be "hidden" doubles
+        for ind, invnr in out_df["Inventarnummer"].iteritems():
+            out_df["Inventarnummer"][ind] = InvNr.remove_leading_zero(invnr)
+        # get a df with all the doubles
+        df_doubles = out_df[out_df["Inventarnummer"].duplicated(keep=False)]
+        # sort the df
+        df_doubles.sort_values(by=["Inventarnummer"], ascending=True, inplace=True, ignore_index=True)
+        # save the df
+        ExF.save_df_excel(df_doubles, f"{out_excel_name}_{today}")
+
 
 if __name__ == '__main__':
     pass
 
-    file_name = "Test_picture_files_Bilddatei_Exists"
-    file_path = os.path.join("_Test_Excel", file_name)
-    df = ExF.in_excel_to_df(file_path)
-
-    # function call
-    out_df, doc = PictureFiles.add_old_picture_name(df, "Test", "Test")
-
-    ExF.save_doc_single("Test", doc)
-    ExF.save_df_excel(out_df, "Test")
+    # file_name = "Test_picture_files_Bilddatei_Exists"
+    # file_path = os.path.join("_Test_Excel", file_name)
+    # df = ExF.in_excel_to_df(file_path)
+    #
+    # # function call
+    # out_df, doc = PictureFiles.add_old_picture_name(df, "Test", "Test")
+    #
+    # ExF.save_doc_single("Test", doc)
+    # ExF.save_df_excel(out_df, "Test")

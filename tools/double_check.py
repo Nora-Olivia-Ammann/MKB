@@ -4,7 +4,8 @@ from datetime import date
 import numpy as np
 import pandas as pd
 
-from sourcetree_code.tools.cleaning_df import CleanDF as Clean
+from mkb_code.tools.cleaning_df import CleanDF as Clean
+from mkb_code.tools.excel_functions import ExcelFunctions as ExF
 
 today = str(date.today())
 os.chdir("..")
@@ -123,14 +124,15 @@ class DoubleCheck:
 if __name__ == "__main__":
     pass
 
-    # file_name = "Test_inventarnummer_has_no_double"
-    # file_path = os.path.join("_Test_Excel", file_name)
-    # df = ExF.in_excel_to_df(file_path)
+    # file_name = "Oz_19-01_Komplett_2022-04-21"
+    # in_df = ExF.in_excel_to_df(file_name)
     #
-    # # function call
-    # boo, out_df, doc = DoubleCheck.add_x_col_double(df, "Inventarnummer", "Test", "Test")
+    # out_df = pd.DataFrame({"Ordner Bild": in_df["Ordner Bild"], "Inventarnummer": in_df["Inventarnummer"],
+    #                        "Bilddatei Alt": np.nan, "Bilddatei Neu": np.nan})
     #
-    # print(boo)
-    # ExF.save_doc_single("Test", doc)
-    # if out_df is not None:
-    #     ExF.save_df_excel(out_df, "Test")
+    # for ind, invnr in out_df["Inventarnummer"].iteritems():
+    #     out_df.loc["Inventarnummer"][ind] = InvNr.remove_leading_zero(invnr)
+    #
+    # df_doubles = out_df[out_df["Inventarnummer"].duplicated(keep=False)]
+    #
+    # ExF.save_df_excel(df_doubles, "Oz2_Umbenennung_Bilddatei_Dubletten_Inventarnummer")
